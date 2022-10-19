@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>记一次头铁的病毒样本分析过程 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="Virus">
+<meta name="description" content="记一次头铁的病毒样本分析过程">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/virus/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="记一次头铁的病毒样本分析过程" />
+<meta property="og:description" content="记一次头铁的病毒样本分析过程" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/virus/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="记一次头铁的病毒样本分析过程"/>
+<meta name="twitter:description" content="记一次头铁的病毒样本分析过程"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "记一次头铁的病毒样本分析过程",
+      "item": "https://planejun.github.io/posts/virus/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "记一次头铁的病毒样本分析过程",
+  "name": "记一次头铁的病毒样本分析过程",
+  "description": "记一次头铁的病毒样本分析过程",
+  "keywords": [
+    "Virus"
+  ],
+  "articleBody": "记一次头铁的病毒样本分析过程 PlaneJun ・2021-10-27 05:07 一、样本： [1]运行效果： 点击确定后就无任何反应。\n二、静态分析 [1]程序信息 MD5 fdd9fd0249d48d8c6d991741c67fcfeb SHA-1 ff0181242825b5bb8cac1d4d17e8377352e3aa55 SHA-256 6a9bdabc4599618513de5c963972929de9322c486e84e101e177c0868e7c5fb7 File size 1.34 MB (1408512 bytes)\n其中较为引人注目的就是winnet.dll、shell32.dll、advapi32.dll，这三者分别是对网络，运行程序，注册表进行操作的动态库，说明程序存在运行外部程序和联网操作。\n字符串的话，通过Strings.exe查询后没发现任何敏感字符串，这里就不贴出来了。（因为太多了 =。=）\n[2]在线查毒 [3]进程行为监控： 通过火绒的监控发现其对注册表进行了大量操作，不过并没什么影响。\n且运行了一个名为CrashReporter.exe的程序。\n途中创建了一些文件\n首先是CrashReporter.exe,跳到目标目录后发现其文件大小与样本大小相同，故猜测此样本运行后将自身转移到新路径后伪装绿色运行，其次是txt，打开后发现内容为\nABC AAC AAD BBC BAC BAD\n暂时不知什么意思，然后是WeiXinCR01,内容为\nD2 C2 7E AD 52 06 C4 93\n这里根据后面的调试，发现内容含义为Crc32计算C盘的序列号的结果。\n[4]网络行为 HttpDebuger无任何发现。\n三、动静态分析 首先分析原样本，突破口可以从给MessageBoxA下断后返回拿到关键点。\n这里直接返回到call的位置，直接计算call地址的相对地址，然后扔进IDA进行分析。\n这个样本在静态分析时之所以没有看到敏感字符串是因为他的字符串都是以字符数组初始化的，\n在分析的时候可以通过先转义这些字符数组的内容，再去分析这个地方执行了什么。比如这里的字符数组为SetEvent error，那么说明调用SetEvent失败。并且他这个样本调用函数的方式是通过一个类似shellcode的方法获取，然后把函数存放放到一个全局变量里。\n我们来到调用了MessageBoxA后，直接到函数头部进行一直交叉引用，最后来到了WinMain的最初调用处。\n这个过程中会发现整个代码中存在很多这种形式的代码。\n这些代码看似是在获取TEB和PEB操作，但是经过简单分析后，发现这些其实就是垃圾代码，只是为了通过增大代码量，用来增加分析时间。\n[1]StartMainWork分析 在这个StartMainWork函数执行前，会执行几个数据初始化的函数,包括有crc32和crc64表的生成，动态库函数的获取，还有样本之后所需要用到的数据。这里crc32和64生成的函数很好识别，因为其算法固定，且带有常量值，下面是样本生成crc的关键代码。\nfor ( i = 0; i \u003c 256; ++i ) // 开始生成crc32表 { crcValue = i; for ( j = 0; j \u003c 8; ++j ) { ......垃圾代码........ if ( crcValue \u0026 1 ) crcValue = (crcValue \u003e\u003e 1) ^ 0xEDB88320;// 搜索这个值，可以知道这里是CRC算法的常量值 else crcValue = crcValue \u003e\u003e 1; g_crc32Table[i] = crcValue; } } for ( jj = 0; jj \u003c 256; ++jj ) // 开始生成crc64表 { v45 = jj; for ( kk = 0; kk \u003c 8; ++kk ) { ......垃圾代码........ if ( v45 \u0026 1 ) { LODWORD(v0) = (v45 \u003e\u003e 1) ^ 0xAC4BC9B5; // 根据这个常量值，搜索后发现是crc64的常量值 HIDWORD(v0) = (v45 \u003e\u003e 1 \u003e\u003e 32) ^ 0x95AC9329; v45 = v0; } else { v45 \u003e\u003e= 1; } g_crc64Table_Low[2 * jj] = v45; g_crc64Table_Hight[2 * jj] = HIDWORD(v45); 然后比较有意思的就是动态库函数的获取了，该样本采取了类似shellcode的方式获取，通过Ldr来遍历自身的dll模块，然后通过都PE文件的解析寻找函数地址，并添加到全局函数表中。该方式在《恶意代码分析实战》一书中第十九章的shellcode符号解析有讲解，这里就不详细解释了。以下是关键代码。\npeb = readPEB(); *functionTable = peb; if ( peb ) { // 通过动态调试得知这里获取的是Kernel32.dll地址,参数二为字符串Kernel32.dll通过crc32计算后的结果 ModuleBase = getModuleBaseByCrcValue(*functionTable, 0xF7784A01); functionTable[1] = ModuleBase; if ( KernelBase ) { // 直接从目录项里获取参数三对应的函数地址 procCreateFileA = getProcAddrByDirArray(functionTable[1], -1, (int)\u0026strCreateFileA, 0); ....往下的也是一样 } ............ } 这里贴出他加载的所有函数\n$ ==\u003e 757E3090 kernel32.CreateFileA $+4 757DDF70 kernel32.GetLastError $+8 757D83E0 kernel32.GetSystemDirectoryA $+C 757E22D0 kernel32.ExpandEnvironmentStringsA $+10 757E0BE0 kernel32.GetStartupInfoA $+14 757F2DA0 kernel32.CreateProcessA $+18 757E2E40 kernel32.CloseHandle $+1C 757E3030 kernel32.WaitForSingleObject $+20 757E3420 kernel32.ReadFile $+24 757D89C0 kernel32.lstrcat $+28 757E2DF0 kernel32.GetCurrentProcessId $+2C 757DDE70 kernel32.GetCurrentThreadId $+30 757E2300 kernel32.GetTickCount $+34 757E3510 kernel32.WriteFile $+38 757F2D80 kernel32.CreatePipe $+3C 75130000 \"MZ?\" $+40 75155840 user32.wsprintfA $+44 757C0000 \"MZ?\" $+48 757E0B30 kernel32.LoadLibraryA $+4C 757E0A40 kernel32.FreeLibrary $+50 757E0D90 kernel32.GetModuleFileNameA $+54 757DE010 kernel32.lstrlenW $+58 757DDF00 kernel32.SetLastError $+5C 7581F6A0 kernel32.lstrcpyW $+60 757E03A0 kernel32.lstrlenA $+64 757D8320 kernel32.lstrcpyA $+68 757DF440 kernel32.lstrcmp $+6C 757DF320 kernel32.VirtualAlloc $+70 757DF420 kernel32.VirtualFree $+74 757E0860 kernel32.GetModuleFileNameW $+78 757E3090 kernel32.CreateFileA $+7C 757E32C0 kernel32.GetFileSize $+80 757E3420 kernel32.ReadFile $+84 757E2E40 kernel32.CloseHandle $+88 757D88F0 kernel32.GetEnvironmentVariableA $+8C 757D89C0 kernel32.lstrcat $+90 757E3510 kernel32.WriteFile $+94 757DDF70 kernel32.GetLastError $+98 757E0E60 kernel32.Sleep $+9C 757E3030 kernel32.WaitForSingleObject $+A0 757E2E90 kernel32.CreateEventA $+A4 757E0E70 kernel32.CreateThread $+A8 757E2FE0 kernel32.SetEvent $+AC 757D92B0 kernel32.OutputDebugStringA $+B0 757E2300 kernel32.GetTickCount $+B4 757D2EB0 kernel32.FindResourceA $+B8 757E03E0 kernel32.SizeofResource $+BC 757DE7A0 kernel32.LoadResource $+C0 757DF2A0 kernel32.LockResource $+C4 757F4B10 kernel32.SetCurrentDirectoryA $+C8 7581CD60 kernel32.WinExec $+CC 757DF4B0 kernel32.GetProcAddress $+D0 757E2DF0 kernel32.GetCurrentProcessId $+D4 757DDE70 kernel32.GetCurrentThreadId $+D8 757F2D80 kernel32.CreatePipe $+DC 757E3010 kernel32.WaitForMultipleObjects $+E0 757E2FD0 kernel32.ResetEvent $+E4 757E0AF0 kernel32.ProcessIdToSessionId $+E8 757E1E10 kernel32.GetNativeSystemInfo $+EC 757E0640 kernel32.IsWow64Process $+F0 757E2DE0 kernel32.GetCurrentProcess $+F4 757F2DA0 kernel32.CreateProcessA $+F8 757D9870 kernel32.TerminateProcess $+FC 757F5000 kernel32.VirtualAllocEx $+100 757F5250 kernel32.WriteProcessMemory $+104 757F2E40 kernel32.CreateRemoteThread $+108 757E0590 kernel32.OpenProcess $+10C 757F4B70 kernel32.SetEnvironmentVariableA $+110 757F3550 kernel32.GetEnvironmentStrings $+114 757E3390 kernel32.GetVolumeInformationA $+118 757D8FE0 kernel32.GetComputerNameA $+11C 757E16C0 kernel32.GetVersionExA $+120 757E0BE0 kernel32.GetStartupInfoA $+124 757D83E0 kernel32.GetSystemDirectoryA $+128 757E34C0 kernel32.SetFilePointerEx $+12C 757E32D0 kernel32.GetFileSizeEx $+130 757E32E0 kernel32.GetFileTime $+134 757E34D0 kernel32.SetFileTime $+138 757E22D0 kernel32.ExpandEnvironmentStringsA $+13C 757E30C0 kernel32.DeleteFileA $+140 757E34B0 kernel32.SetFilePointer $+144 757E09C0 kernel32.GetModuleHandleA $+148 757E0DB0 kernel32.GetModuleHandleW $+14C 757E07C0 kernel32.GetEnvironmentVariableW $+150 757E1E40 kernel32.GetCommandLineA $+154 757D9420 kernel32.GetExitCodeProcess $+158 757E1850 kernel32.ResumeThread $+15C 757DF2F0 kernel32.GetSystemTimeAsFileTime $+160 757E2ED0 kernel32.CreateMutexA $+164 757D8AC0 kernel32.CopyFileA $+168 757E3060 kernel32.CreateDirectoryA $+16C 757E2040 kernel32.GetExitCodeThread $+170 757DF490 kernel32.LocalFree $+174 757DDF50 kernel32.WideCharToMultiByte $+178 75130000 \"MZ?\" $+17C 75155840 user32.wsprintfA $+180 76EE6640 ntdll.NtdllDefWindowProc_A $+184 7514F150 user32.RegisterClassA $+188 75155580 user32.CreateWindowExA $+18C 7516F7E0 user32.ShowWindow $+190 75161970 user32.UpdateWindow $+194 75150B90 user32.GetMessageA $+198 75167660 user32.TranslateMessage $+19C 75154EC0 user32.DispatchMessageA $+1A0 75159350 user32.CharUpperA $+1A4 751AD860 user32.MessageBoxA $+1A8 751527A0 user32.GetCursorPos $+1AC 751B7170 user32.FindWindowExA $+1B0 75167AF0 user32.GetWindowThreadProcessId $+1B4 75161ED0 user32.GetWindowRect $+1B8 751660B0 user32.ScreenToClient $+1BC 75162150 user32.GetClientRect $+1C0 75154080 user32.SetWindowTextA $+1C4 7516F040 user32.MoveWindow $+1C8 751525B0 user32.GetAsyncKeyState $+1CC 76580000 \"MZ?\" $+1D0 7659F620 advapi32.SetServiceStatus $+1D4 7659F8A0 advapi32.RegisterServiceCtrlHandlerW $+1D8 7659DF20 advapi32.OpenProcessToken $+1DC 765A3910 advapi32.LookupPrivilegeValueA $+1E0 7659EF80 advapi32.AdjustTokenPrivileges $+1E4 765B2990 advapi32.CreateProcessAsUserA $+1E8 7659E7E0 advapi32.InitializeSecurityDescriptor $+1EC 7659E7C0 advapi32.InitializeAcl $+1F0 765C45D0 advapi32.LookupAccountNameA $+1F4 7659E660 advapi32.AddAccessAllowedAce $+1F8 7659E640 advapi32.SetSecurityDescriptorDacl $+1FC 765A2840 advapi32.GetUserNameA $+200 75530000 \"MZ?\" $+204 755A59A0 msvcrt.sscanf $+208 755B94D0 msvcrt.memset $+20C 755B8CF0 msvcrt.memcpy $+210 755A4CB0 msvcrt.printf $+214 75596C30 msvcrt._beginthreadex $+218 755B9EF0 msvcrt.strtok $+21C 755B9E60 msvcrt.strstr $+220 755BF140 msvcrt._time64 $+224 7558C650 msvcrt.rand $+228 7558BAB0 \"j\\fh垜]u鐷\\x11\" $+22C 755774F0 msvcrt.malloc $+230 7558C680 msvcrt.srand $+234 75577310 msvcrt.free $+238 76E60000 \"MZ?\" $+23C 76EBE1D0 ntdll.RtlInitializeCriticalSection $+240 76E9E8E0 ntdll.RtlEnterCriticalSection $+244 76E9DE00 ntdll.RtlLeaveCriticalSection $+248 76EAF940 ntdll.RtlDeleteCriticalSection $+24C 746A0000 \"MZ?\" $+250 746A4FD0 wtsapi32.WTSEnumerateSessionsA $+254 746A53A0 wtsapi32.WTSQuerySessionInformationA $+258 746A24A0 wtsapi32.WTSFreeMemory $+25C 746A1930 wtsapi32.QueryUserToken $+260 75C60000 \"MZ?\" $+264 75DBA520 shell32.CommandLineToArgvW $+268 75E97CF0 shell32.ShellExecuteA $+26C 76250000 \"MZ?\" $+270 7626A1C0 shlwapi.PathFileExistsA $+274 73B20000 \"MZ?\" $+278 73DC1380 wininet.InternetOpenA $+27C 73DD8640 wininet.InternetQueryOptionA $+280 73DDA4B0 wininet.InternetSetOptionA $+284 73E27000 wininet.InternetConnectA $+288 73DD7D50 wininet.InternetReadFile $+28C 73DE2950 wininet.InternetCloseHandle $+290 73EC41F0 wininet.HttpOpenRequestA $+294 73DF00F0 wininet.HttpAddRequestHeadersA $+298 73E32B20 wininet.HttpSendRequestA $+29C 73DD9EE0 wininet.HttpQueryInfoA $+2A0 6F780000 \"MZ?\" $+2A4 6F7D19B0 dnsapi.DnsGetCacheDataTable $+2A8 6F7A1DE0 dnsapi.DnsFree $+2AC 6F793530 dnsapi.DnsQuery_W 最后初始化的是一个样本之后用到的数据，包括有创建文件的路径，自拷贝的路径等等。该函数是直接赋值，这里直接贴出他的内容。\n$ ==\u003e 00000201 $+4 00000066 $+8 00000002 $+C 00000065 $+10 00000001 $+14 0123A601 $+18 02D91248 \"D:\\\\Tencent\\\\WeChat\\\\v7.0\\nD:\\\\Tencent\\\\WeChat\\\\v7.0\\n%ProgramData%\\\\Tencent\\\\WeChat\\n\" $+1C 02D92448 \"CrashReporter.exe\" $+20 02D92478 \"%PUBLIC%\\\\unlimit.flag\" $+24 76ED9800 \"鶅}\\x08\" $+28 00000000 $+2C 02D924A8 \"%PUBLIC%\\\\Documents\" $+30 02D924D8 \"new.doc\" $+34 76EA0100 ntdll.76EA0100 $+38 02D924F8 \"%ProgramData%\\\\WeiXinCR01\" $+3C 02D92530 \"%ProgramData%\\\\WeiXinCR02\" $+40 00000001 $+44 00000014 $+48 00000064 $+4C 02D92884 $+50 02D928A8 \"Microsoft Word\" $+54 02D928B7 $+58 00000064 $+5C 0000000A $+60 01200200 $+64 02D925E8 \"127.0.0.\\n.0.0.127\\n192.168.\\n172.16.\\n0.0.0.0\\n255.255.255.255\\n\" $+68 02D92640 \".test\\ntest.\\n\" $+6C 00000000 $+70 00000000 $+74 00000001 $+78 00000301 $+7C 0001D4C0 $+80 00000000 $+84 00000BB8 $+88 00026000 $+8C 00000000 $+90 02D92668 \"WeiXinCrashReporter\" $+94 02D92698 \"https://start.firefoxchina.cn\\nhttps://www.msn.cn/zh-cn\\n\" $+98 02D928BC \"http://39.99.57.67/grief-seed/ribbon-mummy.dat\\nhttp://39.99.57.67/grief-seed/marmaid-conductor.dat\\nhttp://39.99.57.67/grief-seed/candle-knight.dat\\nhttp://39.99.57.67/grief-seed/gramphone-witch.dat\\n\" $+9C 00001388 $+A0 00007530 $+A4 00000001 $+A8 02D92982 \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.104 Safari/537.36 Edg/89.0.774.76\" $+AC 02D92750 \"###@@@WeiXin0099\" $+B0 00000000 $+B4 00000000 $+B8 00000003 $+BC 02D92A06 $+C0 02D92A09 \"0d8d26376410b051421adee91163c5a54a5d5095d47cdf05ae5351de7ba0a153382c6d5778c21726\" $+C4 00EFF320 $+C8 00000FDC $+CC 00000000 $+D0 01200000 $+D4 00001F18 $+D8 00DEF000 $+DC 01200000 $+E0 00000000 $+E4 01200000 $+E8 00EFF390 $+EC 00001F18 $+F0 00001F18 $+F4 00001F18 $+F8 00DEF000 $+FC 00000000 $+100 00000000 这里可以看到存在协议头，域名和IP列表，但是网络工具并没有监测到，说明样本没有触发。\nStartMainWork函数头首先是一个调用ExpandEnvironmentStringsA函数，来获取环境变量的值。\n通过前面他初始化的字符串得知这里的环境值为 %PUBLIC%\\unlimit.flag,因为这个文件一直不存在，所以紧接着的PathFileExistsA返回0,不进入代码块。\n然后会对本层函数传进来的参数进行判断，因为打开程序时默认不带有命令参数，所以CmdLine为NULL。又因为上面判断flag文件不存在，所以对应的标志位也是为0。此处判断不成立。往下走会判断dataTable + 0x14位置的值是否为0。通过查看dataTable发现这个位置的值恒等于1，所以此处永远是执行的状态。\n进行自我复制的操作。\n因为v73在上面的if没有成立，所以此处的值为默认的1，故此处调用的后两个参数为1,0。然后整个WinMain的执行周期结束。明显关键函数为CopySelf_And_DoWork，接下来进入分析。\n[2]CopySelf_And_DoWork分析 进入函数后首先会调用一个popMsgBox_DnsCache,这个函数的是跳出一个信息框然后进行DNS一些查询操作。这里注意的是ida在这里显示的是+0xE的作为参数一，可是在我调试的时候发现这里实际上是0x38，具体原因是啥，我也不清楚。\n现在继续往下看看还会执行什么。\n这里会执行两个函数，通过动态调试得知这里的参数内容如下\npathTable = “D:\\Tencent\\WeChat\\v7.0\\nD:\\Tencent\\WeChat\\v7.0\\n%ProgramData%\\Tencent\\WeChat\\n”\nExistPath = 上面一个函数创建new出来的地址，用于此处函数的out_buffer\n经过内部分析，这个函数作为为对参数一的路径以**\\r\\n分割，然后逐一判断其是否存在，存在则返回到ExistPath**。参数三的作用则是，传入0就直接判断路径是否存在，不创建。传入1就是如果路径不存在则创建。因为本人虚拟机只有C盘，故只有第三项路径存在C:\\ProgramData\\Tencent\\WeChat。如果所有路径都不存在，则本层函数直接返回，反之执行下列代码。\n图片可能有点乱，大概的流程就是\nif ( GetModuleFileNameA(0, \u0026currentPath, 259) )// 获取当前运行时的路径 { if ( lstrcmpA_0(\u0026_crashReportPath, \u0026_currentPath) )// 比较两个文件运行的路径 { // 这里是路径不相同时的处理 if (CopyFileA(\u0026currentPath, \u0026CrashReportPath, 0) )// 将自身拷贝到目标路径 { if ( PathFileExistsA(\u0026CrashReportPath) ) { wsprintf(\u0026v226, \u0026v395, \u0026CrashReportPath); //运行拷贝后的程序 if ( CreateProcessA(0, \u0026v226, 0, 0, 0, 0, 0, 0, \u0026lpStartupInfo, \u0026lpProcessInformation) )// shellCmd { CloseHandle_0(lpProcessInformation); CloseHandle_0(v10); } } } } else { CrashReportMain((int)dataTable, a2, ExistFlag);// CrashReport.exe 执行的函数 } } 然后本层函数也执行完毕。现在就开始分析重中之中，CrashReportMain。\n[3]CrashReportMain分析 首先在x32dbg进行头部下断，查看一下该函数的参数。\n参数1 = dataTable\n参数2 = 1\n参数3 = 0\n函数进来后依旧是popMsgBox_DnsCache函数的调用，这个函数基本上不影响样本功能，所以略过。\n到了这里虽然里面有一个sub_511EB0函数，但是这个条件没有成立，0x24的位置始终为0。这里先继续往下走\n这里的话是判断互斥体名称是否存在，存在的话创建一个互斥体。\n往下继续分析，会看到这里会对上面的错误码进行判断，而且判断的文本为Error : A downloader instance is already，由此可知，这个当前分析的这个CrashReporter样本可能是一个下载器。\n往下执行会执行到这个条件，因为这个sub_4C7B40内部存在sleep函数，单步跳过时会直接卡住。如果返回为true，则会执行下面的sub_5176C0，然后本层函数直接结束掉。这里就直接从sub_4C7B40开始分析。\n[4]sub_4C7B40分析 首先执行第一个函数，CheckMachineIsMatch_FileExist，这个函数会检测是否存在文件C:\\ProgramData\\WeiXinCR02文件，该文件存放着C盘序列号的CRC32值。如果文件不存在则函数返回0，如果存在则获取C盘的序列号并且计算出CRC32值，然后与文件里的值对比，是否一致。这里由于文件是不存在的，所以返回的为0，下面0x40是1，条件成立直接执行下面的延迟函数。\nsafeSleep通过isMatch来计算需要延迟的时间，如果isMatch == true，则延迟2分钟，反之延迟4分钟。\n这里因为为了分析直接先nop掉这个函数执行，并且让返回值为1。\n包括这里isMatch也是0，所以这里也需要改。\n紧接着执行这个位置，函数直接返回1。\n由于没有文件WeiXinCR02，所有在函数尾部，创建了该文件，并写入了C盘序列号的CRC32值，最后也返回1。这个函数整体大概是通过判断文件WeiXinCR02的存在来进行样本休眠，具体的作用可能为了躲过某些检测。\n[5]sub_5176C0分析 进入头部直接是一个urlList的初始化\n往下走会执行一个Requst函数，会对每一个url进行一个get请求和读取源码，之后会执行一个sub_5071A0，这里没分析出具体是干嘛。看到一些加密或解密的函数，估计是在读取网页源码的时候对内容进行解密然后形成shellcode?\n网页操作执行完后，就是文件下载了，这里通过查看数据表发现这里的字符串都是以url\\filename的形式存在，然后下面只有一个函数在执行，所以这里基本上可以确定下面的函数是下载这些文件，在这里本人自己去访问一下这些地址，发现已经无法访问了，所以无法下载，这估计也是为什么该样本运行时只有一个信息框弹出，就没有其它反应了，这里进入downloader进行分析。\n[6]downloader分析 函数头的字符串提示更加确定这是一个下载函数。\n往下走后会看到样本使用了strtok进行文本分割，然后传入startDownLoad开始下载，下载同时会记录下载的个数，当所有下载完成后，本层函数返回下载的总数。这里注意下上面CrashReporter函数中我少了一个函数没分析，那个函数其实就是这个函数。\n[7]startDownLoad分析 这里定义了一个结构体变量，newMem_8,结构体内容如下\nstruct unkown { int* urlField; int* dataTable }; 之后会根据参数3进行启动不同的下载线程。\n[8]sub_50C610分析 因为文件已经无法下载了，所以sub_5071A0本人没法继续跟入分析，因为此函数里，基本都是对下载的文件进行image,section校验，且对部分数据进行处理。由于没拿到原文件，所以本人无从下手。\n[9]openDoc_download分析 首先是是对保存路径初始化。\n然后是对文件路径判断是否存在，如果存在则打开改文档。\n否则进行下载。\n下载完成后创建路径，然后再去打开文档。同样，由于文档当前也是无法下载的，导致没法进一步分析。\n至此，该样本分析基本完了，且据目前分析结果来看，该样本也就是个下载器。\n总结 长达一周的分析，终于结束了。因为该样本添加了很多的垃圾代码，导致分析的时候需要翻来翻去，有些关键代码又夹在里面，分析的时候甚是头疼，并且还有很多没用的条件，看起来觉得他会执行，但是动态调试的时候就是不会执行，就很蛋疼。又因为该样本的下载文件地址全部失效，把样本跑起来后整个虚拟机啥问题都没有，监视工具也压根就没啥反应，压根就是一个正常的程序，这更增加了分析难度。刚刚开始接手这个样本时，运行起来和正常程序没什么区别，完全没有找到有关恶意代码的地方，最后被迫无奈，直接从WinMain手撕。整个样本，共106个函数，天天24小时肝。由于压根就没看到有什么恶意代码，使得产生自我怀疑，甚至产生了放弃的念头，但是想到已经分析那么多了，还不如坚持下去。最后把70多个函数全部给分析了，然后已经看出了个大概，其余的就没分析，只看了个流程。\n",
+  "wordCount" : "1048",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/virus/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      记一次头铁的病毒样本分析过程
+    </h1>
+    <div class="post-description">
+      记一次头铁的病毒样本分析过程
+    </div>
+    <div class="post-meta">时长:&nbsp;5分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b" aria-label="记一次头铁的病毒样本分析过程">记一次头铁的病毒样本分析过程</a></li>
+                    <li>
+                        <a href="#%e4%b8%80%e6%a0%b7%e6%9c%ac" aria-label="一、样本：">一、样本：</a><ul>
+                            
+                    <li>
+                        <a href="#1%e8%bf%90%e8%a1%8c%e6%95%88%e6%9e%9c" aria-label="[1]运行效果：">[1]运行效果：</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e4%ba%8c%e9%9d%99%e6%80%81%e5%88%86%e6%9e%90" aria-label="二、静态分析">二、静态分析</a><ul>
+                            
+                    <li>
+                        <a href="#1%e7%a8%8b%e5%ba%8f%e4%bf%a1%e6%81%af" aria-label="[1]程序信息">[1]程序信息</a></li>
+                    <li>
+                        <a href="#2%e5%9c%a8%e7%ba%bf%e6%9f%a5%e6%af%92" aria-label="[2]在线查毒">[2]在线查毒</a></li>
+                    <li>
+                        <a href="#3%e8%bf%9b%e7%a8%8b%e8%a1%8c%e4%b8%ba%e7%9b%91%e6%8e%a7" aria-label="[3]进程行为监控：">[3]进程行为监控：</a></li>
+                    <li>
+                        <a href="#4%e7%bd%91%e7%bb%9c%e8%a1%8c%e4%b8%ba" aria-label="[4]网络行为">[4]网络行为</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e4%b8%89%e5%8a%a8%e9%9d%99%e6%80%81%e5%88%86%e6%9e%90" aria-label="三、动静态分析">三、动静态分析</a><ul>
+                            
+                    <li>
+                        <a href="#1startmainwork%e5%88%86%e6%9e%90" aria-label="[1]StartMainWork分析">[1]StartMainWork分析</a></li>
+                    <li>
+                        <a href="#2copyself_and_dowork%e5%88%86%e6%9e%90" aria-label="[2]CopySelf_And_DoWork分析">[2]CopySelf_And_DoWork分析</a></li>
+                    <li>
+                        <a href="#3crashreportmain%e5%88%86%e6%9e%90" aria-label="[3]CrashReportMain分析">[3]CrashReportMain分析</a></li>
+                    <li>
+                        <a href="#4sub_4c7b40%e5%88%86%e6%9e%90" aria-label="[4]sub_4C7B40分析">[4]sub_4C7B40分析</a></li>
+                    <li>
+                        <a href="#5sub_5176c0%e5%88%86%e6%9e%90" aria-label="[5]sub_5176C0分析">[5]sub_5176C0分析</a></li>
+                    <li>
+                        <a href="#6downloader%e5%88%86%e6%9e%90" aria-label="[6]downloader分析">[6]downloader分析</a></li>
+                    <li>
+                        <a href="#7startdownload%e5%88%86%e6%9e%90" aria-label="[7]startDownLoad分析">[7]startDownLoad分析</a></li>
+                    <li>
+                        <a href="#8sub_50c610%e5%88%86%e6%9e%90" aria-label="[8]sub_50C610分析">[8]sub_50C610分析</a></li>
+                    <li>
+                        <a href="#9opendoc_download%e5%88%86%e6%9e%90" aria-label="[9]openDoc_download分析">[9]openDoc_download分析</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e6%80%bb%e7%bb%93" aria-label="总结">总结</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="记一次头铁的病毒样本分析过程">记一次头铁的病毒样本分析过程<a hidden class="anchor" aria-hidden="true" href="#记一次头铁的病毒样本分析过程">#</a></h1>
+<ul>
+<li><a href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2021-10-27 05:07</li>
+</ul>
+<h1 id="一样本">一、样本：<a hidden class="anchor" aria-hidden="true" href="#一样本">#</a></h1>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId5.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId5.png"  />
+</p>
+<h2 id="1运行效果">[1]运行效果：<a hidden class="anchor" aria-hidden="true" href="#1运行效果">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId6.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId6.png"  />
+</p>
+<p>点击确定后就无任何反应。</p>
+<h1 id="二静态分析">二、静态分析<a hidden class="anchor" aria-hidden="true" href="#二静态分析">#</a></h1>
+<h2 id="1程序信息">[1]程序信息<a hidden class="anchor" aria-hidden="true" href="#1程序信息">#</a></h2>
+<blockquote>
+<p>MD5    fdd9fd0249d48d8c6d991741c67fcfeb
+SHA-1    ff0181242825b5bb8cac1d4d17e8377352e3aa55
+SHA-256    6a9bdabc4599618513de5c963972929de9322c486e84e101e177c0868e7c5fb7
+File size    1.34 MB (1408512 bytes)</p>
+</blockquote>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId7.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId7.png"  />
+</p>
+<p>其中较为引人注目的就是winnet.dll、shell32.dll、advapi32.dll，这三者分别是对网络，运行程序，注册表进行操作的动态库，说明程序存在运行外部程序和联网操作。</p>
+<p>字符串的话，通过Strings.exe查询后没发现任何敏感字符串，这里就不贴出来了。（因为太多了 =。=）</p>
+<h2 id="2在线查毒">[2]在线查毒<a hidden class="anchor" aria-hidden="true" href="#2在线查毒">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId8.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId8.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId9.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId9.png"  />
+</p>
+<h2 id="3进程行为监控">[3]进程行为监控：<a hidden class="anchor" aria-hidden="true" href="#3进程行为监控">#</a></h2>
+<p>通过火绒的监控发现其对注册表进行了大量操作，不过并没什么影响。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId10.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId10.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId11.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId11.png"  />
+</p>
+<p>且运行了一个名为CrashReporter.exe的程序。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId12.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId12.png"  />
+</p>
+<p>途中创建了一些文件</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId13.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId13.png"  />
+</p>
+<p>首先是CrashReporter.exe,跳到目标目录后发现其文件大小与样本大小相同，故猜测此样本运行后将自身转移到新路径后伪装绿色运行，其次是txt，打开后发现内容为</p>
+<blockquote>
+<p>ABC
+AAC
+AAD
+BBC
+BAC
+BAD</p>
+</blockquote>
+<p>暂时不知什么意思，然后是WeiXinCR01,内容为</p>
+<blockquote>
+<p>D2 C2 7E AD 52 06 C4 93</p>
+</blockquote>
+<p>这里根据后面的调试，发现内容含义为Crc32计算C盘的序列号的结果。</p>
+<h2 id="4网络行为">[4]网络行为<a hidden class="anchor" aria-hidden="true" href="#4网络行为">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId14.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId14.png"  />
+</p>
+<p>HttpDebuger无任何发现。</p>
+<h1 id="三动静态分析">三、动静态分析<a hidden class="anchor" aria-hidden="true" href="#三动静态分析">#</a></h1>
+<p>首先分析原样本，突破口可以从给MessageBoxA下断后返回拿到关键点。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId15.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId15.png"  />
+</p>
+<p>这里直接返回到call的位置，直接计算call地址的相对地址，然后扔进IDA进行分析。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId16.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId16.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId17.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId17.png"  />
+</p>
+<p>这个样本在静态分析时之所以没有看到敏感字符串是因为他的字符串都是以字符数组初始化的，</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId18.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId18.png"  />
+</p>
+<p>在分析的时候可以通过先转义这些字符数组的内容，再去分析这个地方执行了什么。比如这里的字符数组为SetEvent error，那么说明调用SetEvent失败。并且他这个样本调用函数的方式是通过一个类似shellcode的方法获取，然后把函数存放放到一个全局变量里。</p>
+<p>我们来到调用了MessageBoxA后，直接到函数头部进行一直交叉引用，最后来到了WinMain的最初调用处。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId19.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId19.png"  />
+</p>
+<p>这个过程中会发现整个代码中存在很多这种形式的代码。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId20.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId20.png"  />
+</p>
+<p>这些代码看似是在获取TEB和PEB操作，但是经过简单分析后，发现这些其实就是垃圾代码，只是为了通过增大代码量，用来增加分析时间。</p>
+<h2 id="1startmainwork分析">[1]StartMainWork分析<a hidden class="anchor" aria-hidden="true" href="#1startmainwork分析">#</a></h2>
+<p>在这个StartMainWork函数执行前，会执行几个数据初始化的函数,包括有crc32和crc64表的生成，动态库函数的获取，还有样本之后所需要用到的数据。这里crc32和64生成的函数很好识别，因为其算法固定，且带有常量值，下面是样本生成crc的关键代码。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">256</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span> <span class="c1">// 开始生成crc32表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">crcValue</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">......</span><span class="err">垃圾代码</span><span class="p">........</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="n">crcValue</span> <span class="o">&amp;</span> <span class="mi">1</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">crcValue</span> <span class="o">=</span> <span class="p">(</span><span class="n">crcValue</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">^</span> <span class="mh">0xEDB88320</span><span class="p">;</span><span class="c1">// 搜索这个值，可以知道这里是CRC算法的常量值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">else</span>
+</span></span><span class="line"><span class="cl"><span class="n">crcValue</span> <span class="o">=</span> <span class="n">crcValue</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">g_crc32Table</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">crcValue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span> <span class="n">jj</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">jj</span> <span class="o">&lt;</span> <span class="mi">256</span><span class="p">;</span> <span class="o">++</span><span class="n">jj</span> <span class="p">)</span> <span class="c1">// 开始生成crc64表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">v45</span> <span class="o">=</span> <span class="n">jj</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span> <span class="n">kk</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">kk</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="o">++</span><span class="n">kk</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">......</span><span class="err">垃圾代码</span><span class="p">........</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="n">v45</span> <span class="o">&amp;</span> <span class="mi">1</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">LODWORD</span><span class="p">(</span><span class="n">v0</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">v45</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">^</span> <span class="mh">0xAC4BC9B5</span><span class="p">;</span> <span class="c1">// 根据这个常量值，搜索后发现是crc64的常量值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">HIDWORD</span><span class="p">(</span><span class="n">v0</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">v45</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">&gt;&gt;</span> <span class="mi">32</span><span class="p">)</span> <span class="o">^</span> <span class="mh">0x95AC9329</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">v45</span> <span class="o">=</span> <span class="n">v0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="n">v45</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">g_crc64Table_Low</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="n">v45</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">g_crc64Table_Hight</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="n">HIDWORD</span><span class="p">(</span><span class="n">v45</span><span class="p">);</span>
+</span></span></code></pre></div><p>然后比较有意思的就是动态库函数的获取了，该样本采取了类似shellcode的方式获取，通过Ldr来遍历自身的dll模块，然后通过都PE文件的解析寻找函数地址，并添加到全局函数表中。该方式在《恶意代码分析实战》一书中第十九章的shellcode符号解析有讲解，这里就不详细解释了。以下是关键代码。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">peb</span> <span class="o">=</span> <span class="n">readPEB</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">*</span><span class="n">functionTable</span> <span class="o">=</span> <span class="n">peb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="n">peb</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 通过动态调试得知这里获取的是Kernel32.dll地址,参数二为字符串Kernel32.dll通过crc32计算后的结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">ModuleBase</span> <span class="o">=</span> <span class="n">getModuleBaseByCrcValue</span><span class="p">(</span><span class="o">*</span><span class="n">functionTable</span><span class="p">,</span> <span class="mh">0xF7784A01</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">functionTable</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ModuleBase</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="n">KernelBase</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 直接从目录项里获取参数三对应的函数地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">procCreateFileA</span> <span class="o">=</span> <span class="n">getProcAddrByDirArray</span><span class="p">(</span><span class="n">functionTable</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">&amp;</span><span class="n">strCreateFileA</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">....</span><span class="err">往下的也是一样</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">............</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里贴出他加载的所有函数</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="err">$</span> <span class="o">==&gt;</span>     <span class="mf">757E3090</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreateFileA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">4</span>       <span class="mi">757</span><span class="n">DDF70</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetLastError</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">8</span>       <span class="mi">757</span><span class="n">D83E0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetSystemDirectoryA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">C</span>       <span class="mf">757E22</span><span class="n">D0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">ExpandEnvironmentStringsA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">10</span>      <span class="mf">757E0</span><span class="n">BE0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetStartupInfoA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">14</span>      <span class="mf">757F</span><span class="mi">2</span><span class="n">DA0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreateProcessA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">18</span>      <span class="mf">757E2</span><span class="n">E40</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CloseHandle</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">C</span>      <span class="mf">757E3030</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">WaitForSingleObject</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">20</span>      <span class="mf">757E3420</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">ReadFile</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">24</span>      <span class="mi">757</span><span class="n">D89C0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">lstrcat</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">28</span>      <span class="mf">757E2</span><span class="n">DF0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetCurrentProcessId</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">2</span><span class="n">C</span>      <span class="mi">757</span><span class="n">DDE70</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetCurrentThreadId</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">30</span>      <span class="mf">757E2300</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetTickCount</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">34</span>      <span class="mf">757E3510</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">WriteFile</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">38</span>      <span class="mf">757F</span><span class="mi">2</span><span class="n">D80</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreatePipe</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">3</span><span class="n">C</span>      <span class="mi">75130000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">40</span>      <span class="mi">75155840</span>  <span class="n">user32</span><span class="p">.</span><span class="n">wsprintfA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">44</span>      <span class="mi">757</span><span class="n">C0000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">48</span>      <span class="mf">757E0</span><span class="n">B30</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">LoadLibraryA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">4</span><span class="n">C</span>      <span class="mf">757E0</span><span class="n">A40</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">FreeLibrary</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">50</span>      <span class="mf">757E0</span><span class="n">D90</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetModuleFileNameA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">54</span>      <span class="mi">757</span><span class="n">DE010</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">lstrlenW</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">58</span>      <span class="mi">757</span><span class="n">DDF00</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">SetLastError</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">5</span><span class="n">C</span>      <span class="mf">7581F</span><span class="mi">6</span><span class="n">A0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">lstrcpyW</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">60</span>      <span class="mf">757E03</span><span class="n">A0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">lstrlenA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">64</span>      <span class="mi">757</span><span class="n">D8320</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">lstrcpyA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">68</span>      <span class="mi">757</span><span class="n">DF440</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">lstrcmp</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">6</span><span class="n">C</span>      <span class="mi">757</span><span class="n">DF320</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">VirtualAlloc</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">70</span>      <span class="mi">757</span><span class="n">DF420</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">VirtualFree</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">74</span>      <span class="mf">757E0860</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetModuleFileNameW</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">78</span>      <span class="mf">757E3090</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreateFileA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">7</span><span class="n">C</span>      <span class="mf">757E32</span><span class="n">C0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetFileSize</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">80</span>      <span class="mf">757E3420</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">ReadFile</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">84</span>      <span class="mf">757E2</span><span class="n">E40</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CloseHandle</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">88</span>      <span class="mi">757</span><span class="n">D88F0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetEnvironmentVariableA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">8</span><span class="n">C</span>      <span class="mi">757</span><span class="n">D89C0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">lstrcat</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">90</span>      <span class="mf">757E3510</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">WriteFile</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">94</span>      <span class="mi">757</span><span class="n">DDF70</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetLastError</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">98</span>      <span class="mf">757E0</span><span class="n">E60</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">Sleep</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">9</span><span class="n">C</span>      <span class="mf">757E3030</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">WaitForSingleObject</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">A0</span>      <span class="mf">757E2</span><span class="n">E90</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreateEventA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">A4</span>      <span class="mf">757E0</span><span class="n">E70</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreateThread</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">A8</span>      <span class="mf">757E2</span><span class="n">FE0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">SetEvent</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">AC</span>      <span class="mi">757</span><span class="n">D92B0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">OutputDebugStringA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">B0</span>      <span class="mf">757E2300</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetTickCount</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">B4</span>      <span class="mi">757</span><span class="n">D2EB0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">FindResourceA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">B8</span>      <span class="mf">757E03</span><span class="n">E0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">SizeofResource</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">BC</span>      <span class="mi">757</span><span class="n">DE7A0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">LoadResource</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">C0</span>      <span class="mi">757</span><span class="n">DF2A0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">LockResource</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">C4</span>      <span class="mf">757F</span><span class="mi">4</span><span class="n">B10</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">SetCurrentDirectoryA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">C8</span>      <span class="mi">7581</span><span class="n">CD60</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">WinExec</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">CC</span>      <span class="mi">757</span><span class="n">DF4B0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetProcAddress</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">D0</span>      <span class="mf">757E2</span><span class="n">DF0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetCurrentProcessId</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">D4</span>      <span class="mi">757</span><span class="n">DDE70</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetCurrentThreadId</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">D8</span>      <span class="mf">757F</span><span class="mi">2</span><span class="n">D80</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreatePipe</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">DC</span>      <span class="mf">757E3010</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">WaitForMultipleObjects</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">E0</span>      <span class="mf">757E2</span><span class="n">FD0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">ResetEvent</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">E4</span>      <span class="mf">757E0</span><span class="n">AF0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">ProcessIdToSessionId</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">E8</span>      <span class="mf">757E1</span><span class="n">E10</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetNativeSystemInfo</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">EC</span>      <span class="mf">757E0640</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">IsWow64Process</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">F0</span>      <span class="mf">757E2</span><span class="n">DE0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetCurrentProcess</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">F4</span>      <span class="mf">757F</span><span class="mi">2</span><span class="n">DA0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreateProcessA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">F8</span>      <span class="mi">757</span><span class="n">D9870</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">TerminateProcess</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">FC</span>      <span class="mf">757F</span><span class="mi">5000</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">VirtualAllocEx</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">100</span>     <span class="mf">757F</span><span class="mi">5250</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">WriteProcessMemory</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">104</span>     <span class="mf">757F2E40</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreateRemoteThread</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">108</span>     <span class="mf">757E0590</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">OpenProcess</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">10</span><span class="n">C</span>     <span class="mf">757F</span><span class="mi">4</span><span class="n">B70</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">SetEnvironmentVariableA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">110</span>     <span class="mf">757F</span><span class="mi">3550</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetEnvironmentStrings</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">114</span>     <span class="mf">757E3390</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetVolumeInformationA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">118</span>     <span class="mi">757</span><span class="n">D8FE0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetComputerNameA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">11</span><span class="n">C</span>     <span class="mf">757E16</span><span class="n">C0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetVersionExA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">120</span>     <span class="mf">757E0</span><span class="n">BE0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetStartupInfoA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">124</span>     <span class="mi">757</span><span class="n">D83E0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetSystemDirectoryA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">128</span>     <span class="mf">757E34</span><span class="n">C0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">SetFilePointerEx</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">12</span><span class="n">C</span>     <span class="mf">757E32</span><span class="n">D0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetFileSizeEx</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">130</span>     <span class="mf">757E32</span><span class="n">E0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetFileTime</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">134</span>     <span class="mf">757E34</span><span class="n">D0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">SetFileTime</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">138</span>     <span class="mf">757E22</span><span class="n">D0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">ExpandEnvironmentStringsA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">13</span><span class="n">C</span>     <span class="mf">757E30</span><span class="n">C0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">DeleteFileA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">140</span>     <span class="mf">757E34</span><span class="n">B0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">SetFilePointer</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">144</span>     <span class="mf">757E09</span><span class="n">C0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetModuleHandleA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">148</span>     <span class="mf">757E0</span><span class="n">DB0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetModuleHandleW</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">14</span><span class="n">C</span>     <span class="mf">757E07</span><span class="n">C0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetEnvironmentVariableW</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">150</span>     <span class="mf">757E1</span><span class="n">E40</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetCommandLineA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">154</span>     <span class="mi">757</span><span class="n">D9420</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetExitCodeProcess</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">158</span>     <span class="mf">757E1850</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">ResumeThread</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">15</span><span class="n">C</span>     <span class="mi">757</span><span class="n">DF2F0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetSystemTimeAsFileTime</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">160</span>     <span class="mf">757E2</span><span class="n">ED0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreateMutexA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">164</span>     <span class="mi">757</span><span class="n">D8AC0</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CopyFileA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">168</span>     <span class="mf">757E3060</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">CreateDirectoryA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">16</span><span class="n">C</span>     <span class="mf">757E2040</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">GetExitCodeThread</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">170</span>     <span class="mi">757</span><span class="n">DF490</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">LocalFree</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">174</span>     <span class="mi">757</span><span class="n">DDF50</span>  <span class="n">kernel32</span><span class="p">.</span><span class="n">WideCharToMultiByte</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">178</span>     <span class="mi">75130000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">17</span><span class="n">C</span>     <span class="mi">75155840</span>  <span class="n">user32</span><span class="p">.</span><span class="n">wsprintfA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">180</span>     <span class="mi">76</span><span class="n">EE6640</span>  <span class="n">ntdll</span><span class="p">.</span><span class="n">NtdllDefWindowProc_A</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">184</span>     <span class="mf">7514F</span><span class="mi">150</span>  <span class="n">user32</span><span class="p">.</span><span class="n">RegisterClassA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">188</span>     <span class="mi">75155580</span>  <span class="n">user32</span><span class="p">.</span><span class="n">CreateWindowExA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">18</span><span class="n">C</span>     <span class="mf">7516F7E0</span>  <span class="n">user32</span><span class="p">.</span><span class="n">ShowWindow</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">190</span>     <span class="mi">75161970</span>  <span class="n">user32</span><span class="p">.</span><span class="n">UpdateWindow</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">194</span>     <span class="mi">75150</span><span class="n">B90</span>  <span class="n">user32</span><span class="p">.</span><span class="n">GetMessageA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">198</span>     <span class="mi">75167660</span>  <span class="n">user32</span><span class="p">.</span><span class="n">TranslateMessage</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">19</span><span class="n">C</span>     <span class="mi">75154</span><span class="n">EC0</span>  <span class="n">user32</span><span class="p">.</span><span class="n">DispatchMessageA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">A0</span>     <span class="mi">75159350</span>  <span class="n">user32</span><span class="p">.</span><span class="n">CharUpperA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">A4</span>     <span class="mi">751</span><span class="n">AD860</span>  <span class="n">user32</span><span class="p">.</span><span class="n">MessageBoxA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">A8</span>     <span class="mi">751527</span><span class="n">A0</span>  <span class="n">user32</span><span class="p">.</span><span class="n">GetCursorPos</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">AC</span>     <span class="mi">751</span><span class="n">B7170</span>  <span class="n">user32</span><span class="p">.</span><span class="n">FindWindowExA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">B0</span>     <span class="mi">75167</span><span class="n">AF0</span>  <span class="n">user32</span><span class="p">.</span><span class="n">GetWindowThreadProcessId</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">B4</span>     <span class="mi">75161</span><span class="n">ED0</span>  <span class="n">user32</span><span class="p">.</span><span class="n">GetWindowRect</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">B8</span>     <span class="mi">751660</span><span class="n">B0</span>  <span class="n">user32</span><span class="p">.</span><span class="n">ScreenToClient</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">BC</span>     <span class="mi">75162150</span>  <span class="n">user32</span><span class="p">.</span><span class="n">GetClientRect</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">C0</span>     <span class="mi">75154080</span>  <span class="n">user32</span><span class="p">.</span><span class="n">SetWindowTextA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">C4</span>     <span class="mf">7516F</span><span class="mo">040</span>  <span class="n">user32</span><span class="p">.</span><span class="n">MoveWindow</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">C8</span>     <span class="mi">751525</span><span class="n">B0</span>  <span class="n">user32</span><span class="p">.</span><span class="n">GetAsyncKeyState</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">CC</span>     <span class="mi">76580000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">D0</span>     <span class="mf">7659F</span><span class="mi">620</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">SetServiceStatus</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">D4</span>     <span class="mf">7659F</span><span class="mi">8</span><span class="n">A0</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">RegisterServiceCtrlHandlerW</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">D8</span>     <span class="mi">7659</span><span class="n">DF20</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">OpenProcessToken</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">DC</span>     <span class="mi">765</span><span class="n">A3910</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">LookupPrivilegeValueA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mf">1E0</span>     <span class="mi">7659</span><span class="n">EF80</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">AdjustTokenPrivileges</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mf">1E4</span>     <span class="mi">765</span><span class="n">B2990</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">CreateProcessAsUserA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mf">1E8</span>     <span class="mf">7659E7</span><span class="n">E0</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">InitializeSecurityDescriptor</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">EC</span>     <span class="mf">7659E7</span><span class="n">C0</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">InitializeAcl</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mf">1F</span><span class="mi">0</span>     <span class="mi">765</span><span class="n">C45D0</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">LookupAccountNameA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mf">1F</span><span class="mi">4</span>     <span class="mf">7659E660</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">AddAccessAllowedAce</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mf">1F</span><span class="mi">8</span>     <span class="mf">7659E640</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">SetSecurityDescriptorDacl</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mf">1F</span><span class="n">C</span>     <span class="mi">765</span><span class="n">A2840</span>  <span class="n">advapi32</span><span class="p">.</span><span class="n">GetUserNameA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">200</span>     <span class="mi">75530000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">204</span>     <span class="mi">755</span><span class="n">A59A0</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">sscanf</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">208</span>     <span class="mi">755</span><span class="n">B94D0</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">memset</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">20</span><span class="n">C</span>     <span class="mi">755</span><span class="n">B8CF0</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">memcpy</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">210</span>     <span class="mi">755</span><span class="n">A4CB0</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">printf</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">214</span>     <span class="mi">75596</span><span class="n">C30</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">_beginthreadex</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">218</span>     <span class="mi">755</span><span class="n">B9EF0</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">strtok</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">21</span><span class="n">C</span>     <span class="mi">755</span><span class="n">B9E60</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">strstr</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">220</span>     <span class="mi">755</span><span class="n">BF140</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">_time64</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">224</span>     <span class="mi">7558</span><span class="n">C650</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">rand</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">228</span>     <span class="mi">7558</span><span class="n">BAB0</span>  <span class="s">&#34;j</span><span class="se">\f</span><span class="s">h垜]u鐷</span><span class="se">\x11</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">22</span><span class="n">C</span>     <span class="mf">755774F</span><span class="mi">0</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">malloc</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">230</span>     <span class="mi">7558</span><span class="n">C680</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">srand</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">234</span>     <span class="mi">75577310</span>  <span class="n">msvcrt</span><span class="p">.</span><span class="n">free</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">238</span>     <span class="mf">76E60000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">23</span><span class="n">C</span>     <span class="mi">76</span><span class="n">EBE1D0</span>  <span class="n">ntdll</span><span class="p">.</span><span class="n">RtlInitializeCriticalSection</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">240</span>     <span class="mf">76E9</span><span class="n">E8E0</span>  <span class="n">ntdll</span><span class="p">.</span><span class="n">RtlEnterCriticalSection</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">244</span>     <span class="mf">76E9</span><span class="n">DE00</span>  <span class="n">ntdll</span><span class="p">.</span><span class="n">RtlLeaveCriticalSection</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">248</span>     <span class="mi">76</span><span class="n">EAF940</span>  <span class="n">ntdll</span><span class="p">.</span><span class="n">RtlDeleteCriticalSection</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">24</span><span class="n">C</span>     <span class="mi">746</span><span class="n">A0000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">250</span>     <span class="mi">746</span><span class="n">A4FD0</span>  <span class="n">wtsapi32</span><span class="p">.</span><span class="n">WTSEnumerateSessionsA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">254</span>     <span class="mi">746</span><span class="n">A53A0</span>  <span class="n">wtsapi32</span><span class="p">.</span><span class="n">WTSQuerySessionInformationA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">258</span>     <span class="mi">746</span><span class="n">A24A0</span>  <span class="n">wtsapi32</span><span class="p">.</span><span class="n">WTSFreeMemory</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">25</span><span class="n">C</span>     <span class="mi">746</span><span class="n">A1930</span>  <span class="n">wtsapi32</span><span class="p">.</span><span class="n">QueryUserToken</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">260</span>     <span class="mi">75</span><span class="n">C60000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">264</span>     <span class="mi">75</span><span class="n">DBA520</span>  <span class="n">shell32</span><span class="p">.</span><span class="n">CommandLineToArgvW</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">268</span>     <span class="mf">75E97</span><span class="n">CF0</span>  <span class="n">shell32</span><span class="p">.</span><span class="n">ShellExecuteA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">26</span><span class="n">C</span>     <span class="mi">76250000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">270</span>     <span class="mi">7626</span><span class="n">A1C0</span>  <span class="n">shlwapi</span><span class="p">.</span><span class="n">PathFileExistsA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">274</span>     <span class="mi">73</span><span class="n">B20000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">278</span>     <span class="mi">73</span><span class="n">DC1380</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">InternetOpenA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">27</span><span class="n">C</span>     <span class="mi">73</span><span class="n">DD8640</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">InternetQueryOptionA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">280</span>     <span class="mi">73</span><span class="n">DDA4B0</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">InternetSetOptionA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">284</span>     <span class="mf">73E27000</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">InternetConnectA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">288</span>     <span class="mi">73</span><span class="n">DD7D50</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">InternetReadFile</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">28</span><span class="n">C</span>     <span class="mi">73</span><span class="n">DE2950</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">InternetCloseHandle</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">290</span>     <span class="mi">73</span><span class="n">EC41F0</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">HttpOpenRequestA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">294</span>     <span class="mi">73</span><span class="n">DF00F0</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">HttpAddRequestHeadersA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">298</span>     <span class="mf">73E32</span><span class="n">B20</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">HttpSendRequestA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">29</span><span class="n">C</span>     <span class="mi">73</span><span class="n">DD9EE0</span>  <span class="n">wininet</span><span class="p">.</span><span class="n">HttpQueryInfoA</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">2</span><span class="n">A0</span>     <span class="mf">6F</span><span class="mi">780000</span>  <span class="s">&#34;MZ?&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">2</span><span class="n">A4</span>     <span class="mf">6F</span><span class="mi">7</span><span class="n">D19B0</span>  <span class="n">dnsapi</span><span class="p">.</span><span class="n">DnsGetCacheDataTable</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">2</span><span class="n">A8</span>     <span class="mf">6F</span><span class="mi">7</span><span class="n">A1DE0</span>  <span class="n">dnsapi</span><span class="p">.</span><span class="n">DnsFree</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">2</span><span class="n">AC</span>     <span class="mf">6F</span><span class="mi">793530</span>  <span class="n">dnsapi</span><span class="p">.</span><span class="n">DnsQuery_W</span>
+</span></span></code></pre></div><p>最后初始化的是一个样本之后用到的数据，包括有创建文件的路径，自拷贝的路径等等。该函数是直接赋值，这里直接贴出他的内容。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="err">$</span> <span class="o">==&gt;</span>     <span class="mo">00000201</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">4</span>       <span class="mo">00000066</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">8</span>       <span class="mo">00000002</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">C</span>       <span class="mo">00000065</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">10</span>      <span class="mo">00000001</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">14</span>      <span class="mo">0123</span><span class="n">A601</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">18</span>      <span class="mo">02</span><span class="n">D91248</span>  <span class="s">&#34;D:</span><span class="se">\\</span><span class="s">Tencent</span><span class="se">\\</span><span class="s">WeChat</span><span class="se">\\</span><span class="s">v7.0</span><span class="se">\n</span><span class="s">D:</span><span class="se">\\</span><span class="s">Tencent</span><span class="se">\\</span><span class="s">WeChat</span><span class="se">\\</span><span class="s">v7.0</span><span class="se">\n</span><span class="s">%ProgramData%</span><span class="se">\\</span><span class="s">Tencent</span><span class="se">\\</span><span class="s">WeChat</span><span class="se">\n</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">1</span><span class="n">C</span>      <span class="mo">02</span><span class="n">D92448</span>  <span class="s">&#34;CrashReporter.exe&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">20</span>      <span class="mo">02</span><span class="n">D92478</span>  <span class="s">&#34;%PUBLIC%</span><span class="se">\\</span><span class="s">unlimit.flag&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">24</span>      <span class="mi">76</span><span class="n">ED9800</span>  <span class="s">&#34;鶅}</span><span class="se">\x08</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">28</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">2</span><span class="n">C</span>      <span class="mo">02</span><span class="n">D924A8</span>  <span class="s">&#34;%PUBLIC%</span><span class="se">\\</span><span class="s">Documents&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">30</span>      <span class="mo">02</span><span class="n">D924D8</span>  <span class="s">&#34;new.doc&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">34</span>      <span class="mi">76</span><span class="n">EA0100</span>  <span class="n">ntdll</span><span class="mf">.76</span><span class="n">EA0100</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">38</span>      <span class="mo">02</span><span class="n">D924F8</span>  <span class="s">&#34;%ProgramData%</span><span class="se">\\</span><span class="s">WeiXinCR01&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">3</span><span class="n">C</span>      <span class="mo">02</span><span class="n">D92530</span>  <span class="s">&#34;%ProgramData%</span><span class="se">\\</span><span class="s">WeiXinCR02&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">40</span>      <span class="mo">00000001</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">44</span>      <span class="mo">00000014</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">48</span>      <span class="mo">00000064</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">4</span><span class="n">C</span>      <span class="mo">02</span><span class="n">D92884</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">50</span>      <span class="mo">02</span><span class="n">D928A8</span>  <span class="s">&#34;Microsoft Word&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">54</span>      <span class="mo">02</span><span class="n">D928B7</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">58</span>      <span class="mo">00000064</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">5</span><span class="n">C</span>      <span class="mo">0000000</span><span class="n">A</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">60</span>      <span class="mo">01200200</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">64</span>      <span class="mo">02</span><span class="n">D925E8</span>  <span class="s">&#34;127.0.0.</span><span class="se">\n</span><span class="s">.0.0.127</span><span class="se">\n</span><span class="s">192.168.</span><span class="se">\n</span><span class="s">172.16.</span><span class="se">\n</span><span class="s">0.0.0.0</span><span class="se">\n</span><span class="s">255.255.255.255</span><span class="se">\n</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">68</span>      <span class="mo">02</span><span class="n">D92640</span>  <span class="s">&#34;.test</span><span class="se">\n</span><span class="s">test.</span><span class="se">\n</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">6</span><span class="n">C</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">70</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">74</span>      <span class="mo">00000001</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">78</span>      <span class="mo">00000301</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">7</span><span class="n">C</span>      <span class="mo">0001</span><span class="n">D4C0</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">80</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">84</span>      <span class="mo">00000</span><span class="n">BB8</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">88</span>      <span class="mo">00026000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">8</span><span class="n">C</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">90</span>      <span class="mo">02</span><span class="n">D92668</span>  <span class="s">&#34;WeiXinCrashReporter&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">94</span>      <span class="mo">02</span><span class="n">D92698</span>  <span class="s">&#34;https://start.firefoxchina.cn</span><span class="se">\n</span><span class="s">https://www.msn.cn/zh-cn</span><span class="se">\n</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">98</span>      <span class="mo">02</span><span class="n">D928BC</span>  <span class="s">&#34;http://39.99.57.67/grief-seed/ribbon-mummy.dat</span><span class="se">\n</span><span class="s">http://39.99.57.67/grief-seed/marmaid-conductor.dat</span><span class="se">\n</span><span class="s">http://39.99.57.67/grief-seed/candle-knight.dat</span><span class="se">\n</span><span class="s">http://39.99.57.67/grief-seed/gramphone-witch.dat</span><span class="se">\n</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">9</span><span class="n">C</span>      <span class="mo">000013</span><span class="mi">88</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">A0</span>      <span class="mo">00007530</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">A4</span>      <span class="mo">00000001</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">A8</span>      <span class="mo">02</span><span class="n">D92982</span>  <span class="s">&#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.104 Safari/537.36 Edg/89.0.774.76&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">AC</span>      <span class="mo">02</span><span class="n">D92750</span>  <span class="s">&#34;###@@@WeiXin0099&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">B0</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">B4</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">B8</span>      <span class="mo">00000003</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">BC</span>      <span class="mo">02</span><span class="n">D92A06</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">C0</span>      <span class="mo">02</span><span class="n">D92A09</span>  <span class="s">&#34;0d8d26376410b051421adee91163c5a54a5d5095d47cdf05ae5351de7ba0a153382c6d5778c21726&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">C4</span>      <span class="mo">00</span><span class="n">EFF320</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">C8</span>      <span class="mf">00000F</span><span class="n">DC</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">CC</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">D0</span>      <span class="mo">01200000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">D4</span>      <span class="mf">00001F</span><span class="mi">18</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">D8</span>      <span class="mo">00</span><span class="n">DEF000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">DC</span>      <span class="mo">01200000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">E0</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">E4</span>      <span class="mo">01200000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">E8</span>      <span class="mo">00</span><span class="n">EFF390</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">EC</span>      <span class="mf">00001F</span><span class="mi">18</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">F0</span>      <span class="mf">00001F</span><span class="mi">18</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">F4</span>      <span class="mf">00001F</span><span class="mi">18</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">F8</span>      <span class="mo">00</span><span class="n">DEF000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="n">FC</span>      <span class="mo">00000000</span>  
+</span></span><span class="line"><span class="cl"><span class="err">$</span><span class="o">+</span><span class="mi">100</span>     <span class="mo">00000000</span>
+</span></span></code></pre></div><p>这里可以看到存在协议头，域名和IP列表，但是网络工具并没有监测到，说明样本没有触发。</p>
+<p>StartMainWork函数头首先是一个调用ExpandEnvironmentStringsA函数，来获取环境变量的值。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId21.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId21.png"  />
+</p>
+<p>通过前面他初始化的字符串得知这里的环境值为 %PUBLIC%\unlimit.flag,因为这个文件一直不存在，所以紧接着的PathFileExistsA返回0,不进入代码块。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId22.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId22.png"  />
+</p>
+<p>然后会对本层函数传进来的参数进行判断，因为打开程序时默认不带有命令参数，所以CmdLine为NULL。又因为上面判断flag文件不存在，所以对应的标志位也是为0。此处判断不成立。往下走会判断dataTable + 0x14位置的值是否为0。通过查看dataTable发现这个位置的值恒等于1，所以此处永远是执行的状态。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId23.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId23.png"  />
+</p>
+<p>进行自我复制的操作。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId24.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId24.png"  />
+</p>
+<p>因为v73在上面的if没有成立，所以此处的值为默认的1，故此处调用的后两个参数为1,0。然后整个WinMain的执行周期结束。明显关键函数为<strong>CopySelf_And_DoWork</strong>，接下来进入分析。</p>
+<h2 id="2copyself_and_dowork分析">[2]CopySelf_And_DoWork分析<a hidden class="anchor" aria-hidden="true" href="#2copyself_and_dowork分析">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId25.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId25.png"  />
+</p>
+<p>进入函数后首先会调用一个<strong>popMsgBox_DnsCache</strong>,这个函数的是跳出一个信息框然后进行<strong>DNS</strong>一些查询操作。这里注意的是ida在这里显示的是+0xE的作为参数一，可是在我调试的时候发现这里实际上是0x38，具体原因是啥，我也不清楚。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId26.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId26.png"  />
+</p>
+<p>现在继续往下看看还会执行什么。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId27.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId27.png"  />
+</p>
+<p>这里会执行两个函数，通过动态调试得知这里的参数内容如下</p>
+<p>pathTable = &ldquo;D:\Tencent\WeChat\v7.0\nD:\Tencent\WeChat\v7.0\n%ProgramData%\Tencent\WeChat\n&rdquo;</p>
+<p>ExistPath = 上面一个函数创建new出来的地址，用于此处函数的out_buffer</p>
+<p>经过内部分析，这个函数作为为对参数一的路径以**\r\n<strong>分割，然后逐一判断其是否存在，存在则返回到</strong>ExistPath**。参数三的作用则是，传入0就直接判断路径是否存在，不创建。传入1就是如果路径不存在则创建。因为本人虚拟机只有C盘，故只有第三项路径存在<strong>C:\ProgramData\Tencent\WeChat</strong>。如果所有路径都不存在，则本层函数直接返回，反之执行下列代码。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId28.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId28.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId29.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId29.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId30.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId30.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId31.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId31.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId32.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId32.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId33.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId33.png"  />
+</p>
+<p>图片可能有点乱，大概的流程就是</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="n">GetModuleFileNameA</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">currentPath</span><span class="p">,</span> <span class="mi">259</span><span class="p">)</span> <span class="p">)</span><span class="c1">// 获取当前运行时的路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span> <span class="n">lstrcmpA_0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">_crashReportPath</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">_currentPath</span><span class="p">)</span> <span class="p">)</span><span class="c1">// 比较两个文件运行的路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 这里是路径不相同时的处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="p">(</span><span class="n">CopyFileA</span><span class="p">(</span><span class="o">&amp;</span><span class="n">currentPath</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CrashReportPath</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">)</span><span class="c1">// 将自身拷贝到目标路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">(</span> <span class="n">PathFileExistsA</span><span class="p">(</span><span class="o">&amp;</span><span class="n">CrashReportPath</span><span class="p">)</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="n">wsprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">v226</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v395</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CrashReportPath</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">			<span class="c1">//运行拷贝后的程序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="k">if</span> <span class="p">(</span> <span class="n">CreateProcessA</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v226</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lpStartupInfo</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lpProcessInformation</span><span class="p">)</span> <span class="p">)</span><span class="c1">// shellCmd
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>				<span class="p">{</span>
+</span></span><span class="line"><span class="cl">					<span class="n">CloseHandle_0</span><span class="p">(</span><span class="n">lpProcessInformation</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">					<span class="n">CloseHandle_0</span><span class="p">(</span><span class="n">v10</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">else</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">CrashReportMain</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">dataTable</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">ExistFlag</span><span class="p">);</span><span class="c1">// CrashReport.exe 执行的函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>然后本层函数也执行完毕。现在就开始分析重中之中，<strong>CrashReportMain</strong>。</p>
+<h2 id="3crashreportmain分析">[3]CrashReportMain分析<a hidden class="anchor" aria-hidden="true" href="#3crashreportmain分析">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId34.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId34.png"  />
+</p>
+<p>首先在x32dbg进行头部下断，查看一下该函数的参数。</p>
+<p>参数1 = dataTable</p>
+<p>参数2 = 1</p>
+<p>参数3 = 0</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId35.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId35.png"  />
+</p>
+<p>函数进来后依旧是<strong>popMsgBox_DnsCache</strong>函数的调用，这个函数基本上不影响样本功能，所以略过。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId36.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId36.png"  />
+</p>
+<p>到了这里虽然里面有一个<strong>sub_511EB0</strong>函数，但是这个条件没有成立，<strong>0x24的位置始终为0</strong>。这里先继续往下走</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId37.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId37.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId38.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId38.png"  />
+</p>
+<p>这里的话是判断互斥体名称是否存在，存在的话创建一个互斥体。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId39.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId39.png"  />
+</p>
+<p>往下继续分析，会看到这里会对上面的错误码进行判断，而且判断的文本为<strong>Error : A downloader instance is already</strong>，由此可知，这个当前分析的这个CrashReporter样本可能是一个下载器。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId40.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId40.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId41.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId41.png"  />
+</p>
+<p>往下执行会执行到这个条件，因为这个<strong>sub_4C7B40</strong>内部存在<strong>sleep</strong>函数，单步跳过时会直接卡住。如果返回为true，则会执行下面的<strong>sub_5176C0</strong>，然后本层函数直接结束掉。这里就直接从<strong>sub_4C7B40</strong>开始分析。</p>
+<h2 id="4sub_4c7b40分析">[4]sub_4C7B40分析<a hidden class="anchor" aria-hidden="true" href="#4sub_4c7b40分析">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId42.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId42.png"  />
+</p>
+<p>首先执行第一个函数，<strong>CheckMachineIsMatch_FileExist</strong>，这个函数会检测是否存在文件<strong>C:\ProgramData\WeiXinCR02文件</strong>，该文件存放着C盘序列号的CRC32值。如果文件不存在则函数返回0，如果存在则获取C盘的序列号并且计算出CRC32值，然后与文件里的值对比，是否一致。这里由于文件是不存在的，所以返回的为0，下面0x40是1，条件成立直接执行下面的延迟函数。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId43.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId43.png"  />
+</p>
+<p><strong>safeSleep</strong>通过isMatch来计算需要延迟的时间，如果isMatch == true，则延迟2分钟，反之延迟4分钟。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId44.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId44.png"  />
+</p>
+<p>这里因为为了分析直接先nop掉这个函数执行，并且让返回值为1。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId45.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId45.png"  />
+</p>
+<p>包括这里isMatch也是0，所以这里也需要改。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId46.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId46.png"  />
+</p>
+<p>紧接着执行这个位置，函数直接返回1。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId47.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId47.png"  />
+</p>
+<p>由于没有文件WeiXinCR02，所有在函数尾部，创建了该文件，并写入了C盘序列号的CRC32值，最后也返回1。这个函数整体大概是通过判断文件WeiXinCR02的存在来进行样本休眠，具体的作用可能为了躲过某些检测。</p>
+<h2 id="5sub_5176c0分析">[5]sub_5176C0分析<a hidden class="anchor" aria-hidden="true" href="#5sub_5176c0分析">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId48.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId48.png"  />
+</p>
+<p>进入头部直接是一个urlList的初始化</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId49.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId49.png"  />
+</p>
+<p>往下走会执行一个<strong>Requst</strong>函数，会对每一个url进行一个get请求和读取源码，之后会执行一个<strong>sub_5071A0</strong>，这里没分析出具体是干嘛。看到一些加密或解密的函数，估计是在读取网页源码的时候对内容进行解密然后形成shellcode?</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId50.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId50.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId51.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId51.png"  />
+</p>
+<p>网页操作执行完后，就是文件下载了，这里通过查看数据表发现这里的字符串都是以<strong>url\filename</strong>的形式存在，然后下面只有一个函数在执行，所以这里基本上可以确定下面的函数是下载这些文件，在这里本人自己去访问一下这些地址，发现已经无法访问了，所以无法下载，这估计也是为什么该样本运行时只有一个信息框弹出，就没有其它反应了，这里进入<strong>downloader</strong>进行分析。</p>
+<h2 id="6downloader分析">[6]downloader分析<a hidden class="anchor" aria-hidden="true" href="#6downloader分析">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId52.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId52.png"  />
+</p>
+<p>函数头的字符串提示更加确定这是一个下载函数。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId53.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId53.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId54.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId54.png"  />
+</p>
+<p>往下走后会看到样本使用了<strong>strtok</strong>进行文本分割，然后传入<strong>startDownLoad</strong>开始下载，下载同时会记录下载的个数，当所有下载完成后，本层函数返回下载的总数。这里注意下上面<strong>CrashReporter</strong>函数中我少了一个函数没分析，那个函数其实就是这个函数。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId55.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId55.png"  />
+</p>
+<h2 id="7startdownload分析">[7]startDownLoad分析<a hidden class="anchor" aria-hidden="true" href="#7startdownload分析">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId56.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId56.png"  />
+</p>
+<p>这里定义了一个结构体变量，newMem_8,结构体内容如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">unkown</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span><span class="o">*</span> <span class="n">urlField</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span><span class="o">*</span> <span class="n">dataTable</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>之后会根据参数3进行启动不同的下载线程。</p>
+<h2 id="8sub_50c610分析">[8]sub_50C610分析<a hidden class="anchor" aria-hidden="true" href="#8sub_50c610分析">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId57.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId57.png"  />
+</p>
+<p>因为文件已经无法下载了，所以<strong>sub_5071A0</strong>本人没法继续跟入分析，因为此函数里，基本都是对下载的文件进行<strong>image,section</strong>校验，且对部分数据进行处理。由于没拿到原文件，所以本人无从下手。</p>
+<h2 id="9opendoc_download分析">[9]openDoc_download分析<a hidden class="anchor" aria-hidden="true" href="#9opendoc_download分析">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId58.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId58.png"  />
+</p>
+<p>首先是是对保存路径初始化。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId59.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId59.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId60.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId60.png"  />
+</p>
+<p>然后是对文件路径判断是否存在，如果存在则打开改文档。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId61.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId61.png"  />
+</p>
+<p>否则进行下载。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e4%b8%80%e6%ac%a1%e5%a4%b4%e9%93%81%e7%9a%84%e7%97%85%e6%af%92%e6%a0%b7%e6%9c%ac%e5%88%86%e6%9e%90%e8%bf%87%e7%a8%8b/document_image_rId62.png" alt="/posts/Virus/记一次头铁的病毒样本分析过程/document_image_rId62.png"  />
+</p>
+<p>下载完成后创建路径，然后再去打开文档。同样，由于文档当前也是无法下载的，导致没法进一步分析。</p>
+<p>至此，该样本分析基本完了，且据目前分析结果来看，该样本也就是个下载器。</p>
+<h1 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h1>
+<p>长达一周的分析，终于结束了。因为该样本添加了很多的垃圾代码，导致分析的时候需要翻来翻去，有些关键代码又夹在里面，分析的时候甚是头疼，并且还有很多没用的条件，看起来觉得他会执行，但是动态调试的时候就是不会执行，就很蛋疼。又因为该样本的下载文件地址全部失效，把样本跑起来后整个虚拟机啥问题都没有，监视工具也压根就没啥反应，压根就是一个正常的程序，这更增加了分析难度。刚刚开始接手这个样本时，运行起来和正常程序没什么区别，完全没有找到有关恶意代码的地方，最后被迫无奈，直接从WinMain手撕。整个样本，共106个函数，天天24小时肝。由于压根就没看到有什么恶意代码，使得产生自我怀疑，甚至产生了放弃的念头，但是想到已经分析那么多了，还不如坚持下去。最后把70多个函数全部给分析了，然后已经看出了个大概，其余的就没分析，只看了个流程。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/virus/">Virus</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/gamehacker/%E6%B5%85%E8%B0%88fps%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>浅谈FPS子弹追踪实现以及防护</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>记录自己调试windows服务的操作</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

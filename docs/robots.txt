@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://planejun.github.io/sitemap.xml

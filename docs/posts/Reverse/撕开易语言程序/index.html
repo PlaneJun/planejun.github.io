@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>撕开易语言程序 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="Reverse">
+<meta name="description" content="撕开易语言程序">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="撕开易语言程序" />
+<meta property="og:description" content="撕开易语言程序" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="撕开易语言程序"/>
+<meta name="twitter:description" content="撕开易语言程序"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "撕开易语言程序",
+      "item": "https://planejun.github.io/posts/reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "撕开易语言程序",
+  "name": "撕开易语言程序",
+  "description": "撕开易语言程序",
+  "keywords": [
+    "Reverse"
+  ],
+  "articleBody": " PlaneJun ・2021-11-28 20:45 要点 易语言的入口函数特征 各种函数的调用特征以及识别 针对易语言程序的分析插件 1、如何识别易语言程序 一、查看文件信息右键-属性-详细信息 二、查看资源文件Resource Hacker或其他可查看资源文件的工具 三、库文件 易语言程序依赖于自实现的库(.fnr)执行，针对易语言的编译模式有静态编译、非静态编译和独立编译，如下图：\n编译：编译程序时，会将所有需要用到的库文件生成到同程序的目录下。 非静态编译：编译程序时，将所有用到的库文件写入到程序中，与程序合并，编译出来的文件只有程序本身。 独立编译：与静态编译相同之处是编译出来后只有程序本身，但运行程序时，会将所有用到的库文件写入到临时目录中，然后加载库文件。 四、字符串特征 由于易语言是自写的框架，类似于MFC，因此如果未处理编译后的程序，程序中将存在一些固定的字符串。\n五、易语言标准入口 ①静态编译 静态编译是直接将库文件与程序合并。\n②非静态编译 该种编译模式会将库文件存放在程序中，在WinMain入口会获取读取自身的内容，然后释放出库文件。\n随后加载库文件，并调用一个固定函数GetNewSock。\n最后调用函数\n进入该函数后，会看到call eax，eax为函数入口。\n③黑月编译 黑月编译器是网友针对易语言程序编写的一款编译器，他直接会优化掉前期的初始化代码，包括clr(c library runtime)初始化，直接进入到易语言的标准入口。\n2、易语言的函数类型及特征 易语言的函数大致分有三种，分别为窗体控件的消息函数、用户自定义函数、库函数和组件属性函数。\n一、消息函数 消息函数都是通过固定代码段调用，代码段定位流程如下：\n找到如图特征\n进入函数后找到最后一call 局部变量，该位置调用的就是消息函数\n将函数对应到IDA中可直接定位到流程。\n找到 case 2008:\n二、用户自定义函数 用户自定义的函数调用与通常的函数调用方式一致。\n三、库函数 库函数为易语言自写支持库里的函数，类似Windows的DLL文件。函数原型如下。\nE_FuncCallBack(2,参数一的值，参数一是否可忽略，参数一的类型，参数二的值，参数二是否可忽略，参数二的类型) 该函数是一个变参函数，参数一为欲调用欲调用函数的参数个数，然后其余的以三个参数为一组表示参数的信息。忽略参数的值为布尔值，0表示不可以忽略，1表示可忽略；其参数类型可参考的值如下（可能不完整）：\n值 类型 0x80000004 文本型 0x80000101 文本型 0x80000000 通用型 0x80000002 逻辑型 0x80000005 字节集 0x80000006 子程序指针 0x80000301 数值型 0x80000601 数值型 0x10001 窗体 由于易语言的编译模式不同，库函数调用代码也会产生差异。接下来分别解释静态编译与非静态编译下，函数代码的差异。\n静态编译 非静态编译 非静态编译的程序，在调用库函数时不再通过静态地址的方式调用，而是通过传入库文件序号和欲调用对应函数的偏移到寄存器中，然后调用。\n库文件序号指的是库文件是程序中加载的第几个文件。序号从0开始，易语言程序在运行初期最先加载的库文件为该库文件，记加载序号为0；如果再加载一个库文件的话则加载新加载的库文件序号为1。对于调用krnln.fnr库文件的函数，易语言程序以隐式形式传递序号，因此在信息框函数调用的反汇编代码中并未看到传入0序号。常用库文件的函数偏移在附录中贴出。\n四、组件属性函数 函数分为两种，一种是对组件的属性修改，另一种是组件的自带函数。\n属性修改 **参数一：**父窗口\n**参数二：**子窗口\n**参数三：**属性下标\n**参数四：**未知，一般都为-0x1\n**参数五：**值\n自带函数调用 与消息函数类型。参一：参数个数、参二：值，也就是父窗口ID、参三：ID、参四：参数类型\n因为控件存在于krnln.fnr库中，因此在非静态编译中，库函数序号也是隐式传递。部分组件ID也在附录中列出。\n3、易语言的基本数据类型 一、字节集 typdef struct 字节集 { int unkown; int length; char* bytes; };\n4、编译器：黑月 程序入口为两个函数。\n进入第二个后可以看到如下代码特征。\n或者搜索到如下字符串。\n5、易语言分析插件 一、E-Debug（https://github.com/fjqisba/E-debug-plus） 只能用来分析静态编译的程序。\nOD IDA 选择易语言反编译器\nIDA会自动识别由于的函数，并在工具栏新增易语言。\n新增的项可以自动识别资源常量、窗体、消息函数（控件函数）。\n特征生成 EDebug可以手动生成后缀为sig的易语言特征，打开配套工具。\n然后将易语言的支持库拖入即可，最后将生成的sig文件放置到对应分析工具的插件目录下。\n6、花指令 易语言可以设置花指令来干扰程序的逆向分析。在工具栏的工具-系统配置的窗口中选择安全，可以设置花指令等级，默认为1。\n级别不同，花指令形式也不同。\n但是每一级别的花指令代码都是固定的，所以可以在IDA中使用脚本进行批处理处理，或者使用OD的插件去除花指令。\n输入要去除花指令的起始地址和地址段大小后，点击执行即可去除。\n7、针对一些窗口跳转的破解 易语言载入窗口的命令为载入(,,)，窗体的类型为0x10001，因此可以通过搜索push 0x10001来找到该命令，或者有调用窗口函数的代码段来获取窗口ID。再将原始加载的窗口ID进行替换即可实现窗口跳转。\n搜索push 0x10001结果。\n断点放开后执行，直接能跳转到第二个窗口。\n8、附录 一、支持库函数偏移 系统核心支持库——krnln 0x0：寻找文件 0x2：相加 0x9：新建索引 0x58：取符号 0x5C：取绝对值 0x60：取整 0x64：绝对取整 0x68：四舍五入 0x6C：求次方 0x70：求平方根 0x74：求正弦 0x78：求余弦 0x7C：求正切 0x80：求反正切 0x84：求自然对数 0x88：求反对数 0x8C：是否运算正确 0x90：置随机数种子 0x94：取随机数 0xC0：位取反 0xC4：位与 0xC8：位或 0xCC：位异或 0x100：取命令行 0x104：取运行目录 0x108：取执行文件名 0x10C：读环境变量 0x110：写环境变量 0x114：取所有发音 0x118：取发音数目 0x11C：取拼音 0x124：取韵母 0x128：发音比较 0x12C：输入字比较 0x130：取文本长度 0x134：取文本左边 0x138：取文本右边 0x13C：取文本中间 0x140：字符 0x144：取代码 0x148：寻找文本 0x14C：倒找文本 0x150：到大写 0x154：到小写 0x158：到全角 0x15C：到半角 0x160：到时间 0x164：到数值 0x168：到文本 0x16C：删首空 0x170：删尾空 0x174：删首位空 0x178：删全部空 0x17C：文本替换 0x180：子文本替换 0x184：取空白文本 0x188：取重复文本 0x18C：文本比较 0x190：分割文本 0x194：取字节集长度 0x198：到字节集 0x19C：取字节集数据 0x1A0：取字节集左边 0x1A4：取字节集右边 0x1A8：取字节集中间 0x1AC：寻找字节集 0x1B0：倒找字节集 0x1B4：字节集替换 0x1B8：子字节集替换 0x1BC：取空白字节集 0x1C0：去重复字节集 0x1C4：分割字节集 0x1C8：数值到大写 0x1CC：数值到金额 0x1D0：数值到格式文本 0x1D4：取十六进制文本 0x1D8：取八进制文本 0x1DC：增减时间 0x1E0：取时间间隔 0x1E4：取某月天数 0x1E8：时间到文本 0x1EC：取时间部分 0x1F0：取年份 0x1F4：取月份 0x1F8：取日 0x1FC：取星期几 0x200：取小时 0x204：取分钟 0x208：取秒 0x20C：指定时间 0x210：取现行时间 0x214：置现行时间 0x218：取磁盘总空间 0x21C：取磁盘剩余空间 0x220：取磁盘卷标 0x224：置磁盘卷标 0x228：改变驱动器 0x22C：改变目录 0x230：取当前目录 0x234：创建目录 0x238：删除目录 0x23C：复制文件 0x240：移动文件 0x244：删除文件 0x248：文件更名 0x24C：文件是否存在 0x254：取文件时间 0x258：取文件尺寸 0x25C：取文件属性 0x260：置文件属性 0x264：取临时文件名 0x268：读入文件 0x26C：写到文件 0x270：打开文件 0x274：打开内存文件 0x278：关闭文件 0x27C：关闭所有文件 0x280：锁住文件 0x284：解锁文件 0x288：移动读写位置 0x28C：移到文件首 0x290：移到文件尾 0x294：读入字节集 0x298：写出字节集 0x268：读入文件 0x2A0：写出文本 0x2A4：读入一行 0x2A8：写文本行 0x2AC：读入数据 0x2B0：写出数据 0x2B4：是否在文件尾 0x2B8：取读写位置 0x2BC：取文件长度 0x2C0：运行 0x2C4：取剪辑板文本 0x2C8：置剪辑板文本 0x2CC：剪辑板中可有文本 0x2D0：清除剪辑板 0x2D4：取屏幕宽度 0x2D8：取屏幕高度 0x2DC：取鼠标水平位置 0x2E0：取鼠标垂直位置 0x300：信息框 0x304：鸣叫 0x308：取启动时间 0x320：载入 0x330：是否已创建 0x334：取数据类型尺寸 0x35C：取窗口句柄 0x540：是否支持多用户 0x544：取错误码 0x548：取错误信息 0x54C：创建 0x550：打开 0x554：替换打开 0x558：置当前库 0x55C：取当前库 0x560：关闭 0x564：全部关闭 0x568：取库文件名 0x56C：是否已打开 0x570：取记录数 0x574：取创建时间 0x578：取字段数 0x57C：取字段名 0x580：改字段名 0x584：取字段类型 0x588：取字段尺寸 0x58C：新建索引 0x590：置当前索引 0x594：取当前索引 0x598：更新索引 0x59C：取索引数 0x5A0：取索引名 0x5A4：取索引字段 0x5A8：置加锁重试时间 0x5AC：锁住数据库 0x5B0：解锁数据库 0x5B4：锁住增删 0x5B8：解增删锁 0x5BC：锁住记录 0x5C4：解锁记录 0x5C8：全部解锁 0x5CC：取平均值 0x5D0：求和 0x5D4：取最大值 0x5D8：取最小值 0x5DC：取最大时间 0x5E0：计算数目 0x5E4：复制结构 0x5E8：复制记录 0x5EC：计算排序 0x5F0：排序 0x5F4：分类计算 0x5F8：添加 0x5FC：加记录 0x600：加空记录 0x604：替换 0x608：修改 0x60C：删除 0x610：是否已删除 0x614：恢复删除 0x618：彻底删除 0x61C：清空 0x620：读 0x624：写 0x628：读字段 0x62C：写字段 0x630：附加字节集 0x634：附加备注 0x638：索引查找 0x63C：查找 0x640：到首记录 0x644：到尾记录 0x648：跳过 0x64C：取记录号 0x650：跳到 0x654：取标签 0x658：记录是否存在 0x65c：标签跳转 0x660：首记录前 0x664：尾记录后 0x668：写出缓存 0x66c：写出所有缓存 0x670：编辑 0x674：置等待鼠标 0x678：恢复鼠标 0x67C：延时 0x688：插入字节集 0x68C：插入文本 0x690：插入文本行 0x694：删除数据 0x698：取文本注册项 0x69C：取数值注册项 0x6A0：取字节集注册项 0x6A4：写注册项 0x6A8：删除注册项 0x6AC：注册项是否存在 0x6C4：取硬盘特征字 0x6F4：转换为主机名 0x6F8：转换为IP地址 0x714：取默认底色 0x71C：快照 0x8BC：取日期 0x8C0：取时间 0x8C8：读配置项 0x8CC：写配置项 0x8D0：取配置节名 0x8D8：打开加密文件 0x8D4：取操作系统类别 0x8DC：是否已加密 0x8E0：置数据库密码 0x8E4：密码输入框 0x8E8：复制密码 0x914：写到内存 0x904：标准输出 0x90C：指针到文本 0x9D4：到字节 0x9D8：到短整数 0x9DC：到整数 0x9E0：到长整数 0x9E4：到小数 0x9F8：左移 0x9FC：右移 0xA7C：取程序名称 0xA8C：取最后错误 0xAA0：文本到UTF8 0xAA4：UTF8到文本 0xAB0：反转整数字节序 特殊功能支持库——spec 0x1C：延迟 0x24：申请内存 可执行文件数据转换支持库——cnvpe 0x0：转换可执行文件数据 数据操作支持库——dp1 0x0：压缩数据 0x4：解压数据 0x8：取数据摘要 0xC：加密数据 0x10：解密数据 0x14：数字签名 0x18：签名验证 互联网支持库——internet 0x0：连接发信服务器 0x4：断开发信服务器 0x8：添加附件文件 0xC：添加附件数据 0x10：清除所有附件 0x14：发送邮件 0x18：置代理服务器 0x1C：HTTP读文件 0x20：连接FTP服务器 0x24：断开FTP服务器 0x28：FTP文件下载 0x2C：FTP文件上传 0x30：FTP删除文件 0x34：FTP文件改名 0x38：FTP创建目录 0x3C：FTP删除目录 0x40：FTP置现行目录 0x44：FTP取现行目录 0x48：FTP目录列表 操作系统界面功能支持库——shell 0x0：创建快捷方式 0x4：查询快捷方式 0x8：浏览文件夹 0xC：删除到回收站 0x10：进度复制文件 0x14：进度移动文件 0x18：执行 0x1C：取特定目录 0x20：关闭系统 应用接口支持库——eAPI 0x0：取键盘指示灯状态 0x4：模拟按键 0x8：模拟鼠标点击 0xC：取硬盘信息 0x10：取驱动器数量 0x14：取驱动器列表 0x18：弹出光驱 0x1C：关闭光驱 0x20：取光驱盘符 0x24：光驱中是否有盘 0x28：取系统进程列表 0x2C：终止进程 0x30：取正在使用DLL列表 0x38：取系统信息 0x3C：取BIOS信息 0x40：取文件版本信息 0x44：取CPU信息 0x48：取CPU占用率 0x4C：取内存容量信息 0x50：取声卡名称 0x54：打开监视器 0x58：关闭监视器 0x5C：添加右键菜单 0x60：删除右键菜单 0x64：设置自动运行 0x68：删除临时文件 0x6C：清除历史记录 0x94：创建程序组 0x98：删除程序组 0x9C：创建程序项 0xA0：删除程序项 0xA4：取快捷方式目标 0xA8：取网卡信息列表 0xAC：取本机网卡名 0xB0：取本机网卡物理地址 0xB4：取远程网卡物理地址 0xBC：取IP地址 0xC0：撰写邮件 0xC4：取网络类型列表 0xC8：取网络工作组列表 0xCC：取网络计算机列表 0xD0：是否与互联网连接 0xDC：打开特殊系统窗口 0xE0：打开指定网址 0xE4：隐藏桌面图标 0xE8：显示桌面图标 0xEC：隐藏任务栏 0xF0：显示任务栏 0xF4：隐藏系统时钟 0xF8：显示系统时钟 0xFC：隐藏开始按钮 0x100：显示开始按钮 0x104：设置桌面壁纸 0x108：设置窗口透明度 0x10C：取显示模式列表 0x110：取当前显示模式 0x114：设置屏幕分辨率 二、组件ID 0x16010030：编辑框 0x16010031：图片框 0x16010032：外形框 0x16010033：画板 0x16010034：分组框 0x16010035：标签 0x16010036：按钮 0x1601016B：时钟 0x16010006：时钟 ",
+  "wordCount" : "506",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      撕开易语言程序
+    </h1>
+    <div class="post-description">
+      撕开易语言程序
+    </div>
+    <div class="post-meta">时长:&nbsp;3分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9" aria-label="要点">要点</a></li>
+                    <li>
+                        <a href="#1%e5%a6%82%e4%bd%95%e8%af%86%e5%88%ab%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f" aria-label="1、如何识别易语言程序">1、如何识别易语言程序</a><ul>
+                            <ul>
+                            
+                    <li>
+                        <a href="#%e4%b8%80%e6%9f%a5%e7%9c%8b%e6%96%87%e4%bb%b6%e4%bf%a1%e6%81%af%e5%8f%b3%e9%94%ae-%e5%b1%9e%e6%80%a7-%e8%af%a6%e7%bb%86%e4%bf%a1%e6%81%af" aria-label="一、查看文件信息右键-属性-详细信息">一、查看文件信息右键-属性-详细信息</a></li>
+                    <li>
+                        <a href="#%e4%ba%8c%e6%9f%a5%e7%9c%8b%e8%b5%84%e6%ba%90%e6%96%87%e4%bb%b6resource-hacker%e6%88%96%e5%85%b6%e4%bb%96%e5%8f%af%e6%9f%a5%e7%9c%8b%e8%b5%84%e6%ba%90%e6%96%87%e4%bb%b6%e7%9a%84%e5%b7%a5%e5%85%b7" aria-label="二、查看资源文件Resource Hacker或其他可查看资源文件的工具">二、查看资源文件Resource Hacker或其他可查看资源文件的工具</a></li>
+                    <li>
+                        <a href="#%e4%b8%89%e5%ba%93%e6%96%87%e4%bb%b6" aria-label="三、库文件">三、库文件</a></li>
+                    <li>
+                        <a href="#%e5%9b%9b%e5%ad%97%e7%ac%a6%e4%b8%b2%e7%89%b9%e5%be%81" aria-label="四、字符串特征">四、字符串特征</a></li>
+                    <li>
+                        <a href="#%e4%ba%94%e6%98%93%e8%af%ad%e8%a8%80%e6%a0%87%e5%87%86%e5%85%a5%e5%8f%a3" aria-label="五、易语言标准入口">五、易语言标准入口</a></li>
+                    <li>
+                        <a href="#%e9%9d%99%e6%80%81%e7%bc%96%e8%af%91" aria-label="①静态编译">①静态编译</a></li>
+                    <li>
+                        <a href="#%e9%9d%9e%e9%9d%99%e6%80%81%e7%bc%96%e8%af%91" aria-label="②非静态编译">②非静态编译</a></li>
+                    <li>
+                        <a href="#%e9%bb%91%e6%9c%88%e7%bc%96%e8%af%91" aria-label="③黑月编译">③黑月编译</a></li></ul>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#2%e6%98%93%e8%af%ad%e8%a8%80%e7%9a%84%e5%87%bd%e6%95%b0%e7%b1%bb%e5%9e%8b%e5%8f%8a%e7%89%b9%e5%be%81" aria-label="2、易语言的函数类型及特征">2、易语言的函数类型及特征</a><ul>
+                            <ul>
+                            
+                    <li>
+                        <a href="#%e4%b8%80%e6%b6%88%e6%81%af%e5%87%bd%e6%95%b0" aria-label="一、消息函数">一、消息函数</a></li>
+                    <li>
+                        <a href="#%e4%ba%8c%e7%94%a8%e6%88%b7%e8%87%aa%e5%ae%9a%e4%b9%89%e5%87%bd%e6%95%b0" aria-label="二、用户自定义函数">二、用户自定义函数</a></li>
+                    <li>
+                        <a href="#%e4%b8%89%e5%ba%93%e5%87%bd%e6%95%b0" aria-label="三、库函数">三、库函数</a></li>
+                    <li>
+                        <a href="#%e5%9b%9b%e7%bb%84%e4%bb%b6%e5%b1%9e%e6%80%a7%e5%87%bd%e6%95%b0" aria-label="四、组件属性函数">四、组件属性函数</a></li></ul>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#3%e6%98%93%e8%af%ad%e8%a8%80%e7%9a%84%e5%9f%ba%e6%9c%ac%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b" aria-label="3、易语言的基本数据类型">3、易语言的基本数据类型</a><ul>
+                            <ul>
+                            
+                    <li>
+                        <a href="#%e4%b8%80%e5%ad%97%e8%8a%82%e9%9b%86" aria-label="一、字节集">一、字节集</a></li></ul>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#4%e7%bc%96%e8%af%91%e5%99%a8%e9%bb%91%e6%9c%88" aria-label="4、编译器：黑月">4、编译器：黑月</a></li>
+                    <li>
+                        <a href="#5%e6%98%93%e8%af%ad%e8%a8%80%e5%88%86%e6%9e%90%e6%8f%92%e4%bb%b6" aria-label="5、易语言分析插件">5、易语言分析插件</a><ul>
+                            <ul>
+                            
+                    <li>
+                        <a href="#%e4%b8%80e-debughttpsgithubcomfjqisbae-debug-plushttpsgithubcomfjqisbae-debug-plus" aria-label="一、E-Debug（https://github.com/fjqisba/E-debug-plus）">一、E-Debug（<a href="https://github.com/fjqisba/E-debug-plus">https://github.com/fjqisba/E-debug-plus</a>）</a></li></ul>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#6%e8%8a%b1%e6%8c%87%e4%bb%a4" aria-label="6、花指令">6、花指令</a></li>
+                    <li>
+                        <a href="#7%e9%92%88%e5%af%b9%e4%b8%80%e4%ba%9b%e7%aa%97%e5%8f%a3%e8%b7%b3%e8%bd%ac%e7%9a%84%e7%a0%b4%e8%a7%a3" aria-label="7、针对一些窗口跳转的破解">7、针对一些窗口跳转的破解</a></li>
+                    <li>
+                        <a href="#8%e9%99%84%e5%bd%95" aria-label="8、附录">8、附录</a><ul>
+                            <ul>
+                            
+                    <li>
+                        <a href="#%e4%b8%80%e6%94%af%e6%8c%81%e5%ba%93%e5%87%bd%e6%95%b0%e5%81%8f%e7%a7%bb" aria-label="一、支持库函数偏移">一、支持库函数偏移</a></li>
+                    <li>
+                        <a href="#%e7%b3%bb%e7%bb%9f%e6%a0%b8%e5%bf%83%e6%94%af%e6%8c%81%e5%ba%93krnln" aria-label="系统核心支持库——krnln">系统核心支持库——krnln</a></li>
+                    <li>
+                        <a href="#%e7%89%b9%e6%ae%8a%e5%8a%9f%e8%83%bd%e6%94%af%e6%8c%81%e5%ba%93spec" aria-label="特殊功能支持库——spec">特殊功能支持库——spec</a></li>
+                    <li>
+                        <a href="#%e5%8f%af%e6%89%a7%e8%a1%8c%e6%96%87%e4%bb%b6%e6%95%b0%e6%8d%ae%e8%bd%ac%e6%8d%a2%e6%94%af%e6%8c%81%e5%ba%93cnvpe" aria-label="可执行文件数据转换支持库——cnvpe">可执行文件数据转换支持库——cnvpe</a></li>
+                    <li>
+                        <a href="#%e6%95%b0%e6%8d%ae%e6%93%8d%e4%bd%9c%e6%94%af%e6%8c%81%e5%ba%93dp1" aria-label="数据操作支持库——dp1">数据操作支持库——dp1</a></li>
+                    <li>
+                        <a href="#%e4%ba%92%e8%81%94%e7%bd%91%e6%94%af%e6%8c%81%e5%ba%93internet" aria-label="互联网支持库——internet">互联网支持库——internet</a></li>
+                    <li>
+                        <a href="#%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f%e7%95%8c%e9%9d%a2%e5%8a%9f%e8%83%bd%e6%94%af%e6%8c%81%e5%ba%93shell" aria-label="操作系统界面功能支持库——shell">操作系统界面功能支持库——shell</a></li>
+                    <li>
+                        <a href="#%e5%ba%94%e7%94%a8%e6%8e%a5%e5%8f%a3%e6%94%af%e6%8c%81%e5%ba%93eapi" aria-label="应用接口支持库——eAPI">应用接口支持库——eAPI</a></li>
+                    <li>
+                        <a href="#%e4%ba%8c%e7%bb%84%e4%bb%b6id" aria-label="二、组件ID">二、组件ID</a>
+                    </li>
+                </ul>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><ul>
+<li><a href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2021-11-28 20:45</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId5.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId5.png"  />
+</p>
+<h1 id="要点">要点<a hidden class="anchor" aria-hidden="true" href="#要点">#</a></h1>
+<ul>
+<li>易语言的入口函数特征</li>
+<li>各种函数的调用特征以及识别</li>
+<li>针对易语言程序的分析插件</li>
+</ul>
+<h1 id="1如何识别易语言程序">1、如何识别易语言程序<a hidden class="anchor" aria-hidden="true" href="#1如何识别易语言程序">#</a></h1>
+<h3 id="一查看文件信息右键-属性-详细信息">一、查看文件信息右键-属性-详细信息<a hidden class="anchor" aria-hidden="true" href="#一查看文件信息右键-属性-详细信息">#</a></h3>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId6.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId6.png"  />
+</p>
+<h3 id="二查看资源文件resource-hacker或其他可查看资源文件的工具">二、查看资源文件Resource Hacker或其他可查看资源文件的工具<a hidden class="anchor" aria-hidden="true" href="#二查看资源文件resource-hacker或其他可查看资源文件的工具">#</a></h3>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId7.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId7.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId8.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId8.png"  />
+</p>
+<h3 id="三库文件">三、库文件<a hidden class="anchor" aria-hidden="true" href="#三库文件">#</a></h3>
+<p>易语言程序依赖于自实现的库(.<strong>fnr</strong>)执行，针对易语言的编译模式有静态编译、非静态编译和独立编译，如下图：</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId9.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId9.png"  />
+</p>
+<ul>
+<li>编译：编译程序时，会将所有需要用到的库文件生成到同程序的目录下。</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId10.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId10.png"  />
+</p>
+<ul>
+<li>非静态编译：编译程序时，将所有用到的库文件写入到程序中，与程序合并，编译出来的文件只有程序本身。</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId11.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId11.png"  />
+</p>
+<ul>
+<li>独立编译：与静态编译相同之处是编译出来后只有程序本身，但运行程序时，会将所有用到的库文件写入到临时目录中，然后加载库文件。</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId12.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId12.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId13.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId13.png"  />
+</p>
+<h3 id="四字符串特征">四、字符串特征<a hidden class="anchor" aria-hidden="true" href="#四字符串特征">#</a></h3>
+<p>由于易语言是自写的框架，类似于MFC，因此如果未处理编译后的程序，程序中将存在一些固定的字符串。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId14.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId14.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId15.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId15.png"  />
+</p>
+<h3 id="五易语言标准入口">五、易语言标准入口<a hidden class="anchor" aria-hidden="true" href="#五易语言标准入口">#</a></h3>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId16.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId16.png"  />
+</p>
+<h3 id="静态编译">①静态编译<a hidden class="anchor" aria-hidden="true" href="#静态编译">#</a></h3>
+<p>静态编译是直接将库文件与程序合并。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId17.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId17.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId18.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId18.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId19.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId19.png"  />
+</p>
+<h3 id="非静态编译">②非静态编译<a hidden class="anchor" aria-hidden="true" href="#非静态编译">#</a></h3>
+<p>该种编译模式会将库文件存放在程序中，在WinMain入口会获取读取自身的内容，然后释放出库文件。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId20.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId20.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId21.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId21.png"  />
+</p>
+<p>随后加载库文件，并调用一个固定函数<code>GetNewSock</code>。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId22.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId22.png"  />
+</p>
+<p>最后调用函数</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId23.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId23.png"  />
+</p>
+<p>进入该函数后，会看到call eax，eax为函数入口。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId24.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId24.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId25.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId25.png"  />
+</p>
+<h3 id="黑月编译">③黑月编译<a hidden class="anchor" aria-hidden="true" href="#黑月编译">#</a></h3>
+<p>黑月编译器是网友针对易语言程序编写的一款编译器，他直接会优化掉前期的初始化代码，包括<code>clr(c library runtime)</code>初始化，直接进入到易语言的标准入口。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId26.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId26.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId27.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId27.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId28.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId28.png"  />
+</p>
+<h1 id="2易语言的函数类型及特征">2、易语言的函数类型及特征<a hidden class="anchor" aria-hidden="true" href="#2易语言的函数类型及特征">#</a></h1>
+<p>易语言的函数大致分有三种，分别为窗体控件的消息函数、用户自定义函数、库函数和组件属性函数。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId29.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId29.png"  />
+</p>
+<h3 id="一消息函数">一、消息函数<a hidden class="anchor" aria-hidden="true" href="#一消息函数">#</a></h3>
+<p>消息函数都是通过固定代码段调用，代码段定位流程如下：</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId30.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId30.png"  />
+</p>
+<p>找到如图特征</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId31.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId31.png"  />
+</p>
+<p>进入函数后找到最后一call 局部变量，该位置调用的就是消息函数</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId32.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId32.png"  />
+</p>
+<p>将函数对应到IDA中可直接定位到流程。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId33.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId33.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId34.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId34.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId35.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId35.png"  />
+</p>
+<p>找到 case 2008:</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId36.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId36.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId37.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId37.png"  />
+</p>
+<h3 id="二用户自定义函数">二、用户自定义函数<a hidden class="anchor" aria-hidden="true" href="#二用户自定义函数">#</a></h3>
+<p>用户自定义的函数调用与通常的函数调用方式一致。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId38.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId38.png"  />
+</p>
+<h3 id="三库函数">三、库函数<a hidden class="anchor" aria-hidden="true" href="#三库函数">#</a></h3>
+<p>库函数为易语言自写支持库里的函数，类似Windows的DLL文件。函数原型如下。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">E_FuncCallBack</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="err">参数一的值，参数一是否可忽略，参数一的类型，参数二的值，参数二是否可忽略，参数二的类型</span><span class="p">)</span>
+</span></span></code></pre></div><p>该函数是一个变参函数，参数一为<strong>欲调用欲调用函数的参数个数</strong>，然后其余的以<strong>三个参数为一组</strong>表示参数的信息。忽略参数的值为布尔值，0表示不可以忽略，1表示可忽略；其参数类型可参考的值如下（可能不完整）：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x80000004</td>
+<td>文本型</td>
+</tr>
+<tr>
+<td>0x80000101</td>
+<td>文本型</td>
+</tr>
+<tr>
+<td>0x80000000</td>
+<td>通用型</td>
+</tr>
+<tr>
+<td>0x80000002</td>
+<td>逻辑型</td>
+</tr>
+<tr>
+<td>0x80000005</td>
+<td>字节集</td>
+</tr>
+<tr>
+<td>0x80000006</td>
+<td>子程序指针</td>
+</tr>
+<tr>
+<td>0x80000301</td>
+<td>数值型</td>
+</tr>
+<tr>
+<td>0x80000601</td>
+<td>数值型</td>
+</tr>
+<tr>
+<td>0x10001</td>
+<td>窗体</td>
+</tr>
+</tbody>
+</table>
+<p>由于易语言的编译模式不同，库函数调用代码也会产生差异。接下来分别解释静态编译与非静态编译下，函数代码的差异。</p>
+<ul>
+<li>静态编译</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId39.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId39.png"  />
+</p>
+<ul>
+<li>非静态编译</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId40.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId40.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId41.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId41.png"  />
+</p>
+<p>非静态编译的程序，在调用库函数时不再通过静态地址的方式调用，而是通过传入库文件序号和欲调用对应函数的偏移到寄存器中，然后调用。</p>
+<p>库文件序号指的是库文件是程序中加载的第几个文件。序号从0开始，易语言程序在运行初期最先加载的库文件为该库文件，记加载序号为0；如果再加载一个库文件的话则加载新加载的库文件序号为1。<strong>对于调用krnln.fnr库文件的函数，易语言程序以隐式形式传递序号</strong>，因此在信息框函数调用的反汇编代码中并未看到传入0序号。常用库文件的函数偏移在附录中贴出。</p>
+<h3 id="四组件属性函数">四、组件属性函数<a hidden class="anchor" aria-hidden="true" href="#四组件属性函数">#</a></h3>
+<p>函数分为两种，一种是对组件的属性修改，另一种是组件的自带函数。</p>
+<ul>
+<li>属性修改</li>
+</ul>
+<p>**参数一：**父窗口</p>
+<p>**参数二：**子窗口</p>
+<p>**参数三：**属性下标</p>
+<p>**参数四：**未知，一般都为-0x1</p>
+<p>**参数五：**值</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId42.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId42.png"  />
+</p>
+<ul>
+<li>自带函数调用</li>
+</ul>
+<p>与消息函数类型。参一：<strong>参数个数</strong>、参二：<strong>值，也就是父窗口ID</strong>、参三：<strong>ID</strong>、参四：<strong>参数类型</strong></p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId43.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId43.png"  />
+</p>
+<p>因为控件存在于krnln.fnr库中，因此在非静态编译中，库函数序号也是隐式传递。部分组件ID也在附录中列出。</p>
+<h1 id="3易语言的基本数据类型">3、易语言的基本数据类型<a hidden class="anchor" aria-hidden="true" href="#3易语言的基本数据类型">#</a></h1>
+<h3 id="一字节集">一、字节集<a hidden class="anchor" aria-hidden="true" href="#一字节集">#</a></h3>
+<p>typdef struct 字节集
+{
+int unkown;
+int length;
+char* bytes;
+};</p>
+<h1 id="4编译器黑月">4、编译器：黑月<a hidden class="anchor" aria-hidden="true" href="#4编译器黑月">#</a></h1>
+<p>程序入口为两个函数。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId44.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId44.png"  />
+</p>
+<p>进入第二个后可以看到如下代码特征。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId45.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId45.png"  />
+</p>
+<p>或者搜索到如下字符串。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId46.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId46.png"  />
+</p>
+<h1 id="5易语言分析插件">5、易语言分析插件<a hidden class="anchor" aria-hidden="true" href="#5易语言分析插件">#</a></h1>
+<h3 id="一e-debughttpsgithubcomfjqisbae-debug-plushttpsgithubcomfjqisbae-debug-plus">一、E-Debug（<a href="https://github.com/fjqisba/E-debug-plus">https://github.com/fjqisba/E-debug-plus</a>）<a hidden class="anchor" aria-hidden="true" href="#一e-debughttpsgithubcomfjqisbae-debug-plushttpsgithubcomfjqisbae-debug-plus">#</a></h3>
+<p>只能用来分析静态编译的程序。</p>
+<ul>
+<li>OD</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId48.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId48.png"  />
+</p>
+<ul>
+<li>IDA</li>
+</ul>
+<p>选择易语言反编译器</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId49.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId49.png"  />
+</p>
+<p>IDA会自动识别由于的函数，并在工具栏新增易语言。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId50.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId50.png"  />
+</p>
+<p>新增的项可以自动识别资源常量、窗体、消息函数（控件函数）。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId51.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId51.png"  />
+</p>
+<ul>
+<li>特征生成</li>
+</ul>
+<p>EDebug可以手动生成后缀为sig的易语言特征，打开配套工具。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId52.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId52.png"  />
+</p>
+<p>然后将易语言的支持库拖入即可，最后将生成的sig文件放置到对应分析工具的插件目录下。</p>
+<h1 id="6花指令">6、花指令<a hidden class="anchor" aria-hidden="true" href="#6花指令">#</a></h1>
+<p>易语言可以设置花指令来干扰程序的逆向分析。在工具栏的工具-系统配置的窗口中选择安全，可以设置花指令等级，默认为1。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId53.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId53.png"  />
+</p>
+<p>级别不同，花指令形式也不同。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId54.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId54.png"  />
+</p>
+<p>但是每一级别的花指令代码都是固定的，所以可以在IDA中使用脚本进行批处理处理，或者使用OD的插件去除花指令。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId55.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId55.png"  />
+</p>
+<p>输入要去除花指令的起始地址和地址段大小后，点击执行即可去除。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId56.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId56.png"  />
+</p>
+<h1 id="7针对一些窗口跳转的破解">7、针对一些窗口跳转的破解<a hidden class="anchor" aria-hidden="true" href="#7针对一些窗口跳转的破解">#</a></h1>
+<p>易语言载入窗口的命令为载入(,,)，窗体的类型为0x10001，因此可以通过搜索push 0x10001来找到该命令，或者有调用窗口函数的代码段来获取窗口ID。再将原始加载的窗口ID进行替换即可实现窗口跳转。</p>
+<p>搜索push 0x10001结果。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId57.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId57.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId58.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId58.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId59.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId59.png"  />
+</p>
+<p>断点放开后执行，直接能跳转到第二个窗口。</p>
+<p><img loading="lazy" src="/posts/Reverse/%e6%92%95%e5%bc%80%e6%98%93%e8%af%ad%e8%a8%80%e7%a8%8b%e5%ba%8f/document_image_rId60.png" alt="/posts/Reverse/撕开易语言程序/document_image_rId60.png"  />
+</p>
+<h1 id="8附录">8、附录<a hidden class="anchor" aria-hidden="true" href="#8附录">#</a></h1>
+<h3 id="一支持库函数偏移">一、支持库函数偏移<a hidden class="anchor" aria-hidden="true" href="#一支持库函数偏移">#</a></h3>
+<h3 id="系统核心支持库krnln">系统核心支持库——krnln<a hidden class="anchor" aria-hidden="true" href="#系统核心支持库krnln">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mh">0x0</span><span class="err">：寻找文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2</span><span class="err">：相加</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x9</span><span class="err">：新建索引</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x58</span><span class="err">：取符号</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5C</span><span class="err">：取绝对值</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x60</span><span class="err">：取整</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x64</span><span class="err">：绝对取整</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x68</span><span class="err">：四舍五入</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x6C</span><span class="err">：求次方</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x70</span><span class="err">：求平方根</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x74</span><span class="err">：求正弦</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x78</span><span class="err">：求余弦</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x7C</span><span class="err">：求正切</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x80</span><span class="err">：求反正切</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x84</span><span class="err">：求自然对数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x88</span><span class="err">：求反对数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8C</span><span class="err">：是否运算正确</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x90</span><span class="err">：置随机数种子</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x94</span><span class="err">：取随机数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC0</span><span class="err">：位取反</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC4</span><span class="err">：位与</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC8</span><span class="err">：位或</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xCC</span><span class="err">：位异或</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x100</span><span class="err">：取命令行</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x104</span><span class="err">：取运行目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x108</span><span class="err">：取执行文件名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10C</span><span class="err">：读环境变量</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x110</span><span class="err">：写环境变量</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x114</span><span class="err">：取所有发音</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x118</span><span class="err">：取发音数目</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x11C</span><span class="err">：取拼音</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x124</span><span class="err">：取韵母</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x128</span><span class="err">：发音比较</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x12C</span><span class="err">：输入字比较</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x130</span><span class="err">：取文本长度</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x134</span><span class="err">：取文本左边</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x138</span><span class="err">：取文本右边</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x13C</span><span class="err">：取文本中间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x140</span><span class="err">：字符</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x144</span><span class="err">：取代码</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x148</span><span class="err">：寻找文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x14C</span><span class="err">：倒找文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x150</span><span class="err">：到大写</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x154</span><span class="err">：到小写</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x158</span><span class="err">：到全角</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x15C</span><span class="err">：到半角</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x160</span><span class="err">：到时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x164</span><span class="err">：到数值</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x168</span><span class="err">：到文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x16C</span><span class="err">：删首空</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x170</span><span class="err">：删尾空</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x174</span><span class="err">：删首位空</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x178</span><span class="err">：删全部空</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x17C</span><span class="err">：文本替换</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x180</span><span class="err">：子文本替换</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x184</span><span class="err">：取空白文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x188</span><span class="err">：取重复文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x18C</span><span class="err">：文本比较</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x190</span><span class="err">：分割文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x194</span><span class="err">：取字节集长度</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x198</span><span class="err">：到字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x19C</span><span class="err">：取字节集数据</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1A0</span><span class="err">：取字节集左边</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1A4</span><span class="err">：取字节集右边</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1A8</span><span class="err">：取字节集中间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1AC</span><span class="err">：寻找字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1B0</span><span class="err">：倒找字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1B4</span><span class="err">：字节集替换</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1B8</span><span class="err">：子字节集替换</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1BC</span><span class="err">：取空白字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1C0</span><span class="err">：去重复字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1C4</span><span class="err">：分割字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1C8</span><span class="err">：数值到大写</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1CC</span><span class="err">：数值到金额</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1D0</span><span class="err">：数值到格式文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1D4</span><span class="err">：取十六进制文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1D8</span><span class="err">：取八进制文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1DC</span><span class="err">：增减时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1E0</span><span class="err">：取时间间隔</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1E4</span><span class="err">：取某月天数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1E8</span><span class="err">：时间到文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1EC</span><span class="err">：取时间部分</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1F0</span><span class="err">：取年份</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1F4</span><span class="err">：取月份</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1F8</span><span class="err">：取日</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1FC</span><span class="err">：取星期几</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x200</span><span class="err">：取小时</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x204</span><span class="err">：取分钟</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x208</span><span class="err">：取秒</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x20C</span><span class="err">：指定时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x210</span><span class="err">：取现行时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x214</span><span class="err">：置现行时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x218</span><span class="err">：取磁盘总空间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x21C</span><span class="err">：取磁盘剩余空间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x220</span><span class="err">：取磁盘卷标</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x224</span><span class="err">：置磁盘卷标</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x228</span><span class="err">：改变驱动器</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x22C</span><span class="err">：改变目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x230</span><span class="err">：取当前目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x234</span><span class="err">：创建目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x238</span><span class="err">：删除目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x23C</span><span class="err">：复制文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x240</span><span class="err">：移动文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x244</span><span class="err">：删除文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x248</span><span class="err">：文件更名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x24C</span><span class="err">：文件是否存在</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x254</span><span class="err">：取文件时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x258</span><span class="err">：取文件尺寸</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x25C</span><span class="err">：取文件属性</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x260</span><span class="err">：置文件属性</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x264</span><span class="err">：取临时文件名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x268</span><span class="err">：读入文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x26C</span><span class="err">：写到文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x270</span><span class="err">：打开文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x274</span><span class="err">：打开内存文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x278</span><span class="err">：关闭文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x27C</span><span class="err">：关闭所有文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x280</span><span class="err">：锁住文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x284</span><span class="err">：解锁文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x288</span><span class="err">：移动读写位置</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x28C</span><span class="err">：移到文件首</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x290</span><span class="err">：移到文件尾</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x294</span><span class="err">：读入字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x298</span><span class="err">：写出字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x268</span><span class="err">：读入文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2A0</span><span class="err">：写出文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2A4</span><span class="err">：读入一行</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2A8</span><span class="err">：写文本行</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2AC</span><span class="err">：读入数据</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2B0</span><span class="err">：写出数据</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2B4</span><span class="err">：是否在文件尾</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2B8</span><span class="err">：取读写位置</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2BC</span><span class="err">：取文件长度</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2C0</span><span class="err">：运行</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2C4</span><span class="err">：取剪辑板文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2C8</span><span class="err">：置剪辑板文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2CC</span><span class="err">：剪辑板中可有文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2D0</span><span class="err">：清除剪辑板</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2D4</span><span class="err">：取屏幕宽度</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2D8</span><span class="err">：取屏幕高度</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2DC</span><span class="err">：取鼠标水平位置</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2E0</span><span class="err">：取鼠标垂直位置</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x300</span><span class="err">：信息框</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x304</span><span class="err">：鸣叫</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x308</span><span class="err">：取启动时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x320</span><span class="err">：载入</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x330</span><span class="err">：是否已创建</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x334</span><span class="err">：取数据类型尺寸</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x35C</span><span class="err">：取窗口句柄</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x540</span><span class="err">：是否支持多用户</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x544</span><span class="err">：取错误码</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x548</span><span class="err">：取错误信息</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x54C</span><span class="err">：创建</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x550</span><span class="err">：打开</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x554</span><span class="err">：替换打开</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x558</span><span class="err">：置当前库</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x55C</span><span class="err">：取当前库</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x560</span><span class="err">：关闭</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x564</span><span class="err">：全部关闭</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x568</span><span class="err">：取库文件名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x56C</span><span class="err">：是否已打开</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x570</span><span class="err">：取记录数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x574</span><span class="err">：取创建时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x578</span><span class="err">：取字段数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x57C</span><span class="err">：取字段名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x580</span><span class="err">：改字段名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x584</span><span class="err">：取字段类型</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x588</span><span class="err">：取字段尺寸</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x58C</span><span class="err">：新建索引</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x590</span><span class="err">：置当前索引</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x594</span><span class="err">：取当前索引</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x598</span><span class="err">：更新索引</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x59C</span><span class="err">：取索引数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5A0</span><span class="err">：取索引名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5A4</span><span class="err">：取索引字段</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5A8</span><span class="err">：置加锁重试时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5AC</span><span class="err">：锁住数据库</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5B0</span><span class="err">：解锁数据库</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5B4</span><span class="err">：锁住增删</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5B8</span><span class="err">：解增删锁</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5BC</span><span class="err">：锁住记录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5C4</span><span class="err">：解锁记录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5C8</span><span class="err">：全部解锁</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5CC</span><span class="err">：取平均值</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5D0</span><span class="err">：求和</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5D4</span><span class="err">：取最大值</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5D8</span><span class="err">：取最小值</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5DC</span><span class="err">：取最大时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5E0</span><span class="err">：计算数目</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5E4</span><span class="err">：复制结构</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5E8</span><span class="err">：复制记录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5EC</span><span class="err">：计算排序</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5F0</span><span class="err">：排序</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5F4</span><span class="err">：分类计算</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5F8</span><span class="err">：添加</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5FC</span><span class="err">：加记录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x600</span><span class="err">：加空记录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x604</span><span class="err">：替换</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x608</span><span class="err">：修改</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x60C</span><span class="err">：删除</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x610</span><span class="err">：是否已删除</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x614</span><span class="err">：恢复删除</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x618</span><span class="err">：彻底删除</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x61C</span><span class="err">：清空</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x620</span><span class="err">：读</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x624</span><span class="err">：写</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x628</span><span class="err">：读字段</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x62C</span><span class="err">：写字段</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x630</span><span class="err">：附加字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x634</span><span class="err">：附加备注</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x638</span><span class="err">：索引查找</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x63C</span><span class="err">：查找</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x640</span><span class="err">：到首记录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x644</span><span class="err">：到尾记录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x648</span><span class="err">：跳过</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x64C</span><span class="err">：取记录号</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x650</span><span class="err">：跳到</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x654</span><span class="err">：取标签</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x658</span><span class="err">：记录是否存在</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x65c</span><span class="err">：标签跳转</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x660</span><span class="err">：首记录前</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x664</span><span class="err">：尾记录后</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x668</span><span class="err">：写出缓存</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x66c</span><span class="err">：写出所有缓存</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x670</span><span class="err">：编辑</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x674</span><span class="err">：置等待鼠标</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x678</span><span class="err">：恢复鼠标</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x67C</span><span class="err">：延时</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x688</span><span class="err">：插入字节集</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x68C</span><span class="err">：插入文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x690</span><span class="err">：插入文本行</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x694</span><span class="err">：删除数据</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x698</span><span class="err">：取文本注册项</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x69C</span><span class="err">：取数值注册项</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x6A0</span><span class="err">：取字节集注册项</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x6A4</span><span class="err">：写注册项</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x6A8</span><span class="err">：删除注册项</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x6AC</span><span class="err">：注册项是否存在</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x6C4</span><span class="err">：取硬盘特征字</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x6F4</span><span class="err">：转换为主机名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x6F8</span><span class="err">：转换为</span><span class="n">IP地址</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x714</span><span class="err">：取默认底色</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x71C</span><span class="err">：快照</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8BC</span><span class="err">：取日期</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8C0</span><span class="err">：取时间</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8C8</span><span class="err">：读配置项</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8CC</span><span class="err">：写配置项</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8D0</span><span class="err">：取配置节名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8D8</span><span class="err">：打开加密文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8D4</span><span class="err">：取操作系统类别</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8DC</span><span class="err">：是否已加密</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8E0</span><span class="err">：置数据库密码</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8E4</span><span class="err">：密码输入框</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8E8</span><span class="err">：复制密码</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x914</span><span class="err">：写到内存</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x904</span><span class="err">：标准输出</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x90C</span><span class="err">：指针到文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x9D4</span><span class="err">：到字节</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x9D8</span><span class="err">：到短整数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x9DC</span><span class="err">：到整数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x9E0</span><span class="err">：到长整数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x9E4</span><span class="err">：到小数</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x9F8</span><span class="err">：左移</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x9FC</span><span class="err">：右移</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xA7C</span><span class="err">：取程序名称</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xA8C</span><span class="err">：取最后错误</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xAA0</span><span class="err">：文本到</span><span class="n">UTF8</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xAA4</span><span class="err">：</span><span class="n">UTF8到文本</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xAB0</span><span class="err">：反转整数字节序</span>
+</span></span></code></pre></div><h3 id="特殊功能支持库spec">特殊功能支持库——spec<a hidden class="anchor" aria-hidden="true" href="#特殊功能支持库spec">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mh">0x1C</span><span class="err">：延迟</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x24</span><span class="err">：申请内存</span>
+</span></span></code></pre></div><h3 id="可执行文件数据转换支持库cnvpe">可执行文件数据转换支持库——cnvpe<a hidden class="anchor" aria-hidden="true" href="#可执行文件数据转换支持库cnvpe">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mh">0x0</span><span class="err">：转换可执行文件数据</span>
+</span></span></code></pre></div><h3 id="数据操作支持库dp1">数据操作支持库——dp1<a hidden class="anchor" aria-hidden="true" href="#数据操作支持库dp1">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mh">0x0</span><span class="err">：压缩数据</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x4</span><span class="err">：解压数据</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8</span><span class="err">：取数据摘要</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC</span><span class="err">：加密数据</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10</span><span class="err">：解密数据</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x14</span><span class="err">：数字签名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x18</span><span class="err">：签名验证</span>
+</span></span></code></pre></div><h3 id="互联网支持库internet">互联网支持库——internet<a hidden class="anchor" aria-hidden="true" href="#互联网支持库internet">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mh">0x0</span><span class="err">：连接发信服务器</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x4</span><span class="err">：断开发信服务器</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8</span><span class="err">：添加附件文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC</span><span class="err">：添加附件数据</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10</span><span class="err">：清除所有附件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x14</span><span class="err">：发送邮件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x18</span><span class="err">：置代理服务器</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1C</span><span class="err">：</span><span class="n">HTTP读文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x20</span><span class="err">：连接</span><span class="n">FTP服务器</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x24</span><span class="err">：断开</span><span class="n">FTP服务器</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x28</span><span class="err">：</span><span class="n">FTP文件下载</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2C</span><span class="err">：</span><span class="n">FTP文件上传</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x30</span><span class="err">：</span><span class="n">FTP删除文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x34</span><span class="err">：</span><span class="n">FTP文件改名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x38</span><span class="err">：</span><span class="n">FTP创建目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x3C</span><span class="err">：</span><span class="n">FTP删除目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x40</span><span class="err">：</span><span class="n">FTP置现行目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x44</span><span class="err">：</span><span class="n">FTP取现行目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x48</span><span class="err">：</span><span class="n">FTP目录列表</span>
+</span></span></code></pre></div><h3 id="操作系统界面功能支持库shell">操作系统界面功能支持库——shell<a hidden class="anchor" aria-hidden="true" href="#操作系统界面功能支持库shell">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mh">0x0</span><span class="err">：创建快捷方式</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x4</span><span class="err">：查询快捷方式</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8</span><span class="err">：浏览文件夹</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC</span><span class="err">：删除到回收站</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10</span><span class="err">：进度复制文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x14</span><span class="err">：进度移动文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x18</span><span class="err">：执行</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1C</span><span class="err">：取特定目录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x20</span><span class="err">：关闭系统</span>
+</span></span></code></pre></div><h3 id="应用接口支持库eapi">应用接口支持库——eAPI<a hidden class="anchor" aria-hidden="true" href="#应用接口支持库eapi">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mh">0x0</span><span class="err">：取键盘指示灯状态</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x4</span><span class="err">：模拟按键</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x8</span><span class="err">：模拟鼠标点击</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC</span><span class="err">：取硬盘信息</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10</span><span class="err">：取驱动器数量</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x14</span><span class="err">：取驱动器列表</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x18</span><span class="err">：弹出光驱</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1C</span><span class="err">：关闭光驱</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x20</span><span class="err">：取光驱盘符</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x24</span><span class="err">：光驱中是否有盘</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x28</span><span class="err">：取系统进程列表</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x2C</span><span class="err">：终止进程</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x30</span><span class="err">：取正在使用</span><span class="n">DLL列表</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x38</span><span class="err">：取系统信息</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x3C</span><span class="err">：取</span><span class="n">BIOS信息</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x40</span><span class="err">：取文件版本信息</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x44</span><span class="err">：取</span><span class="n">CPU信息</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x48</span><span class="err">：取</span><span class="n">CPU占用率</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x4C</span><span class="err">：取内存容量信息</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x50</span><span class="err">：取声卡名称</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x54</span><span class="err">：打开监视器</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x58</span><span class="err">：关闭监视器</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x5C</span><span class="err">：添加右键菜单</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x60</span><span class="err">：删除右键菜单</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x64</span><span class="err">：设置自动运行</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x68</span><span class="err">：删除临时文件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x6C</span><span class="err">：清除历史记录</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x94</span><span class="err">：创建程序组</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x98</span><span class="err">：删除程序组</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x9C</span><span class="err">：创建程序项</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xA0</span><span class="err">：删除程序项</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xA4</span><span class="err">：取快捷方式目标</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xA8</span><span class="err">：取网卡信息列表</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xAC</span><span class="err">：取本机网卡名</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xB0</span><span class="err">：取本机网卡物理地址</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xB4</span><span class="err">：取远程网卡物理地址</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xBC</span><span class="err">：取</span><span class="n">IP地址</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC0</span><span class="err">：撰写邮件</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC4</span><span class="err">：取网络类型列表</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xC8</span><span class="err">：取网络工作组列表</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xCC</span><span class="err">：取网络计算机列表</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xD0</span><span class="err">：是否与互联网连接</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xDC</span><span class="err">：打开特殊系统窗口</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xE0</span><span class="err">：打开指定网址</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xE4</span><span class="err">：隐藏桌面图标</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xE8</span><span class="err">：显示桌面图标</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xEC</span><span class="err">：隐藏任务栏</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xF0</span><span class="err">：显示任务栏</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xF4</span><span class="err">：隐藏系统时钟</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xF8</span><span class="err">：显示系统时钟</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0xFC</span><span class="err">：隐藏开始按钮</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x100</span><span class="err">：显示开始按钮</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x104</span><span class="err">：设置桌面壁纸</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x108</span><span class="err">：设置窗口透明度</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x10C</span><span class="err">：取显示模式列表</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x110</span><span class="err">：取当前显示模式</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x114</span><span class="err">：设置屏幕分辨率</span>
+</span></span></code></pre></div><h3 id="二组件id">二、组件ID<a hidden class="anchor" aria-hidden="true" href="#二组件id">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mh">0x16010030</span><span class="err">：编辑框</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x16010031</span><span class="err">：图片框</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x16010032</span><span class="err">：外形框</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x16010033</span><span class="err">：画板</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x16010034</span><span class="err">：分组框</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x16010035</span><span class="err">：标签</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x16010036</span><span class="err">：按钮</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x1601016B</span><span class="err">：时钟</span>
+</span></span><span class="line"><span class="cl"><span class="mh">0x16010006</span><span class="err">：时钟</span>
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/reverse/">Reverse</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/virus/%E5%BD%A9%E8%99%B9%E7%8C%AB%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>彩虹猫病毒分析</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/ctf/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0csaw2013reversing2/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>攻防世界-逆向题笔记{csaw2013reversing2}</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

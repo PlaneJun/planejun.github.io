@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>天堂M傳說-吃药call的逆向分析 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="GameHacker">
+<meta name="description" content="天堂M傳說-吃药call的逆向分析">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/gamehacker/%E5%A4%A9%E5%A0%82m%E5%82%B3%E8%AA%AA-%E5%90%83%E8%8D%AFcall%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="天堂M傳說-吃药call的逆向分析" />
+<meta property="og:description" content="天堂M傳說-吃药call的逆向分析" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/gamehacker/%E5%A4%A9%E5%A0%82m%E5%82%B3%E8%AA%AA-%E5%90%83%E8%8D%AFcall%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="天堂M傳說-吃药call的逆向分析"/>
+<meta name="twitter:description" content="天堂M傳說-吃药call的逆向分析"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "天堂M傳說-吃药call的逆向分析",
+      "item": "https://planejun.github.io/posts/gamehacker/%E5%A4%A9%E5%A0%82m%E5%82%B3%E8%AA%AA-%E5%90%83%E8%8D%AFcall%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "天堂M傳說-吃药call的逆向分析",
+  "name": "天堂M傳說-吃药call的逆向分析",
+  "description": "天堂M傳說-吃药call的逆向分析",
+  "keywords": [
+    "GameHacker"
+  ],
+  "articleBody": "天堂M傳說-吃药call的逆向分析 • PlaneJun ・2019-10-7 13:10\n目录\n一、基础理论知识\n二、实践是检验真理的唯一标准\n1、恢复钩子\n2、发包的灵活处理以及分析\n3、调用\n三、总结\n分析对象：天堂M 傳說\n编程工具：Visual Studio 2019\n工具：CheatEngine7.0 （该游戏有调试器检测，OD附加后电脑直接进入卡死状态）、火绒剑\n一、基础理论知识 既然是吃药call，那么我们需要先思考一下这个call的一些信息，比如说他的参数个数，触发时机等等，这样的话才能方便我们去逆向找出这个call。\n首先我们明确两点：1、这个游戏的是一个网络游戏，那么就说明他和服务器存在着数据的交互，用来保证数据的正确性**(封包的检测)，举个例子：我们要做某个动作，那么此时客户端(就是我们正在玩的游戏)就会向服务器发送一个封包数据，然后服务器对这个封包进行一个验证，该动作是否合法或者可以操作，然后服务器再发送一个结果封包到客户端，客户端接收到封包后进行处理。如果合法，那么进行这个操作，如果不合法就阻止或者非法提示(封号)**。2、我们既然是要找吃药call，那么肯定是在我们吃药的时候才会触发的游戏内部call，因为游戏不可能说在我们做其他动作的时候游戏会调用的吃药call(该情况可以存在，但是没有必要)。明确了上面两点后，我们呢就有了一些找call的思路。\n思路一：通过发包。因为在我们吃药的时候，客户端肯定会发送一个封包到服务器，用来验证这个动作是否可行，然后服务器反馈到客户端。我们就可以直接在相关发包的函数头下一个断点，然后吃药，断下的时候，我们就可以通过不断的返回上一层来定位到吃药call。\n思路二：通过物品的属性去逆向查找。因为药品是背包的物品，那么我们吃药这个动作也相当于一个使用背包物品的动作，此时，游戏需要知道我们使用了背包的哪个物品。然后再根据这个物品去调用他的相关函数。所以说，在我们找吃药call的时候需要注意一些的参数**(也就是push的值),因为他极大的可能会存着药品的某个属性(比如：地址、ID、数量)**。因此我们就可以通过这个特性直接在药品的相关属性下一个访问断点，通过调试器给我们断下的地方去定位到一些关键代码段，然后再进行逆向反推，这样的方法也是可以找到吃药call的。\n笔者在本篇文章中采用的是思路一，原因是思路二看起来虽然道理很简单，但是真要去逆向反推的话其过程是相当繁琐和困难的，因为游戏公司不可能给你轻轻松松的找到call，他们肯定会进行一些代码处理和加密，让逆向的难度大大增加。其困难的程度由该call的火爆性决定**(如果一个call被众多外挂所利用，那么游戏公司会对其进行一些处理，例如:加密，检测)**。话不多说，咱们开始搞事！\n二、实践是检验真理的唯一标准 咱们既然是通过发包下手，那么简单来介绍一下常见的发包函数: send,sendto,WSASend，这些呢基本都是现在比较常见的发包函数，游戏也基本上也是通过这三个发包函数中的其中一个去与服务器交互的。Emmm，既然我们知道，那么游戏公司也知道，所以咱们相对于某些游戏来说，直接在这些函数头部下断是会吃瘪的，需要去瞎搞更深底层的WSPSend。因为本篇文章所采用的游戏对其的处理并不怎么高手，这里呢我就不过多讨论。\n1、恢复钩子 这里我用的是火绒剑**(官方认可工具,强大又安全)**。咱们打开游戏后先来看一下这游戏干了什么事。打开火绒剑扫描钩子。\n通过扫描结果我们会发现这个游戏下了很多的钩子，其中有一个就是发包函数send的钩子，我们双击看一下。\n发现他的头变成了jmp，而且目的地址为游戏地址。为了确保调试正常，我们待会把他下的所有钩子全部恢复。这里注意：钩子的恢复必须要在游戏内，如果恢复钩子过早那么游戏会提示一些错误。简单说就是你得在游戏界面为以下时才能恢复。\n2、发包的灵活处理以及分析 这个游戏用的是send发包，因为三大发包函数里只有这个下断后会断下。我们用CE附加游戏后到send头部尝试下断后做动作看看。\n我们会发现，一旦我们下断点后，切回游戏的一瞬间，断点就被断下，无论我们重复多少次都是如此。而我们当前想要是，只有在游戏角色做某出些动作时才断下。这个就与我们想做的事产生了一些矛盾，那怎么办呢？\n我们先思考一下为什么在我们切回游戏的时候，断点会断下？断点一旦被断下就说明了有封包发送到服务器，可是客户端(游戏)为什么在我们切回游戏的时候要发送封包呢？其实在切回游戏后，游戏会瞬间发送一个封包到服务器是有一定作用的，这个作用类似于游戏拉回操作。用FPS来说的话就是防止瞬移，有些FPS能实现网截瞬移就是因为游戏并不会对服务器发送一个校验的封包**(有的直接通过第三方工具拦截封包实现瞬移)**，如果说游戏不断的向服务器发送一个请求正确位置的封包，那么服务器接收到后就会返回一个正确位置的封包，然后游戏会进行一个判断，如果当前位置不正确就直接拉回。大致原理就是这个意思。明白这个之后我们来看一下怎么去解决这个问题。稍微学过socket编程的都知道，send函数他有一个参数是包长，我们贴上MSDN的定义：\n在游戏中，不同的动作他的包长也会发生变化的，因为动作不同，包数据也不同。(当然不排除一些包长一样的动作)，那么我们就可以通过这个包长去下一个条件断点，只有当包长是吃药时的包长才让断点断下。那么问题来了，我们怎么知道他这个包长是多少，上面也说了，我们一下断点切回游戏，游戏就会发送一个类似校验的封包，使游戏断下，这样的话我们也没法观察吃药时的封包包长。但是只要思想不滑坡，办法总比困难多。咱们直接来一个HOOK获取包长就行了。我们在send头部下断让其断下，然后返回到外层。\n(为什么不在send头部下断点，因为CE好像不支持[esp+xx] == xx 这样类型的断点，反正我没下成功)，通过send的定义，包长是第三个参数，那么对应的就是eax是我们的包长，我们可以直接在push eax 下面一句进行一个hook。我们首先分配一个空白地址用来保存我们的eax，我申请的地址为0x03830000,我们直接用CE自带的代码注入HOOK，\nHOOK后，咱们把刚刚申请到的地址放到列表看看。\n我这里以16进制显示，我们发现现在我们可以看到包长了。\n那么咱们去吃药，发现吃药的时候包长也是0xE，那好办，下一个条件断点。\n咱们回去吃药，注意：确保你是吃药后才断下的。因为我说了，不排除其他动作包长也是0xE。\n吃药断下后，我们记录一下跟踪到的CALL。\n红框是我们要看的，因为红框以外的call，通过观察参数，基本上就不是了。\n咱们从上往下看。\n第一个call：GameClient80.bin+672b0c\n看到他是call 寄存器的形式，基本上也不用看。\n第二个call：GameClient80.bin+66CABB\n第三个 call：GameClient80.bin+ 66CF3A\n第四个 call：GameClient80.bin+ 603F1D\n第五个 call：GameClient80.bin+ 603AB5\n第六个 call：GameClient80.bin+ 617B76\n到这里呢我们基本上是获取到有关吃药的call了，上面的六个call里也是包含了真实的吃药call，但是呢，我这里就不继续分析了，直接摊牌。\n我用的是第五个call。其他的call大家可以去尝试，除了第一个call,因为第一个call进去后直接是send发包，就意味着第一个call只是负责给服务器发送一个封包来检测这个动作是否合法，他直接跳过了动作的封装。\n3、调用 调用非常的简单，因为我用的是第五个call，我也分析过了，我就直接贴上结果。\npush 2DCFA3B8 //血瓶地址 mov ecx,[0142e368] //背包基地址 call 00A03C60 这个call，如果说从push和call内部的ret来看他只有一个参数，但是其实他有两个参数，其中一个是push，另一个是通过给ecx，然后call内部进行调用。 调用这个call只要传参正确就直接实现了吃药，具体效果我就不发了。这里我简单的说一下他这个背包地址和血瓶地址怎么来。\n首先是背包基地址，直接通过血瓶的数量反推就可以直接得到。反推的过程可以算出一个表达式：\n背包物品=0142E368]+0x54]+i*4]\n然后去查找一些偏移，发现+0x20偏移存的是数量 +0x8的位置存的是物品ID。每个物品的ID是唯一的，我们就可以去记录这个药品的ID,然后写一个程序去遍历物品在判断该物品的ID是否为血瓶，这样就可以得到了血瓶的地址，然后就可以去调用了。这里我简单贴一下我的C++代码：\nvoid __declspec(naked) Call_Blood() { _asm { pushad push g_dwBloodAddr //对象地址 mov ecx, [Base_Pack] mov eax, 0x00A03C60 call eax popad ret } } void TraversingObject() { DWORD actorArray = 0, count = 0, id = 0; for (int i = 0; i \u003c 180; i++) { actorArray = *(DWORD*)Base_Pack + 0x54; actorArray = *(DWORD*)actorArray + i * 0x4; actorArray = *(DWORD*)actorArray; /*读取物品数量和ID*/ ReadProcessMemory(GetCurrentProcess(), (LPVOID)(actorArray + 0x20), \u0026count, sizeof(DWORD), NULL); ReadProcessMemory(GetCurrentProcess(), (LPVOID)(actorArray + 0x8), \u0026id, sizeof(DWORD), NULL); if (0x00213D7C == id) //血 g_dwBloodAddr = actorArray; } } void CDEBUG::OnBnClickedButton2() { // TODO: 在此添加控件通知处理程序代码 if (NULL == g_dwBloodAddr) TraversingObject(); Call_Blood(); } 我这里是编写为带有MFC窗口的DLL，注入游戏后会弹出一个窗口，然后点击一下Button2就可以实现吃药了。\n三、总结 在分析这个游戏时，深刻认识到了什么叫做吃瘪，笔者刚刚开始是通过血瓶数量、ID、地址去逆向反推血瓶call，然后开始遇到各种奇葩，因为如果你用CE去访问什么写入了血瓶数量，你会发现，无论什么时候，他传进去的总是使用后的血瓶数量**(当前数量-1)**。就是说他血瓶数量减少的代码段并不在当前访问的代码段，而是在其他地方。然后笔者就继续分析数量企图找出被减少的代码段，发现代码有加密运算，经过一顿骚操作后，我直接尝试nop大法，发现。。。。nop后还能吃药，就说明我找错了。。\n然后尝试其他方法，反正就各种吃瘪，最后还找到了播放粒子特效的call。。。然后被迫用send发包，简单的处理之后直接找到吃药call。虽然说找call的整个过程稍微有点心累，但是总的来说收获还是挺多的，因为在找背包数组的时候还是稍微吃点逻辑，另外就是send发包的一个灵活处理。\n",
+  "wordCount" : "186",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/gamehacker/%E5%A4%A9%E5%A0%82m%E5%82%B3%E8%AA%AA-%E5%90%83%E8%8D%AFcall%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      天堂M傳說-吃药call的逆向分析
+    </h1>
+    <div class="post-description">
+      天堂M傳說-吃药call的逆向分析
+    </div>
+    <div class="post-meta">时长:&nbsp;1分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e5%a4%a9%e5%a0%82m%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90" aria-label="天堂M傳說-吃药call的逆向分析">天堂M傳說-吃药call的逆向分析</a></li>
+                    <li>
+                        <a href="#%e4%b8%80%e5%9f%ba%e7%a1%80%e7%90%86%e8%ae%ba%e7%9f%a5%e8%af%86" aria-label="一、基础理论知识">一、基础理论知识</a></li>
+                    <li>
+                        <a href="#%e4%ba%8c%e5%ae%9e%e8%b7%b5%e6%98%af%e6%a3%80%e9%aa%8c%e7%9c%9f%e7%90%86%e7%9a%84%e5%94%af%e4%b8%80%e6%a0%87%e5%87%86" aria-label="二、实践是检验真理的唯一标准">二、实践是检验真理的唯一标准</a></li>
+                    <li>
+                        <a href="#1%e6%81%a2%e5%a4%8d%e9%92%a9%e5%ad%90" aria-label="1、恢复钩子">1、恢复钩子</a></li>
+                    <li>
+                        <a href="#2%e5%8f%91%e5%8c%85%e7%9a%84%e7%81%b5%e6%b4%bb%e5%a4%84%e7%90%86%e4%bb%a5%e5%8f%8a%e5%88%86%e6%9e%90" aria-label="2、发包的灵活处理以及分析">2、发包的灵活处理以及分析</a></li>
+                    <li>
+                        <a href="#3%e8%b0%83%e7%94%a8" aria-label="3、调用">3、调用</a></li>
+                    <li>
+                        <a href="#%e4%b8%89%e6%80%bb%e7%bb%93" aria-label="三、总结">三、总结</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="天堂m傳說-吃药call的逆向分析">天堂M傳說-吃药call的逆向分析<a hidden class="anchor" aria-hidden="true" href="#天堂m傳說-吃药call的逆向分析">#</a></h1>
+<p>• <a href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2019-10-7 13:10</p>
+<p><strong>目录</strong></p>
+<p>一、基础理论知识</p>
+<p>二、实践是检验真理的唯一标准</p>
+<p>1、恢复钩子</p>
+<p>2、发包的灵活处理以及分析</p>
+<p>3、调用</p>
+<p>三、总结</p>
+<p>分析对象：<strong>天堂M 傳說</strong></p>
+<p>编程工具：<strong>Visual Studio 2019</strong></p>
+<p>工具：<strong>CheatEngine7.0</strong> （该游戏有调试器检测，OD附加后电脑直接进入卡死状态）、<strong>火绒剑</strong></p>
+<h1 id="一基础理论知识">一、基础理论知识<a hidden class="anchor" aria-hidden="true" href="#一基础理论知识">#</a></h1>
+<p>既然是吃药call，那么我们需要先思考一下这个call的一些信息，比如说他的参数个数，触发时机等等，这样的话才能方便我们去逆向找出这个call。</p>
+<p>首先我们明确两点：1、这个游戏的是一个网络游戏，那么就说明他和服务器存在着数据的交互，用来保证数据的正确性**(封包的检测)<strong>，举个例子：我们要做某个动作，那么此时客户端</strong>(就是我们正在玩的游戏)<strong>就会向服务器发送一个封包数据，然后服务器对这个封包进行一个验证，该动作是否合法或者可以操作，然后服务器再发送一个结果封包到客户端，客户端接收到封包后进行处理。如果合法，那么进行这个操作，如果不合法就阻止或者非法提示</strong>(封号)**。2、我们既然是要找吃药call，那么肯定是在我们吃药的时候才会触发的游戏内部call，因为游戏不可能说在我们做其他动作的时候游戏会调用的吃药call(该情况可以存在，但是没有必要)。明确了上面两点后，我们呢就有了一些找call的思路。</p>
+<p><strong>思路一</strong>：通过发包。因为在我们吃药的时候，客户端肯定会发送一个封包到服务器，用来验证这个动作是否可行，然后服务器反馈到客户端。我们就可以直接在相关发包的函数头下一个断点，然后吃药，断下的时候，我们就可以通过不断的返回上一层来定位到吃药call。</p>
+<p><strong>思路二</strong>：通过物品的属性去逆向查找。因为药品是背包的物品，那么我们吃药这个动作也相当于一个使用背包物品的动作，此时，游戏需要知道我们使用了背包的哪个物品。然后再根据这个物品去调用他的相关函数。所以说，在我们找吃药call的时候需要注意一些的参数**(也就是push的值)<strong>,因为他极大的可能会存着药品的某个属性</strong>(比如：地址、ID、数量)**。因此我们就可以通过这个特性直接在药品的相关属性下一个访问断点，通过调试器给我们断下的地方去定位到一些关键代码段，然后再进行逆向反推，这样的方法也是可以找到吃药call的。</p>
+<p>笔者在本篇文章中采用的是思路一，原因是思路二看起来虽然道理很简单，但是真要去逆向反推的话其过程是相当繁琐和困难的，因为游戏公司不可能给你轻轻松松的找到call，他们肯定会进行一些代码处理和加密，让逆向的难度大大增加。其困难的程度由该call的火爆性决定**(如果一个call被众多外挂所利用，那么游戏公司会对其进行一些处理，例如:加密，检测)**。话不多说，咱们开始搞事！</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled.png" alt="Untitled"  />
+</p>
+<h1 id="二实践是检验真理的唯一标准">二、实践是检验真理的唯一标准<a hidden class="anchor" aria-hidden="true" href="#二实践是检验真理的唯一标准">#</a></h1>
+<p>咱们既然是通过发包下手，那么简单来介绍一下常见的发包函数: send,sendto,WSASend，这些呢基本都是现在比较常见的发包函数，游戏也基本上也是通过这三个发包函数中的其中一个去与服务器交互的。Emmm，既然我们知道，那么游戏公司也知道，所以咱们相对于某些游戏来说，直接在这些函数头部下断是会吃瘪的，需要去瞎搞更深底层的WSPSend。因为本篇文章所采用的游戏对其的处理并不怎么高手，这里呢我就不过多讨论。</p>
+<h1 id="1恢复钩子">1、恢复钩子<a hidden class="anchor" aria-hidden="true" href="#1恢复钩子">#</a></h1>
+<p>这里我用的是火绒剑**(官方认可工具,强大又安全)**。咱们打开游戏后先来看一下这游戏干了什么事。打开火绒剑扫描钩子。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%201.png" alt="Untitled"  />
+</p>
+<p>通过扫描结果我们会发现这个游戏下了很多的钩子，其中有一个就是发包函数send的钩子，我们双击看一下。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/QQ%25E5%259B%25BE%25E7%2589%258720221016013535.png" alt="QQ图片20221016013535.png"  />
+</p>
+<p>发现他的头变成了jmp，而且目的地址为游戏地址。为了确保调试正常，我们待会把他下的所有钩子全部恢复。<strong>这里注意：钩子的恢复必须要在游戏内，如果恢复钩子过早那么游戏会提示一些错误。简单说就是你得在游戏界面为以下时才能恢复。</strong></p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/1648093052946-09bc4e8c-4939-49bf-a7da-f263ded07320.png" alt="1648093052946-09bc4e8c-4939-49bf-a7da-f263ded07320.png"  />
+</p>
+<h1 id="2发包的灵活处理以及分析">2、发包的灵活处理以及分析<a hidden class="anchor" aria-hidden="true" href="#2发包的灵活处理以及分析">#</a></h1>
+<p>这个游戏用的是send发包，因为三大发包函数里只有这个下断后会断下。我们用CE附加游戏后到send头部尝试下断后做动作看看。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/aaaaa.png" alt="aaaaa.png"  />
+</p>
+<p>我们会发现，一旦我们下断点后，切回游戏的一瞬间，断点就被断下，无论我们重复多少次都是如此。而我们当前想要是，只有在游戏角色做某出些动作时才断下。这个就与我们想做的事产生了一些矛盾，那怎么办呢？</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422.png" alt="1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422.png"  />
+</p>
+<p>我们先思考一下为什么在我们切回游戏的时候，断点会断下？断点一旦被断下就说明了有封包发送到服务器，可是客户端(游戏)为什么在我们切回游戏的时候要发送封包呢？其实在切回游戏后，游戏会瞬间发送一个封包到服务器是有一定作用的，这个作用类似于游戏拉回操作。用FPS来说的话就是防止瞬移，有些FPS能实现网截瞬移就是因为游戏并不会对服务器发送一个校验的封包**(有的直接通过第三方工具拦截封包实现瞬移)**，如果说游戏不断的向服务器发送一个请求正确位置的封包，那么服务器接收到后就会返回一个正确位置的封包，然后游戏会进行一个判断，如果当前位置不正确就直接拉回。大致原理就是这个意思。明白这个之后我们来看一下怎么去解决这个问题。稍微学过socket编程的都知道，send函数他有一个参数是包长，我们贴上MSDN的定义：</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422%201.png" alt="1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422.png"  />
+</p>
+<p>在游戏中，不同的动作他的包长也会发生变化的，因为动作不同，包数据也不同。<strong>(当然不排除一些包长一样的动作)</strong>，那么我们就可以通过这个包长去下一个条件断点，只有当包长是吃药时的包长才让断点断下。那么问题来了，我们怎么知道他这个包长是多少，上面也说了，我们一下断点切回游戏，游戏就会发送一个类似校验的封包，使游戏断下，这样的话我们也没法观察吃药时的封包包长。但是只要思想不滑坡，办法总比困难多。咱们直接来一个HOOK获取包长就行了。我们在send头部下断让其断下，然后返回到外层。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%202.png" alt="Untitled"  />
+</p>
+<p><strong>(为什么不在send头部下断点，因为CE好像不支持[esp+xx] == xx 这样类型的断点，反正我没下成功)</strong>，通过send的定义，包长是第三个参数，那么对应的就是eax是我们的包长，我们可以直接在push eax 下面一句进行一个hook。我们首先分配一个空白地址用来保存我们的eax，我申请的地址为0x03830000,我们直接用CE自带的代码注入HOOK，</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%203.png" alt="Untitled"  />
+</p>
+<p>HOOK后，咱们把刚刚申请到的地址放到列表看看。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422%202.png" alt="1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422.png"  />
+</p>
+<p>我这里以16进制显示，我们发现现在我们可以看到包长了。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422%203.png" alt="1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422.png"  />
+</p>
+<p>那么咱们去吃药，发现吃药的时候包长也是0xE，那好办，下一个条件断点。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422%204.png" alt="1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422.png"  />
+</p>
+<p>咱们回去吃药，注意：确保你是吃药后才断下的。因为我说了，不排除其他动作包长也是0xE。</p>
+<p>吃药断下后，我们记录一下跟踪到的CALL。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%204.png" alt="Untitled"  />
+</p>
+<p>红框是我们要看的，因为红框以外的call，通过观察参数，基本上就不是了。</p>
+<p>咱们从上往下看。</p>
+<p><strong>第一个call：GameClient80.bin+672b0c</strong></p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422%205.png" alt="1648093081482-4f9c5bcd-5d04-4459-ac22-48e4acd97422.png"  />
+</p>
+<p>看到他是call 寄存器的形式，基本上也不用看。</p>
+<p><strong>第二个call：GameClient80.bin+66CABB</strong></p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%205.png" alt="Untitled"  />
+</p>
+<p><strong>第三个 call：GameClient80.bin+ 66CF3A</strong></p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%206.png" alt="Untitled"  />
+</p>
+<p><strong>第四个 call：GameClient80.bin+ 603F1D</strong></p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%207.png" alt="Untitled"  />
+</p>
+<p><strong>第五个 call：GameClient80.bin+ 603AB5</strong></p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%208.png" alt="Untitled"  />
+</p>
+<p><strong>第六个 call：GameClient80.bin+ 617B76</strong></p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%209.png" alt="Untitled"  />
+</p>
+<p>到这里呢我们基本上是获取到有关吃药的call了，上面的六个call里也是包含了真实的吃药call，但是呢，我这里就不继续分析了，直接摊牌。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2010.png" alt="Untitled"  />
+</p>
+<p>我用的是第五个call。其他的call大家可以去尝试，除了第一个call,因为第一个call进去后直接是send发包，就意味着第一个call只是负责给服务器发送一个封包来检测这个动作是否合法，他直接跳过了动作的封装。</p>
+<h1 id="3调用">3、调用<a hidden class="anchor" aria-hidden="true" href="#3调用">#</a></h1>
+<p>调用非常的简单，因为我用的是第五个call，我也分析过了，我就直接贴上结果。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">push</span> <span class="mi">2</span><span class="n">DCFA3B8</span>              <span class="c1">//血瓶地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">mov</span> <span class="n">ecx</span><span class="p">,[</span><span class="mf">0142e368</span><span class="p">]</span>           <span class="c1">//背包基地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">call</span> <span class="mo">00</span><span class="n">A03C60</span>
+</span></span></code></pre></div><p>这个call，如果说从push和call内部的ret来看他只有一个参数，但是其实他有两个参数，其中一个是push，另一个是通过给ecx，然后call内部进行调用。 调用这个call只要传参正确就直接实现了吃药，具体效果我就不发了。这里我简单的说一下他这个背包地址和血瓶地址怎么来。</p>
+<p>首先是背包基地址，直接通过血瓶的数量反推就可以直接得到。反推的过程可以算出一个表达式：</p>
+<p><strong>背包物品=0142E368]+0x54]+i*4]</strong></p>
+<p>然后去查找一些偏移，发现+0x20偏移存的是数量   +0x8的位置存的是物品ID。每个物品的ID是唯一的，我们就可以去记录这个药品的ID,然后写一个程序去遍历物品在判断该物品的ID是否为血瓶，这样就可以得到了血瓶的地址，然后就可以去调用了。这里我简单贴一下我的C++代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">__declspec</span><span class="p">(</span><span class="kr">naked</span><span class="p">)</span> <span class="n">Call_Blood</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                 <span class="n">_asm</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                 <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">pushad</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">push</span> <span class="n">g_dwBloodAddr</span>   <span class="c1">//对象地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         
+</span></span><span class="line"><span class="cl">                          <span class="n">mov</span> <span class="n">ecx</span><span class="p">,</span> <span class="p">[</span><span class="n">Base_Pack</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span> <span class="mh">0x00A03C60</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">call</span> <span class="n">eax</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">popad</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">ret</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                 <span class="p">}</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="nf">TraversingObject</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                 <span class="n">DWORD</span> <span class="n">actorArray</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                 <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">180</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                 <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">actorArray</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="n">Base_Pack</span> <span class="o">+</span> <span class="mh">0x54</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">actorArray</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="n">actorArray</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mh">0x4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">actorArray</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="n">actorArray</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="cm">/*读取物品数量和ID*/</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">ReadProcessMemory</span><span class="p">(</span><span class="n">GetCurrentProcess</span><span class="p">(),</span> <span class="p">(</span><span class="n">LPVOID</span><span class="p">)(</span><span class="n">actorArray</span> <span class="o">+</span> <span class="mh">0x20</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">count</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">DWORD</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>  
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">ReadProcessMemory</span><span class="p">(</span><span class="n">GetCurrentProcess</span><span class="p">(),</span> <span class="p">(</span><span class="n">LPVOID</span><span class="p">)(</span><span class="n">actorArray</span> <span class="o">+</span> <span class="mh">0x8</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">id</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">DWORD</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="k">if</span> <span class="p">(</span><span class="mh">0x00213D7C</span> <span class="o">==</span> <span class="n">id</span><span class="p">)</span>  <span class="c1">//血
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         
+</span></span><span class="line"><span class="cl">                                  <span class="n">g_dwBloodAddr</span> <span class="o">=</span> <span class="n">actorArray</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                 <span class="p">}</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="n">CDEBUG</span><span class="o">::</span><span class="n">OnBnClickedButton2</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                 <span class="c1">// TODO: 在此添加控件通知处理程序代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         
+</span></span><span class="line"><span class="cl">                 <span class="k">if</span> <span class="p">(</span><span class="nb">NULL</span> <span class="o">==</span> <span class="n">g_dwBloodAddr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                          <span class="n">TraversingObject</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">                 <span class="n">Call_Blood</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">         
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span></code></pre></div><p>我这里是编写为带有MFC窗口的DLL，注入游戏后会弹出一个窗口，然后点击一下Button2就可以实现吃药了。</p>
+<h1 id="三总结">三、总结<a hidden class="anchor" aria-hidden="true" href="#三总结">#</a></h1>
+<p>在分析这个游戏时，深刻认识到了什么叫做吃瘪，笔者刚刚开始是通过血瓶数量、ID、地址去逆向反推血瓶call，然后开始遇到各种奇葩，因为如果你用CE去访问什么写入了血瓶数量，你会发现，无论什么时候，他传进去的总是使用后的血瓶数量**(当前数量-1)**。就是说他血瓶数量减少的代码段并不在当前访问的代码段，而是在其他地方。然后笔者就继续分析数量企图找出被减少的代码段，发现代码有加密运算，经过一顿骚操作后，我直接尝试nop大法，发现。。。。nop后还能吃药，就说明我找错了。。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%a4%a9%e5%a0%82M%e5%82%b3%e8%aa%aa-%e5%90%83%e8%8d%afcall%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2011.png" alt="Untitled"  />
+</p>
+<p>然后尝试其他方法，反正就各种吃瘪，最后还找到了播放粒子特效的call。。。然后被迫用send发包，简单的处理之后直接找到吃药call。虽然说找call的整个过程稍微有点心累，但是总的来说收获还是挺多的，因为在找背包数组的时候还是稍微吃点逻辑，另外就是send发包的一个灵活处理。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/gamehacker/">GameHacker</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/unrealengine/%E5%9B%9B%E8%AE%A4%E8%AF%86%E7%BB%93%E6%9E%84%E5%B9%B6%E6%89%8B%E5%8A%A8%E8%A7%A3%E6%9E%90/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>四、认识结构并手动解析</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/virus/%E5%BD%A9%E8%99%B9%E7%8C%AB%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>彩虹猫病毒分析</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

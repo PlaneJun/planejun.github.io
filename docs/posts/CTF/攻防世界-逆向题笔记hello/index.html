@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>攻防世界-逆向题笔记{Hello, | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="CTF">
+<meta name="description" content="攻防世界-逆向题笔记{Hello,">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/ctf/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0hello/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="攻防世界-逆向题笔记{Hello," />
+<meta property="og:description" content="攻防世界-逆向题笔记{Hello," />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/ctf/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0hello/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="攻防世界-逆向题笔记{Hello,"/>
+<meta name="twitter:description" content="攻防世界-逆向题笔记{Hello,"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "攻防世界-逆向题笔记{Hello,",
+      "item": "https://planejun.github.io/posts/ctf/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0hello/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "攻防世界-逆向题笔记{Hello,",
+  "name": "攻防世界-逆向题笔记{Hello,",
+  "description": "攻防世界-逆向题笔记{Hello,",
+  "keywords": [
+    "CTF"
+  ],
+  "articleBody": "分析对象：Hello,CTF\n工具：ida、exeinfope\n步骤：1）、运行查看效果\n2）、PE工具查壳\n3）、查看文件平台\n4）、如果有壳就脱壳，无壳进行第四步\n5）、文件拖入ida进行分析\n6）、解密\n一、运行查看效果\n可以发现输入错误的注册码后，又从新开始要求输入，可知他是一个循环。\n二、PE工具查壳\n无壳。\n三、查看文件平台\n依旧为32位程序，直接32位ida打开\n四、无\n五、文件拖入ida进行分析\n依旧先搜索字符串，看看有没有可用内容或者明文flag。\n发现这里有可用信息，**success! ,**双击后交叉引用到此处。\n拉到头，发现该函数是main函数。\n并发现该处有可疑之处，猜测是加密密钥。\n简单进行分析后，发现输入的内容长度不能\u003e17，但是在最后比较的时候却和v13的比较。通过手算v13长度可只为34，而17的两倍就是为34。猜测程序将输入的内容进行了一个类似翻倍的操作。那么看看他是怎么翻倍操作。\n很明显，他把输入内容的字符转换为十六进制后保存。放一张ASCLL码表\n转换过程非常明显。比如输入的内容为ABC，那么经过程序转换就为 0x41 0x42 0x43,存入变量中就是414243。\n六、解密\n明白了转换过程，那么我们就可以解密了。\n可以写脚本，也可以手动转换，这里就直接脚本转换\n将密钥两辆分解得到 43 72 61 63 6b 4d 65 4a 75 73 74 46 6f 72 46 75 6e\n因为这些都是十六进制的Ascll码，直接对应表转换为字符即可。\n总结：\n这题太简单，没什么好总结 ，就是这么膨胀！ =。=\n",
+  "wordCount" : "53",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/ctf/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0hello/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      攻防世界-逆向题笔记{Hello,
+    </h1>
+    <div class="post-description">
+      攻防世界-逆向题笔记{Hello,
+    </div>
+    <div class="post-meta">时长:&nbsp;1分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> 
+
+  <div class="post-content"><p>分析对象：Hello,CTF</p>
+<p>工具：ida、exeinfope</p>
+<p>步骤：1）、运行查看效果</p>
+<p>2）、PE工具查壳</p>
+<p>3）、查看文件平台</p>
+<p>4）、如果有壳就脱壳，无壳进行第四步</p>
+<p>5）、文件拖入ida进行分析</p>
+<p>6）、解密</p>
+<p><strong>一、运行查看效果</strong></p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId4.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId4.png"  />
+</p>
+<p>可以发现输入错误的注册码后，又从新开始要求输入，可知他是一个循环。</p>
+<p><strong>二、PE工具查壳</strong></p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId5.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId5.png"  />
+</p>
+<p>无壳。</p>
+<p><strong>三、查看文件平台</strong></p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId6.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId6.png"  />
+</p>
+<p>依旧为<strong>32位程序</strong>，直接32位ida打开</p>
+<p><strong>四、无</strong></p>
+<p><strong>五、文件拖入ida进行分析</strong></p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId7.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId7.png"  />
+</p>
+<p>依旧先<strong>搜索字符串</strong>，看看有没有<strong>可用内容</strong>或者<strong>明文flag</strong>。</p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId8.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId8.png"  />
+</p>
+<p>发现这里有可用信息，**success! ,**双击后交叉引用到此处。</p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId9.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId9.png"  />
+</p>
+<p>拉到头，发现该函数是<strong>main</strong>函数。</p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId10.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId10.png"  />
+</p>
+<p>并发现该处有可疑之处，猜测是加密密钥。</p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId11.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId11.png"  />
+</p>
+<p>简单进行分析后，发现输入的内容长度不能&gt;17，但是在最后比较的时候却和v13的比较。通过手算v13长度可只为34，而17的两倍就是为34。猜测程序将输入的内容进行了一个类似翻倍的操作。那么看看他是怎么翻倍操作。</p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId12.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId12.png"  />
+</p>
+<p>很明显，他把输入内容的字符转换为十六进制后保存。放一张ASCLL码表</p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId13.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId13.png"  />
+</p>
+<p>转换过程非常明显。比如输入的内容为ABC，那么经过程序转换就为 0x41 0x42 0x43,存入变量中就是414243。</p>
+<p><strong>六、解密</strong></p>
+<p>明白了转换过程，那么我们就可以解密了。</p>
+<p>可以写脚本，也可以手动转换，这里就直接脚本转换</p>
+<p>将密钥两辆分解得到 43 72 61 63 6b 4d 65 4a 75 73 74 46 6f 72 46 75 6e</p>
+<p>因为这些都是十六进制的Ascll码，直接对应表转换为字符即可。</p>
+<p><img loading="lazy" src="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId14.png" alt="%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHello,%20CTF%7D%2014ff0db5f95c45b48734ba56c22d3c72/document_image_rId14.png"  />
+</p>
+<p><strong>总结：</strong></p>
+<p>这题太简单，没什么好总结 ，就是这么膨胀！           =。=</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/ctf/">CTF</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/ctf/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0getit/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>攻防世界-逆向题笔记{getit}</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/ctf/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0insanity/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>攻防世界-逆向题笔记{insanity}</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

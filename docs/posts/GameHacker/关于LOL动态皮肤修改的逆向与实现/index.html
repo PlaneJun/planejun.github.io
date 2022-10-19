@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>关于LOL动态皮肤修改的逆向与实现 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="GameHacker">
+<meta name="description" content="关于LOL动态皮肤修改的逆向与实现">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/gamehacker/%E5%85%B3%E4%BA%8Elol%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="关于LOL动态皮肤修改的逆向与实现" />
+<meta property="og:description" content="关于LOL动态皮肤修改的逆向与实现" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/gamehacker/%E5%85%B3%E4%BA%8Elol%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="关于LOL动态皮肤修改的逆向与实现"/>
+<meta name="twitter:description" content="关于LOL动态皮肤修改的逆向与实现"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "关于LOL动态皮肤修改的逆向与实现",
+      "item": "https://planejun.github.io/posts/gamehacker/%E5%85%B3%E4%BA%8Elol%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "关于LOL动态皮肤修改的逆向与实现",
+  "name": "关于LOL动态皮肤修改的逆向与实现",
+  "description": "关于LOL动态皮肤修改的逆向与实现",
+  "keywords": [
+    "GameHacker"
+  ],
+  "articleBody": "关于LOL动态皮肤修改的逆向与实现 • PlaneJun ・2018-12-3 09:18\n第一次在看雪这种地方发这种帖子，心里很动荡不安。因为我本身很菜，所以有哪里不足的请大佬多多包涵并指出。\n最近莫名其妙又染上LOL这个游戏了，然后突然想到之前网上的动态换肤辅助，所以就打算下载一个然后搞搞事，最后虽然是弄出来了，但是因为技术比较差。在实现方面会因为和游戏主线程冲突，导致游戏崩掉（原因看文章结尾）。下面我开始上分析。Ps：本人技术以及表达能力都很差，请大家见谅。(因为在写这篇文章的时候，我是一边分析一边写这篇文章所以游戏可能是已经结束的状态。但是如果有需要调试游戏的话，我会重新打开游戏进行调试，所以会发现有一些图片和数据是不一样的，重要的是分析)\n在开始分析的时候，因为我以前搞过这游戏，所以我知道这个实现动态换皮肤是需要一个皮肤ID的。所以我就直接打开下载好的辅助，来进行找这个ID。\n辅助图片如下：\n在这里先说一下如何去找一个英雄皮肤ID，所谓的英雄皮肤ID指的是某个英雄他的皮肤数从0开始算，比如【暗裔剑魔】有4个皮肤，那么他的皮肤ID就是0(默认皮肤)、1、2、3。如下图：\n于是我在寻找这个ID的时候就是按照这种方法来寻找，因为默认皮肤的ID为0，所以我通过辅助来换到下一个皮肤的时候，我搜索1，这样慢慢的搜索，最后就会剩下一个我们需要的地址。下面我以【剑圣】为例(搜索好了的)。\n然后我们右键访问这个地址，然后去自杀。因为在人物复活的时候皮肤CALL会访问这个皮肤ID来重新对皮肤进行初始化，然后我们就可以通过这个来找出皮肤CALL。下图是该地址在人物复活的时候被访问。\n现在出现了下面两条：\n00581B6B - 89 46 40 - mov [esi+0x40],eax -1 00582CB7 - 8B 5F 40 - mov ebx,[edi+0x40] -2\n我们选择第一条点击详细信息\n我们会发现eax=0，esi=7DE7D2E8。回到游戏我们会发现我们原本换好的皮肤现在变成默认的皮肤了，也就是皮肤ID变成了0。然后还会发现esi+0x40=7DE7D328，而7DE7D328这个地址刚刚好就是我们搜索出来的皮肤ID地址，就是说我们在复活的时候游戏会把0赋值给我们的皮肤ID地址，让我们的皮肤变成默认的皮肤。那么这个地方很可能就是一个皮肤CALL的传参关键。。。。。然后我们看第二条，一样查看详细信息。\n发现edi=7DE7D2E8，然后把edi+0x40的值传进ebx，而这个edi+0x40刚好是我们搜索到的这个皮肤ID地址。可是我们来想一下，此时这个时候皮肤ID地址的值已经为0，说明游戏在执行到这个语句之前，皮肤ID的值已经被改变，就是说在执行到这条语句之前皮肤已经被修改过，所以这条语句不太可能是调用皮肤CALL之前的语句，而是在调用皮肤CALL之后的语句。 以上分析后，发现只有第一条。\n00581B6B - 89 46 40 - mov [esi+0x40],eax\n符合我们的要求，我们记录他的地址00581B6B，然后扔到OD里查看。\n我们打开OD，Ctrl+G输入我们记录的地址然后回车跳到这一行代码。有意思的地方到了，在反汇编窗口中可以看到在eax传进皮肤ID地址后，立即去执行了一个CALL，这个就引起了我们的注意，因为我上面说过，调用皮肤CALL需要的一个参数就是皮肤ID值。现在我们在这个CALL下一个断点，然后去送自杀，等待复活。注意：这个CALL需要在即将复活的那一瞬间下断，不然会被其他地方调用的时候断下，这个时候所返回的数据是不正确的。\n当人物即将重生的时候游戏断了下来，看右边，EAX的值依然为0。这个时候往上看一下EAX的来源：\nmov eax,dword ptr ss:[esp+0x10]\n然后在我开始研究的时候，第一想法是去追这个esp的来源然后想直接通过找到的最终地址加上各种偏移来修改皮肤的，然后发现追不到。结果重新思考一下发现是没有必要的去追这个esp的，因为我直接可以在调用这段的时候给eax一个皮肤ID的值或者直接把皮肤ID的值传进皮肤ID地址(esi+0x40)里，然后直接调用下面的那个CALL就ojbk了。于是我就打算尝试直接调用这个CALL看看效果。为了弄懂调用这个CALL需要哪些参数的需要，我们继续分析。 这里先贴上这个部分的反汇编代码：\n00581B67 8BCE mov ecx,esi 00581B69 6A 01 push 0x1 00581B6B 8946 40 mov dword ptr ds:[esi+0x40],eax 00581B6E E8 1D110000 call League_o.00582C90 首先：把esi传进了ecx，然后压入一个1，之后把eax传进[esi+0x40]，最后就直接去调用CALL。到发现这里没看到esi的值是哪里来的，所以要么esi的传值操作在上面，要么就在上一层。我们往上找看看有没有对esi赋值的语句。哟西,果然有\n00581B48 8BF1 mov esi,ecx 把ecx的值传进esi，然后又发现上面没有对ecx的传值操作，那只能去上一层找。我们在程序头下断点，然后去自杀，等复活。等我们即将复活的时候断点断了下来，我们直接快捷键返回上一层，这个时候会看到有对ecx的传值操作。\n0061E0B0 - 8D 8F B8320000 - lea ecx,[edi+0x32B8] 我们在这里下一个断然后去自杀等复活，看看断下来的时候edi的值。\nedi=5D395010，我们把这个值扔进CE去搜索一下 。\n会发现出现一个绿色的值，我们把它拉下来查看地址。\n032A6DCC (“League of Legends.exe”+2EA6DCC)\n那么032A6DCC这个估计就是人物地址了，所以\necx=[0x032A6DC]+0x32B8C // lea ecx,[edi+0x32B8]\n因为esi=ecx，由此可知皮肤ID的地址=[0x032A6DC]+0x32B8C+0x40\n我们现在找出ecx的值了，我们返回到刚刚的这个位置。\n现在我们回车进入到这个CALL里。\n这个时候会发现在这个CALL里面有一条语句就是上面我们用CE调试的时候访问我们皮肤ID地址的语句。\n00582CB7 - 8B 5F 40 - mov ebx,[edi+0x40] 而这一条语句是在皮肤ID已经传入皮肤ID地址这个操作后才执行的，这个时候我就估计这个是皮肤CALL的内部。刚刚那个外层就是调用这个CALL来实现更换皮肤的，并且EAX是一个皮肤ID。现在我们从程序头开始分析。\n00582C90 83EC 2C sub esp,0x2C 00582C93 A1 D0D49E01 mov eax,dword ptr ds:[0x19ED4D0] 00582C98 33C4 xor eax,esp 00582C9A 894424 28 mov dword ptr ss:[esp+0x28],eax 00582C9E 53 push ebx 00582C9F 55 push ebp 00582CA0 56 push esi 00582CA1 57 push edi 从开头到这为止都没有问题，然后到\n00582CA2 8BF9 mov edi,ecx 看一下这一句，把ecx的值传给edi，因为从程序头到这一行都没有为ecx传值操作，所以可知ecx是上一层传进来的，而我们已经分析出ecx的来源，所以ecx是一个参数。然后在往下看，发现都在不断的从edi+偏移里读取东西，而edi来源于ecx，那么可以确定之前找到那个绿色的地址就是人物地址，而[人物地址]+0x32B8应该是关于人物模型之类的，然后再加一个偏移就是对应的属性。然后继续往下分析，直到这个CALL结束(一路顺畅)。\n00582E8F C2 0400 retn 0x4 发现retn 04 ，说明这个call就push了一个，就是之前那个1，到这里大部分都已经分析完了，现在我们来整理一下，这里贴上游戏调用这个CALL的原型：\n00581B63 8B4424 10 mov eax,dword ptr ss:[esp+0x10] //从某个地方获取ID 00581B67 8BCE mov ecx,esi 00581B69 6A 01 push 0x1 00581B6B 8946 40 mov dword ptr ds:[esi+0x40],eax //传入皮肤ID 00581B6E E8 1D110000 call League_o.00582C90 //调用CALL 人物基址=0x032A6DC\necx=esi=[人物基址]+0x32B8\n皮肤ID的地址=[人物基址]+0x32B8C+0x40\n调用CALL所需要的参数：\necx //通过mov把人物基址+0x32B8传入ecx\n1 //通过push压入\n皮肤ID //通过mov传进皮肤ID地址([人物基址]+0x32B8C+0x40=ecx+0x40)\n最后来测试一下，其中这一句我们就不用加入到代码了。\n00581B63 8B4424 10 mov eax,dword ptr ss:[esp+0x10] 我们只直接给皮肤ID地址传进一个ID值。\n在这里我换第二个皮肤，注入远程代码。\n调用成功，那么这个CALL应该就是调用皮肤的CALL。\n============================================================================================================\n崩溃原因：如果你们跟着我这个文章一步一步操作的话，会发现在下断点的时候，我们人物即使在没死或者没有复活的情况下也会断下，为什么？因为游戏的主线程也在调用这一段代码，但是具体干什么用我不懂，所以如果你在调用这段换肤CALL的时候主线程刚好也在调用这段换肤CALL，那么这个时候就会撞车，主线程就会不知所措，游戏就会崩溃。如何解决这个，就你们自己弄了，这里就不讨论了。\n============================================================================================================\n",
+  "wordCount" : "221",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/gamehacker/%E5%85%B3%E4%BA%8Elol%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      关于LOL动态皮肤修改的逆向与实现
+    </h1>
+    <div class="post-description">
+      关于LOL动态皮肤修改的逆向与实现
+    </div>
+    <div class="post-meta">时长:&nbsp;2分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e5%85%b3%e4%ba%8elol%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0" aria-label="关于LOL动态皮肤修改的逆向与实现">关于LOL动态皮肤修改的逆向与实现</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="关于lol动态皮肤修改的逆向与实现">关于LOL动态皮肤修改的逆向与实现<a hidden class="anchor" aria-hidden="true" href="#关于lol动态皮肤修改的逆向与实现">#</a></h1>
+<p>• <a href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2018-12-3 09:18</p>
+<p>第一次在看雪这种地方发这种帖子，心里很动荡不安。因为我本身很菜，所以有哪里不足的请大佬多多包涵并指出。</p>
+<p>最近莫名其妙又染上LOL这个游戏了，然后突然想到之前网上的动态换肤辅助，所以就打算下载一个然后搞搞事，最后虽然是弄出来了，但是因为技术比较差。在实现方面会因为和游戏主线程冲突，导致游戏崩掉（原因看文章结尾）。下面我开始上分析。<strong>Ps：本人技术以及表达能力都很差，请大家见谅。(因为在写这篇文章的时候，我是一边分析一边写这篇文章所以游戏可能是已经结束的状态。但是如果有需要调试游戏的话，我会重新打开游戏进行调试，所以会发现有一些图片和数据是不一样的，重要的是分析)</strong></p>
+<p>在开始分析的时候，因为我以前搞过这游戏，所以我知道这个实现动态换皮肤是需要一个皮肤ID的。所以我就直接打开下载好的辅助，来进行找这个ID。</p>
+<p>辅助图片如下：</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled.png" alt="Untitled"  />
+</p>
+<p>在这里先说一下如何去找一个<code>英雄皮肤ID</code>，所谓的英雄皮肤ID指的是某个英雄他的皮肤数从0开始算，比如【暗裔剑魔】有4个皮肤，那么他的皮肤ID就是0(默认皮肤)、1、2、3。如下图：</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%201.png" alt="Untitled"  />
+</p>
+<p>于是我在寻找这个ID的时候就是按照这种方法来寻找，因为默认皮肤的ID为0，所以我通过辅助来换到下一个皮肤的时候，我搜索1，这样慢慢的搜索，最后就会剩下一个我们需要的地址。下面我以【剑圣】为例(搜索好了的)。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%202.png" alt="Untitled"  />
+</p>
+<p>然后我们右键访问这个地址，然后去自杀。因为在人物复活的时候皮肤CALL会访问这个皮肤ID来重新对皮肤进行初始化，然后我们就可以通过这个来找出皮肤CALL。下图是该地址在人物复活的时候被访问。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%203.png" alt="Untitled"  />
+</p>
+<p>现在出现了下面两条：</p>
+<blockquote>
+<p>00581B6B - 89 46 40  - mov [esi+0x40],eax        -1
+00582CB7 - 8B 5F 40  - mov ebx,[edi+0x40]        -2</p>
+</blockquote>
+<p>我们选择第一条点击详细信息</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%204.png" alt="Untitled"  />
+</p>
+<p>我们会发现eax=0，esi=7DE7D2E8。回到游戏我们会发现我们原本换好的皮肤现在变成默认的皮肤了，也就是皮肤ID变成了0。然后还会发现esi+0x40=7DE7D328，而7DE7D328这个地址刚刚好就是我们搜索出来的皮肤ID地址，就是说我们在复活的时候游戏会把0赋值给我们的皮肤ID地址，让我们的皮肤变成默认的皮肤。那么这个地方很可能就是一个皮肤CALL的传参关键。。。。。然后我们看第二条，一样查看详细信息。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%205.png" alt="Untitled"  />
+</p>
+<p>发现edi=7DE7D2E8，然后把edi+0x40的值传进ebx，而这个edi+0x40刚好是我们搜索到的这个皮肤ID地址。可是我们来想一下，此时这个时候皮肤ID地址的值已经为0，说明游戏在执行到这个语句之前，皮肤ID的值已经被改变，就是说在执行到这条语句之前皮肤已经被修改过，所以这条语句不太可能是调用皮肤CALL之前的语句，而是在调用皮肤CALL之后的语句。
+以上分析后，发现只有第一条。</p>
+<blockquote>
+<p>00581B6B - 89 46 40  - mov [esi+0x40],eax</p>
+</blockquote>
+<p>符合我们的要求，我们记录他的地址00581B6B，然后扔到OD里查看。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%206.png" alt="Untitled"  />
+</p>
+<p>我们打开OD，Ctrl+G输入我们记录的地址然后回车跳到这一行代码。有意思的地方到了，在反汇编窗口中可以看到在eax传进皮肤ID地址后，立即去执行了一个CALL，这个就引起了我们的注意，因为我上面说过，调用皮肤CALL需要的一个参数就是皮肤ID值。现在我们在这个CALL下一个断点，然后去送自杀，等待复活。<strong>注意：这个CALL需要在即将复活的那一瞬间下断，不然会被其他地方调用的时候断下，这个时候所返回的数据是不正确的。</strong></p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%207.png" alt="Untitled"  />
+</p>
+<p>当人物即将重生的时候游戏断了下来，看右边，EAX的值依然为0。这个时候往上看一下EAX的来源：</p>
+<blockquote>
+<p>mov eax,dword ptr ss:[esp+0x10]</p>
+</blockquote>
+<p>然后在我开始研究的时候，第一想法是去追这个esp的来源然后想直接通过找到的最终地址加上各种偏移来修改皮肤的，然后发现追不到。结果重新思考一下发现是没有必要的去追这个esp的，因为我直接可以在调用这段的时候给eax一个皮肤ID的值或者直接把皮肤ID的值传进皮肤ID地址(esi+0x40)里，然后直接调用下面的那个CALL就ojbk了。于是我就打算尝试直接调用这个CALL看看效果。为了弄懂调用这个CALL需要哪些参数的需要，我们继续分析。
+这里先贴上这个部分的反汇编代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">81</span><span class="n">B67</span>    <span class="mi">8</span><span class="n">BCE</span>            <span class="n">mov</span> <span class="n">ecx</span><span class="p">,</span><span class="n">esi</span>       
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">81</span><span class="n">B69</span>    <span class="mi">6</span><span class="n">A</span> <span class="mo">01</span>           <span class="n">push</span> <span class="mh">0x1</span>
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">81</span><span class="n">B6B</span>    <span class="mi">8946</span> <span class="mi">40</span>         <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="n">esi</span><span class="o">+</span><span class="mh">0x40</span><span class="p">],</span><span class="n">eax</span> 
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">81</span><span class="n">B6E</span>    <span class="n">E8</span> <span class="mi">1</span><span class="n">D110000</span>     <span class="n">call</span> <span class="n">League_o</span><span class="mf">.00582</span><span class="n">C90</span>
+</span></span></code></pre></div><p>首先：把esi传进了ecx，然后压入一个1，之后把eax传进[esi+0x40]，最后就直接去调用CALL。到发现这里没看到esi的值是哪里来的，所以要么esi的传值操作在上面，要么就在上一层。我们往上找看看有没有对esi赋值的语句。哟西,果然有</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">81</span><span class="n">B48</span>    <span class="mi">8</span><span class="n">BF1</span>            <span class="n">mov</span> <span class="n">esi</span><span class="p">,</span><span class="n">ecx</span>
+</span></span></code></pre></div><p>把ecx的值传进esi，然后又发现上面没有对ecx的传值操作，那只能去上一层找。我们在程序头下断点，然后去自杀，等复活。等我们即将复活的时候断点断了下来，我们直接快捷键返回上一层，这个时候会看到有对ecx的传值操作。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mf">0061E0</span><span class="n">B0</span> <span class="o">-</span> <span class="mi">8</span><span class="n">D</span> <span class="mf">8F</span> <span class="n">B8320000</span>        <span class="o">-</span> <span class="n">lea</span> <span class="n">ecx</span><span class="p">,[</span><span class="n">edi</span><span class="o">+</span><span class="mh">0x32B8</span><span class="p">]</span>
+</span></span></code></pre></div><p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%208.png" alt="Untitled"  />
+</p>
+<p>我们在这里下一个断然后去自杀等复活，看看断下来的时候edi的值。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%209.png" alt="Untitled"  />
+</p>
+<p>edi=5D395010，我们把这个值扔进CE去搜索一下 。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%2010.png" alt="Untitled"  />
+</p>
+<p>会发现出现一个绿色的值，我们把它拉下来查看地址。</p>
+<p><strong>032A6DCC (&ldquo;League of Legends.exe&rdquo;+2EA6DCC)</strong></p>
+<p>那么<strong>032A6DCC</strong>这个估计就是人物地址了，所以</p>
+<p><strong>ecx=[0x032A6DC]+0x32B8C   // lea ecx,[edi+0x32B8]</strong></p>
+<p><strong>因为esi=ecx，由此可知皮肤ID的地址=[0x032A6DC]+0x32B8C+0x40</strong></p>
+<p>我们现在找出ecx的值了，我们返回到刚刚的这个位置。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%2011.png" alt="Untitled"  />
+</p>
+<p>现在我们回车进入到这个CALL里。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%2012.png" alt="Untitled"  />
+</p>
+<p>这个时候会发现在这个CALL里面有一条语句就是上面我们用CE调试的时候访问我们皮肤ID地址的语句。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">CB7</span> <span class="o">-</span> <span class="mi">8</span><span class="n">B</span> <span class="mf">5F</span> <span class="mi">40</span> <span class="o">-</span> <span class="n">mov</span> <span class="n">ebx</span><span class="p">,[</span><span class="n">edi</span><span class="o">+</span><span class="mh">0x40</span><span class="p">]</span>
+</span></span></code></pre></div><p>而这一条语句是在皮肤ID已经传入皮肤ID地址这个操作后才执行的，这个时候我就估计这个是皮肤CALL的内部。刚刚那个外层就是调用这个CALL来实现更换皮肤的，并且EAX是一个皮肤ID。现在我们从程序头开始分析。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">C90</span>    <span class="mi">83</span><span class="n">EC</span> <span class="mi">2</span><span class="n">C</span>         <span class="n">sub</span> <span class="n">esp</span><span class="p">,</span><span class="mh">0x2C</span>
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">C93</span>    <span class="n">A1</span> <span class="n">D0D49E01</span>     <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="mh">0x19ED4D0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">C98</span>    <span class="mi">33</span><span class="n">C4</span>            <span class="n">xor</span> <span class="n">eax</span><span class="p">,</span><span class="n">esp</span>
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">C9A</span>    <span class="mi">894424</span> <span class="mi">28</span>       <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ss</span><span class="p">:[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x28</span><span class="p">],</span><span class="n">eax</span>
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">C9E</span>    <span class="mi">53</span>              <span class="n">push</span> <span class="n">ebx</span>                                 
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">C9F</span>    <span class="mi">55</span>              <span class="n">push</span> <span class="n">ebp</span>
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">CA0</span>    <span class="mi">56</span>              <span class="n">push</span> <span class="n">esi</span>
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">CA1</span>    <span class="mi">57</span>              <span class="n">push</span> <span class="n">edi</span>
+</span></span></code></pre></div><p>从开头到这为止都没有问题，然后到</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">82</span><span class="n">CA2</span> <span class="mi">8</span><span class="n">BF9</span> <span class="n">mov</span> <span class="n">edi</span><span class="p">,</span><span class="n">ecx</span>
+</span></span></code></pre></div><p>看一下这一句，把ecx的值传给edi，因为从程序头到这一行都没有为ecx传值操作，所以可知ecx是上一层传进来的，而我们已经分析出ecx的来源，所以ecx是一个参数。然后在往下看，发现都在不断的从edi+偏移里读取东西，而edi来源于ecx，那么可以确定之前找到那个绿色的地址就是人物地址，而[人物地址]+0x32B8应该是关于人物模型之类的，然后再加一个偏移就是对应的属性。然后继续往下分析，直到这个CALL结束(一路顺畅)。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mf">00582E8</span><span class="n">F</span>    <span class="n">C2</span> <span class="mo">0400</span>         <span class="n">retn</span> <span class="mh">0x4</span>
+</span></span></code></pre></div><p>发现retn 04 ，说明这个call就push了一个，就是之前那个1，到这里大部分都已经分析完了，现在我们来整理一下，这里贴上游戏调用这个CALL的原型：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">81</span><span class="n">B63</span>    <span class="mi">8</span><span class="n">B4424</span> <span class="mi">10</span>     <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ss</span><span class="p">:[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">]</span>    <span class="c1">//从某个地方获取ID
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mo">005</span><span class="mi">81</span><span class="n">B67</span>    <span class="mi">8</span><span class="n">BCE</span>          <span class="n">mov</span> <span class="n">ecx</span><span class="p">,</span><span class="n">esi</span>   
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">81</span><span class="n">B69</span>    <span class="mi">6</span><span class="n">A</span> <span class="mo">01</span>         <span class="n">push</span> <span class="mh">0x1</span>
+</span></span><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">81</span><span class="n">B6B</span>    <span class="mi">8946</span> <span class="mi">40</span>       <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ds</span><span class="p">:[</span><span class="n">esi</span><span class="o">+</span><span class="mh">0x40</span><span class="p">],</span><span class="n">eax</span>   <span class="c1">//传入皮肤ID
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="mo">005</span><span class="mi">81</span><span class="n">B6E</span>    <span class="n">E8</span> <span class="mi">1</span><span class="n">D110000</span>   <span class="n">call</span> <span class="n">League_o</span><span class="mf">.00582</span><span class="n">C90</span>   <span class="c1">//调用CALL
+</span></span></span></code></pre></div><p><strong>人物基址=0x032A6DC</strong></p>
+<p><strong>ecx=esi=[人物基址]+0x32B8</strong></p>
+<p><strong>皮肤ID的地址=[人物基址]+0x32B8C+0x40</strong></p>
+<p><strong>调用CALL所需要的参数：</strong></p>
+<p><strong>ecx      //通过mov把人物基址+0x32B8传入ecx</strong></p>
+<p><strong>1          //通过push压入</strong></p>
+<p><strong>皮肤ID  //通过mov传进皮肤ID地址([人物基址]+0x32B8C+0x40=ecx+0x40)</strong></p>
+<p>最后来测试一下，其中这一句我们就不用加入到代码了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="mo">005</span><span class="mi">81</span><span class="n">B63</span> <span class="mi">8</span><span class="n">B4424</span> <span class="mi">10</span> <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="n">dword</span> <span class="n">ptr</span> <span class="nl">ss</span><span class="p">:[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">]</span>
+</span></span></code></pre></div><p>我们只直接给皮肤ID地址传进一个ID值。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%2013.png" alt="Untitled"  />
+</p>
+<p>在这里我换第二个皮肤，注入远程代码。</p>
+<p><img loading="lazy" src="/posts/GameHacker/%e5%85%b3%e4%ba%8eLOL%e5%8a%a8%e6%80%81%e7%9a%ae%e8%82%a4%e4%bf%ae%e6%94%b9%e7%9a%84%e9%80%86%e5%90%91%e4%b8%8e%e5%ae%9e%e7%8e%b0/Untitled%2014.png" alt="Untitled"  />
+</p>
+<p>调用成功，那么这个CALL应该就是调用皮肤的CALL。</p>
+<p><strong>============================================================================================================</strong></p>
+<p><strong>崩溃原因：如果你们跟着我这个文章一步一步操作的话，会发现在下断点的时候，我们人物即使在没死或者没有复活的情况下也会断下，为什么？因为游戏的主线程也在调用这一段代码，但是具体干什么用我不懂，所以如果你在调用这段换肤CALL的时候主线程刚好也在调用这段换肤CALL，那么这个时候就会撞车，主线程就会不知所措，游戏就会崩溃。如何解决这个，就你们自己弄了，这里就不讨论了。</strong></p>
+<p><strong>============================================================================================================</strong></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/gamehacker/">GameHacker</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/unrealengine/%E5%85%AD%E5%8A%A0%E5%AF%86%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E8%A7%A3%E5%AF%86/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>六、加密的原理及解密</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/gamehacker/%E5%88%A9%E7%94%A8u3d%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>利用U3D引擎特性快递定位数组</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

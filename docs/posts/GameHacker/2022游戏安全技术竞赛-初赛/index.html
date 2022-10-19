@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>2022游戏安全技术竞赛-初赛 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="GameHacker">
+<meta name="description" content="2022游戏安全技术竞赛-初赛">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/gamehacker/2022%E6%B8%B8%E6%88%8F%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF%E7%AB%9E%E8%B5%9B-%E5%88%9D%E8%B5%9B/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="2022游戏安全技术竞赛-初赛" />
+<meta property="og:description" content="2022游戏安全技术竞赛-初赛" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/gamehacker/2022%E6%B8%B8%E6%88%8F%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF%E7%AB%9E%E8%B5%9B-%E5%88%9D%E8%B5%9B/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="2022游戏安全技术竞赛-初赛"/>
+<meta name="twitter:description" content="2022游戏安全技术竞赛-初赛"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "2022游戏安全技术竞赛-初赛",
+      "item": "https://planejun.github.io/posts/gamehacker/2022%E6%B8%B8%E6%88%8F%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF%E7%AB%9E%E8%B5%9B-%E5%88%9D%E8%B5%9B/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "2022游戏安全技术竞赛-初赛",
+  "name": "2022游戏安全技术竞赛-初赛",
+  "description": "2022游戏安全技术竞赛-初赛",
+  "keywords": [
+    "GameHacker"
+  ],
+  "articleBody": "2022游戏安全技术竞赛-初赛 PlaneJun ・2022-4-27 13:59 运行效果： 原程序运行后显示ACE，并且许秒后绘制消失。原题则要求如下：\n详细分析及实现： 首先创建了一个名为\"avoid repeat open\"的互斥体，保证程序的单例执行。\n然后开始创建窗口，并初始化D3D设备。\n随后开始动态获取ZwAllocateVirtualMemory和ZwFreeVirtualMem的函数地址。\n调用ZwAllocateVirtualMemory申请一段可执行内存后，开始将两段shellcode写入。\n紧接着可以看到通过调用GetTickCount来判断运行时间是否超过4秒，若超过4秒则清空shellcode，即绘制消失。\nshellcode的入口为D3D的一些shader初始化。\n动态编译shader完毕后开始执行虚拟机。\n简单分析了之后，可知每个分支作用如下：\n指令 作用 0 寄存器相加。eg：v1+=v2 1 两数相减。eg：v1-=v2 2 寄存器赋值。eg：v1=v2 3 立即数赋值。eg：v1=999 4 计算key。 5 绘制黄色小方块 6 绘制青色小方块 7 函数返回 由于绘制青色方块正常，黄色方块不正常，故猜测黄色方块数据存在污染。\n进一步分析DrawFillRect函数，得知前四个参数中，第一第二个为坐标数据，第三第四个为Key。并且在捕获绘制青色方块的数据时发现，第三和第四个参数在参与运算时结果始终为0，反之，黄色方块不为0。\n将指令集扣下后使用C++进行模拟流程，并输出操作流程。\n经过对比，发现黄色方块在计算Decryp之后，将Table[6]与Table[7]的值进行了互换。直接通过判断互换流程将其修改为Table[3] = Table[1]禁止互换。\n修改后发现仍然没有绘制黄色小方块，通过代码调试发现绘制时，Table[4]为负数，而Table[4] = (Table[0] – Table[1]) = 0x32 – 0x3E8。\n怀疑0x3E8为故意使坐标计算为负数，故将0x3E8修改为0x0后，黄色小方块显示。\n同理，第二个黄色方块的由于没有Key互换，但是对0x1F4计算，将0x1F4修改为0，后方块显示。\n经过手动修改后，发现存在0x3E8和0x1F4数据对黄色方块的坐标进行污染，将其修改0，并且禁止key互换后，旗帜显示。\n以下为C++修复表部分效果。\n修复完毕后会自动运行程序后执行修复表操作。\n",
+  "wordCount" : "55",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/gamehacker/2022%E6%B8%B8%E6%88%8F%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF%E7%AB%9E%E8%B5%9B-%E5%88%9D%E8%B5%9B/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      2022游戏安全技术竞赛-初赛
+    </h1>
+    <div class="post-description">
+      2022游戏安全技术竞赛-初赛
+    </div>
+    <div class="post-meta">时长:&nbsp;1分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b" aria-label="2022游戏安全技术竞赛-初赛">2022游戏安全技术竞赛-初赛</a></li>
+                    <li>
+                        <a href="#%e8%bf%90%e8%a1%8c%e6%95%88%e6%9e%9c" aria-label="运行效果：">运行效果：</a></li>
+                    <li>
+                        <a href="#%e8%af%a6%e7%bb%86%e5%88%86%e6%9e%90%e5%8f%8a%e5%ae%9e%e7%8e%b0" aria-label="详细分析及实现：">详细分析及实现：</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="2022游戏安全技术竞赛-初赛">2022游戏安全技术竞赛-初赛<a hidden class="anchor" aria-hidden="true" href="#2022游戏安全技术竞赛-初赛">#</a></h1>
+<ul>
+<li><a href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2022-4-27 13:59</li>
+</ul>
+<h1 id="运行效果">运行效果：<a hidden class="anchor" aria-hidden="true" href="#运行效果">#</a></h1>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId5.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId5.png"  />
+</p>
+<p>原程序运行后显示ACE，并且许秒后绘制消失。原题则要求如下：</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId6.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId6.png"  />
+</p>
+<h1 id="详细分析及实现">详细分析及实现：<a hidden class="anchor" aria-hidden="true" href="#详细分析及实现">#</a></h1>
+<p>首先创建了一个名为&quot;avoid repeat open&quot;的互斥体，保证程序的单例执行。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId7.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId7.png"  />
+</p>
+<p>然后开始创建窗口，并初始化D3D设备。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId8.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId8.png"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId9.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId9.png"  />
+</p>
+<p>随后开始动态获取ZwAllocateVirtualMemory和ZwFreeVirtualMem的函数地址。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId10.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId10.png"  />
+</p>
+<p>调用ZwAllocateVirtualMemory申请一段可执行内存后，开始将两段shellcode写入。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/Untitled.png" alt="Untitled"  />
+</p>
+<p>紧接着可以看到通过调用GetTickCount来判断运行时间是否超过4秒，若超过4秒则清空shellcode，即绘制消失。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId12.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId12.png"  />
+</p>
+<p>shellcode的入口为D3D的一些shader初始化。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId13.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId13.png"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId14.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId14.png"  />
+</p>
+<p>动态编译shader完毕后开始执行虚拟机。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId15.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId15.png"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId16.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId16.png"  />
+</p>
+<p>简单分析了之后，可知每个分支作用如下：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>寄存器相加。eg：v1+=v2</td>
+</tr>
+<tr>
+<td>1</td>
+<td>两数相减。eg：v1-=v2</td>
+</tr>
+<tr>
+<td>2</td>
+<td>寄存器赋值。eg：v1=v2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>立即数赋值。eg：v1=999</td>
+</tr>
+<tr>
+<td>4</td>
+<td>计算key。</td>
+</tr>
+<tr>
+<td>5</td>
+<td>绘制黄色小方块</td>
+</tr>
+<tr>
+<td>6</td>
+<td>绘制青色小方块</td>
+</tr>
+<tr>
+<td>7</td>
+<td>函数返回</td>
+</tr>
+</tbody>
+</table>
+<p>由于绘制青色方块正常，黄色方块不正常，故猜测黄色方块数据存在污染。</p>
+<p>进一步分析DrawFillRect函数，得知前四个参数中，第一第二个为坐标数据，第三第四个为Key。并且在捕获绘制青色方块的数据时发现，第三和第四个参数在参与运算时结果始终为0，反之，黄色方块不为0。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId17.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId17.png"  />
+</p>
+<p>将指令集扣下后使用C++进行模拟流程，并输出操作流程。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId18.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId18.png"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId19.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId19.png"  />
+</p>
+<p>经过对比，发现黄色方块在计算Decryp之后，将Table[6]与Table[7]的值进行了互换。直接通过判断互换流程将其修改为Table[3] = Table[1]禁止互换。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId20.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId20.png"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId21.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId21.png"  />
+</p>
+<p>修改后发现仍然没有绘制黄色小方块，通过代码调试发现绘制时，Table[4]为负数，而Table[4] = (Table[0] – Table[1]) = 0x32 – 0x3E8。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId22.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId22.png"  />
+</p>
+<p>怀疑0x3E8为故意使坐标计算为负数，故将0x3E8修改为0x0后，黄色小方块显示。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId23.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId23.png"  />
+</p>
+<p>同理，第二个黄色方块的由于没有Key互换，但是对0x1F4计算，将0x1F4修改为0，后方块显示。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId24.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId24.png"  />
+</p>
+<p>经过手动修改后，发现存在0x3E8和0x1F4数据对黄色方块的坐标进行污染，将其修改0，并且禁止key互换后，旗帜显示。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId25.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId25.png"  />
+</p>
+<p>以下为C++修复表部分效果。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId26.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId26.png"  />
+</p>
+<p>修复完毕后会自动运行程序后执行修复表操作。</p>
+<p><img loading="lazy" src="/posts/GameHacker/2022%e6%b8%b8%e6%88%8f%e5%ae%89%e5%85%a8%e6%8a%80%e6%9c%af%e7%ab%9e%e8%b5%9b-%e5%88%9d%e8%b5%9b/document_image_rId27.png" alt="/posts/GameHacker/2022游戏安全技术竞赛-初赛/document_image_rId27.png"  />
+</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/gamehacker/">GameHacker</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/gamehacker/2022%E6%B8%B8%E6%88%8F%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF%E7%AB%9E%E8%B5%9B-%E5%86%B3%E8%B5%9B/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>2022游戏安全技术竞赛-决赛</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/vulhub/apache-tomcat%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>Apache Tomcat远程代码执行漏洞</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
