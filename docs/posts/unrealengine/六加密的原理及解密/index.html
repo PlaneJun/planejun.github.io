@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>六、加密的原理及解密 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="UnrealEngine">
+<meta name="description" content="六、加密的原理及解密">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/unrealengine/%E5%85%AD%E5%8A%A0%E5%AF%86%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E8%A7%A3%E5%AF%86/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="六、加密的原理及解密" />
+<meta property="og:description" content="六、加密的原理及解密" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/unrealengine/%E5%85%AD%E5%8A%A0%E5%AF%86%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E8%A7%A3%E5%AF%86/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="六、加密的原理及解密"/>
+<meta name="twitter:description" content="六、加密的原理及解密"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "六、加密的原理及解密",
+      "item": "https://planejun.github.io/posts/unrealengine/%E5%85%AD%E5%8A%A0%E5%AF%86%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E8%A7%A3%E5%AF%86/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "六、加密的原理及解密",
+  "name": "六、加密的原理及解密",
+  "description": "六、加密的原理及解密",
+  "keywords": [
+    "UnrealEngine"
+  ],
+  "articleBody": "1、简单的加密解密例子 CS1.6人物速度加密实现 首先，找到人物速度后，访问速度查看任何改写和访问的代码。\n然后对这四条都进行自实现简单的加解密。\n进行HOOK。\n效果如下：\n加密前\n加密后\n定位解密 访问速度。\n根据自写代码可知，赋值为加密操作，读值为解密操作。因此查看取值代码。\n根据游戏代码解密即可。\n结论 用到的加密数据附近必定有解密代码。\n2、PUBG解密 Uworld 利用字符串SeamlessTravel FlushLevelStreaming定位到代码如下：\n根据官方源码可知，Uworld在附近，但是这里看到是一个CALL，因此交叉引用后分析外层,得到下图结果。\n可知Uworld来自(_QWORD *)(v1 + 160)，但是这里并不是一个全局变量。看到上边sub_7FF77B03EE38有对v1+160操作，因此进去看看。\n发现代码调用了off_7FF77E5E7720对a2，也就是Uworld进行了处理，下边又调用了off_7FF77E5E7728对处理后的数据进行二次处理。由于该处是UE4引擎对Uworld的初始化，但是游戏本身对Uworld有加密操作。因此变量qword_7FF77F9D96E0为Uworld，函数off_7FF77E5E7720为加密函数，用于将加密后的数据赋值给Uworld，又因为此处需要用到Uworld，所以游戏又给他解密了，off_7FF77E5E7728为解密函数。为啥不直接用a2？别问，问就是不懂。\nGName 利用字符串ByteProperty定位到代码如下：\n从函数sub_7FF778C03450开始分析\n可以看到a2 / 0x40F0，根据算法可以判定为0x40F0为Chunk_Size，而且这里应该是在计算类名。既然计算了类名，那么肯定是需要GName，看到代码对a1进行了解密，并且看到将v3(就是除法计算好的结构) * 8加上 一个解密结果,所以可知a1是GName（Gname算法），追a1。\nv2（也就是a1），被v1解密了一次，v1又从sub_7FF778C03830来，所以去这个函数里即可拿到GName。\nGObject、Index 利用字符串DebugCanvasObject定位到代码如下：\n很明显的一句v7 = off_7FF77DFDA628(1212074649i64, qword_7FF77F9988A8) + 0x30i64 * v11;，0x30是FObjectItem的结构大小，v11就相当于遍历的i（0~9999），这里是在获取GObject中的某一个对象。根据UObject成员可知，index为对象下标，所以Index的偏移为0x34，解密代码为：v17 ^ (v17 \u003c\u003c 16) ^ 0xFC17596F。\nClass、Outer、FName 利用字符串CopyPropertiesForUnrelatedObjects定位到代码如下：\n对应官方代码为：\n由于GetFullName有获取Class，Outer，FName的成员，因此进入该函数寻找解密和偏移。\n对比源代码分析后得到如下结果。\n",
+  "wordCount" : "55",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/unrealengine/%E5%85%AD%E5%8A%A0%E5%AF%86%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E8%A7%A3%E5%AF%86/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      六、加密的原理及解密
+    </h1>
+    <div class="post-description">
+      六、加密的原理及解密
+    </div>
+    <div class="post-meta">时长:&nbsp;1分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#1%e7%ae%80%e5%8d%95%e7%9a%84%e5%8a%a0%e5%af%86%e8%a7%a3%e5%af%86%e4%be%8b%e5%ad%90" aria-label="1、简单的加密解密例子">1、简单的加密解密例子</a></li>
+                    <li>
+                        <a href="#2pubg%e8%a7%a3%e5%af%86" aria-label="2、PUBG解密">2、PUBG解密</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="1简单的加密解密例子">1、简单的加密解密例子<a hidden class="anchor" aria-hidden="true" href="#1简单的加密解密例子">#</a></h1>
+<ul>
+<li><strong>CS1.6人物速度加密实现</strong></li>
+</ul>
+<p>首先，找到人物速度后，访问速度查看任何改写和访问的代码。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId4.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId4.png"  />
+</p>
+<p>然后对这四条都进行自实现简单的加解密。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId5.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId5.png"  />
+</p>
+<p>进行HOOK。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId6.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId6.png"  />
+</p>
+<p>效果如下：</p>
+<p><strong>加密前</strong></p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId7.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId7.png"  />
+</p>
+<p><strong>加密后</strong></p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId8.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId8.png"  />
+</p>
+<ul>
+<li><strong>定位解密</strong></li>
+</ul>
+<p>访问速度。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId9.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId9.png"  />
+</p>
+<p>根据自写代码可知，赋值为加密操作，读值为解密操作。因此查看取值代码。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId10.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId10.png"  />
+</p>
+<p>根据游戏代码解密即可。</p>
+<ul>
+<li><strong>结论</strong></li>
+</ul>
+<p>用到的加密数据附近必定有解密代码。</p>
+<h1 id="2pubg解密">2、PUBG解密<a hidden class="anchor" aria-hidden="true" href="#2pubg解密">#</a></h1>
+<ul>
+<li><strong>Uworld</strong></li>
+</ul>
+<p>利用字符串<code>SeamlessTravel FlushLevelStreaming</code>定位到代码如下：</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId11.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId11.png"  />
+</p>
+<p>根据官方源码可知，<code>Uworld</code>在附近，但是这里看到是一个<code>CALL</code>，因此交叉引用后分析外层,得到下图结果。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId12.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId12.png"  />
+</p>
+<p>可知<code>Uworld</code>来自<code>(_QWORD *)(v1 + 160)</code>，但是这里并不是一个全局变量。看到上边<code>sub_7FF77B03EE38</code>有对v1+160操作，因此进去看看。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId13.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId13.png"  />
+</p>
+<p>发现代码调用了<code>off_7FF77E5E7720</code>对a2，也就是<code>Uworld</code>进行了处理，下边又调用了<code>off_7FF77E5E7728</code>对处理后的数据进行二次处理。由于该处是UE4引擎对Uworld的初始化，但是游戏本身对Uworld有加密操作。因此变量<code>qword_7FF77F9D96E0</code>为<code>Uworld</code>，函数<code>off_7FF77E5E7720</code>为加密函数，用于将加密后的数据赋值给<code>Uworld</code>，又因为此处需要用到<code>Uworld</code>，所以游戏又给他解密了，<code>off_7FF77E5E7728</code>为解密函数。为啥不直接用<code>a2</code>？别问，问就是不懂。</p>
+<ul>
+<li><strong>GName</strong></li>
+</ul>
+<p>利用字符串<code>ByteProperty</code>定位到代码如下：</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId14.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId14.png"  />
+</p>
+<p>从函数<code>sub_7FF778C03450</code>开始分析</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId15.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId15.png"  />
+</p>
+<p>可以看到<code>a2 / 0x40F0</code>，根据算法可以判定为<strong>0x40F0</strong>为<code>Chunk_Size</code>，而且这里应该是在计算类名。既然计算了类名，那么肯定是需要<code>GName</code>，看到代码对<code>a1</code>进行了解密，并且看到将v3(就是除法计算好的结构) * 8加上 一个解密结果,所以可知a1是GName（Gname算法），追a1。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId16.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId16.png"  />
+</p>
+<p>v2（也就是a1），被v1解密了一次，v1又从sub_7FF778C03830来，所以去这个函数里即可拿到GName。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId17.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId17.png"  />
+</p>
+<ul>
+<li><strong>GObject、Index</strong></li>
+</ul>
+<p>利用字符串<code>DebugCanvasObject</code>定位到代码如下：</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId18.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId18.png"  />
+</p>
+<p>很明显的一句<code>v7 = off_7FF77DFDA628(1212074649i64, qword_7FF77F9988A8) + 0x30i64 * v11;</code>，0x30是FObjectItem的结构大小，v11就相当于遍历的i（0~9999），这里是在获取GObject中的某一个对象。根据UObject成员可知，index为对象下标，所以Index的偏移为0x34，解密代码为：<code>v17 ^ (v17 &lt;&lt; 16) ^ 0xFC17596F</code>。</p>
+<ul>
+<li><strong>Class、Outer、FName</strong></li>
+</ul>
+<p>利用字符串<code>CopyPropertiesForUnrelatedObjects</code>定位到代码如下：</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId19.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId19.png"  />
+</p>
+<p>对应官方代码为：</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId20.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId20.png"  />
+</p>
+<p>由于GetFullName有获取Class，Outer，FName的成员，因此进入该函数寻找解密和偏移。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId21.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId21.png"  />
+</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId22.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId22.png"  />
+</p>
+<p>对比源代码分析后得到如下结果。</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId23.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId23.png"  />
+</p>
+<p><img loading="lazy" src="/posts/UnrealEngine/%e5%85%ad%e3%80%81%e5%8a%a0%e5%af%86%e7%9a%84%e5%8e%9f%e7%90%86%e5%8f%8a%e8%a7%a3%e5%af%86/document_image_rId24.png" alt="/posts/UnrealEngine/六、加密的原理及解密/document_image_rId24.png"  />
+</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/unrealengine/">UnrealEngine</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/unrealengine/%E4%BA%94%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>五、静态类和修复完整结构</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/gamehacker/%E5%85%B3%E4%BA%8Elol%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>关于LOL动态皮肤修改的逆向与实现</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

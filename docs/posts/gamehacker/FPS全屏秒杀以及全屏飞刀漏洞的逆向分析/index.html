@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>FPS全屏秒杀以及全屏飞刀漏洞的逆向分析 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="GameHacker">
+<meta name="description" content="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/gamehacker/fps%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析" />
+<meta property="og:description" content="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/gamehacker/fps%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析"/>
+<meta name="twitter:description" content="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "FPS全屏秒杀以及全屏飞刀漏洞的逆向分析",
+      "item": "https://planejun.github.io/posts/gamehacker/fps%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "FPS全屏秒杀以及全屏飞刀漏洞的逆向分析",
+  "name": "FPS全屏秒杀以及全屏飞刀漏洞的逆向分析",
+  "description": "FPS全屏秒杀以及全屏飞刀漏洞的逆向分析",
+  "keywords": [
+    "GameHacker"
+  ],
+  "articleBody": "FPS全屏秒杀以及全屏飞刀漏洞的逆向分析 PlaneJun ・2019-11-19 20:45 目录 一、引言\n二、正文\n1、全屏飞刀原理及实现\n2、全屏秒杀原理及实现\n三、总结\n四、白嫖\n分析对象：CS1.6 5Eplay 版本\n编程工具：Visual Studio 2019\n工具：CheatEngine 6.7\n一、引言 不知道有多少人是经历过穿越X线的神仙时代。我只记得当时最疯狂的是一个房间充满着各种奇葩的科学家，例如飞天、遁地、隐身、加速、子弹穿墙，飞刀等等，但是，最有意思的还是Bug不掉血的卡箱和卡墙。这些东西虽说是游戏的漏洞造成的，但是当时那个时候玩起来依旧是很开心，毕竟当时的游戏环境还是很认可的，武器属性的平衡，玩家之间的默契度，战队里的开黑，都让我们对当时的一些保留着一无比忘怀的怀念。\n二、正文： 煽情完了，咱们开始正题。今儿咱们来说说远古时期的大发明-全屏飞刀和全屏秒杀。这篇文章依旧使用被无数次仙人跳的游戏来操作，嗯，没错就是CS1.6。\n在我们干事之前，稍微对游戏的一个动作进行思考，这里咱们先讲全屏飞刀，再讲全屏秒杀。\n一、 全屏飞刀原理及实现\n这里我总结了三种思路：1、通过游戏播放的音效来寻找。细心的同志可能会发现，挥刀的时候，打中和没打中是有两种音效播放的，所以我们只需要在游戏目录下找到这个音效的名字，然后去文件操作相关的api下断，看他什么时候去访问这个文件就行了，断下后直接返回应该就直接能找到关键代码处。2、只要是个有脑子的人，手里拿着枪的时候可以砰砰砰的射击，但是切刀之后就没法实现击中效果了。那么他肯定会有一个关键跳转来判断你当前武器是否是刀(有可能判断当前手持的模型ID)，这个时候找到这个跳转，搞就完事。3、都知道鼠标控制开火，那么鼠标消息肯定会经过关键代码，这个时候直接鼠标消息下断后去分析就行了，但是相比前两种方法，要分析的代码量更多，头发多的人推荐尝试。 这里我用的是第二种方法，但是其他方法依旧希望大家去试试，毕竟技多不压身(其实就是懒得去弄)。\n在正式去找的时候我们先来整理一下思路。首先我们要找的是全屏飞刀，那什么是全屏飞刀？顾名思义，就是当我们拿着刀的时候不用贴着敌人也能打中敌人。此时我们是不是很容易去联想到攻击call？因为你的刀能不能攻击到别人是取决于你的攻击call的代码流程，所以在内部代码中极有可能存在着某条跳转用来判断你这个攻击是否有效，如果有效，给你击中；如果无效，直接给你ret。下面是给出的伪代码：\nbool 开始攻击(xxxxxxxx) { If ( 当前手持武器 == 刀) If(可以攻击==假) Return false； //攻击失败 攻击（）； Return true； } 理论就说这么多，咱们直接找吧！\n首先咱们要找到游戏对人物处理血量的关键代码处，然后下断返回，就能看到攻击call了。很简单，找到血量-\u003e访问血量-\u003e射他-\u003e出现代码-\u003e记录代码-\u003e甩进OD-\u003e开始分析，其中前5步我就不演示了，直接放甩进OD的部分。\n给他下个F2断点，然后用刀划他**(记住，一定要用刀划，因为我们先在是要找基于刀的攻击代码)**。\n这里我返回5层，因为我分析过，所以知道这5层内必有我们要找的东西，但是在实际分析其他游戏的时候，建议大家多返回。\n在开始分析这些call之前，我先和大家说两点非常关键的问题。\n1）、我们从哪一层开始分析？\n从最外层。为什么呢？很简单，因为越内层的call往往是对攻击处理，而不是对开始攻击逻辑的处理。实在不理解的话，咱们想一下咱们在写某个动作代码的时候，是不是先判断逻辑操作，再去执行核心代码？\n2）、代码的执行逻辑\n这个稍微有点难解释，因为他和第一个问题有小牵扯。如果我们对人物血量处理下断后返回层数不够多会怎么样？答案是，我们只得到了他攻击call处理代码。意思就是说当前得到的所有call是处理已经成功击打后的代码，而不是处理开始攻击逻辑的代码，导致在最外层下断的时候会出现一个问题，单纯挥刀不会断下，开枪才会断下**(因为你怎么开枪都会击中)**。解决的办法就是在人物血量处理地方下断后疯狂返回上一层并且记录，然后挨个下断挥刀，能断下说明找到了，断不下就再找。\n接下来依旧是我最喜欢的摊牌环节。\n其实在这5层中，第5层就是处理开始攻击逻辑的call，其他的全是成功击打的call。因为只有在第5层call下断挥刀的时候才会断下，其他call下断挥刀不断。不信的同志可以去试试，接下来我们就来分析第5层call。 我们现在先下一个断。\n然后我们对着墙或者人物划一刀**(可以击中的状态)**，发现断点断下了。\n这个时候非常关键，我们F7进去后F8单步跟一下。 注意，记得标记跳转是否实现\n在通过F8单步跟的时候，细心的人会发现一个东西。\n他这里会播放wav，实际上他这里就是在判断你的刀是否击打到物体，击打到了就播放击打音效，反之播放未击打音效。其实hit是击打音效，slash是未击打音效，笔者也是在分析的过程中看到这个才萌发处第一种思路。而且在单步跟踪的时候发现他跳过了播放slash音效，而去播放了hit音效并且执行了我们记录的第4层call**(攻击处理)**，说明上面有相关跳转控制了击打判断。\n现在我们返回第5层call，下断，对着空气挥刀看看。\n同样F7进入后，F8单步跟，并且记录跳转是否实现。\n这里观察到之前的实现的跳转现在没有实现了，说明这里可能是一个关键点 包括下面这张图的位置\n最后会发现他去执行了这一串代码\n这一串刚刚好是播放未击中音效的代码。再继续F8单步跟，发现他直接ret了，并没有去执行我们第4层的攻击代码。\n经过以上分析，我们得出了两个关键点，那就是那两个jne跳转。在我们对墙壁或者人挥刀并且成功击打的时候该跳转是实现的，但是现在我们对着空气挥刀发现他跳转没有被实现，那么说明该跳转就是关键跳转，而且他们都是对同一个地址进行了读操作，所以游戏很有可能是对该地址的值进行一个校验，来判断是否能击打。\n首先这个代码是一个很典型的浮点数比较代码，大概就是将0x19FEC660 和st(0)比较后把状态值传给ax，然后ah判断是否能击中物体。我们用CE看看这个地址的值。\n发现是0，我们尝试改为1。回到游戏的时候，发现我们挥刀的时候竟然是击中的音效。此时全屏飞刀已经实现。\n一、 全屏秒杀原理及实现 虽然我们实现了全屏飞刀，但是会发现，当我们向敌人挥刀的时候，发现敌人并没有掉血，这个时候就会有人认为我在坑大家了。\n其实呢，咱们还得需要一个东西，那就是选择攻击对象。这里呢，不知道大家还记得我在文章开头写的那个伪代码吗？我们当前只是修改了第一个if，但是还有第二个if**(可能还有更多if)**没有修改。我们虽然让他成功全屏攻击了，但是他可能会判断，你这个人和敌人是否在可攻击距离内，如果不在的话直接给你攻击一个空对象，具体的逻辑代码大家可以去分析一下。\n现在咱们来说说这个全屏秒杀，无论你拿着什么武器，你要射人，那你肯定要有一个攻击对象吧。于是咱们可以去跟一下，看看他的攻击对象的来源，然后用第三方手段去修改，这样我们想打谁就打谁了。攻击对象很好找，因为你攻击call的参数必定有攻击对象，然后就去追这个对象的来源。这里呢我就直接放追到的来源。\n其实这里就是第4层call进来的内容，我在OD也注释了，他这里做了简单的判断，如果你的攻击对象为0那么就ret，否则就对攻击力进行一个赋值，然后进行攻击。在这里我们可以去观察我们全屏飞刀的时候，他的攻击对象一直为0，那就说明他没有选择一个攻击对象。我们换成枪，去打一下敌人，发现他的内容变了。我们直接锁定，然后换成刀去划，发现这个时候咱们的刀能打人了，而且对着哪里划都能打中，包括枪。咱们这时直接去修改攻击力，直接是一划既死。这个时候灵机一动。\n是不是我们直接让程序不断的向这个地址写入对象，然后在修改攻击力就完事了？没错。就是这样。下面是效果展示\n其实这里还有一个处理方法，在0x1A0665F8下一个写入断点，能来到这个地方\n其实这里是对攻击对象和攻击力进行一个0的初始化。处理方法很简单，直接在头部ret，不让他初始0，然后再用程序去写入会更稳定些，因为游戏会调用这个call，进行清0。 好了，基本上这就是全屏秒杀的分析。 另外 攻击对象的值=对象]+0x7C]\n三、总结： 其实这个全屏飞刀的实现的思路是来源于我在很久之前就实现的植物大战僵尸的折叠种植功能，当时找的方法和本篇文章实现飞刀基本类似，就是用通过这种特殊的判断去分析的，在种植call下断后去实现一次普通的种植，然后跟进去记录跳转；然后再去种植call下断，直接去实现一次重叠种植，断下后F7进去单步直接可以发现关键跳转，然后直接改成jmp(好像是jmp)，直接就实现了折叠种植。昨天前段微风吹过脑壳，突发奇想来试试，果不其然，还真能实现！但是出现了无法攻击到对象的情况，然后偶然发现在飞刀的时候攻击call传进来的对象是0，于是就想到应该有一个地方有赋值对象的。然后努力了一波，就实现了全屏秒杀和全屏飞刀的效果。\n虽说这个是对cs1.6的漏洞分析，但是其他游戏的实现原理我觉得是差不多的，就拿飞刀来说，游戏肯定是需要去判断你这个武器是不是刀，是刀给你ret；反之给你攻击。所以这个地方基本上可以成为一个突破点。至于全屏秒杀，只要找到攻击对象的赋值也就差不多了。\n",
+  "wordCount" : "87",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/gamehacker/fps%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      FPS全屏秒杀以及全屏飞刀漏洞的逆向分析
+    </h1>
+    <div class="post-description">
+      FPS全屏秒杀以及全屏飞刀漏洞的逆向分析
+    </div>
+    <div class="post-meta">时长:&nbsp;1分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#fps%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90" aria-label="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析">FPS全屏秒杀以及全屏飞刀漏洞的逆向分析</a></li>
+                    <li>
+                        <a href="#%e7%9b%ae%e5%bd%95" aria-label="目录">目录</a></li>
+                    <li>
+                        <a href="#%e4%b8%80%e5%bc%95%e8%a8%80" aria-label="一、引言">一、引言</a></li>
+                    <li>
+                        <a href="#%e4%ba%8c%e6%ad%a3%e6%96%87" aria-label="二、正文：">二、正文：</a><ul>
+                            <ul>
+                            
+                    <li>
+                        <a href="#%e4%b8%80-%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e5%8e%9f%e7%90%86%e5%8f%8a%e5%ae%9e%e7%8e%b0" aria-label="一、 全屏秒杀原理及实现">一、 全屏秒杀原理及实现</a></li></ul>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#%e4%b8%89%e6%80%bb%e7%bb%93" aria-label="三、总结：">三、总结：</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="fps全屏秒杀以及全屏飞刀漏洞的逆向分析">FPS全屏秒杀以及全屏飞刀漏洞的逆向分析<a hidden class="anchor" aria-hidden="true" href="#fps全屏秒杀以及全屏飞刀漏洞的逆向分析">#</a></h1>
+<ul>
+<li><a href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2019-11-19 20:45</li>
+</ul>
+<h1 id="目录">目录<a hidden class="anchor" aria-hidden="true" href="#目录">#</a></h1>
+<p>一、引言</p>
+<p>二、正文</p>
+<p>1、全屏飞刀原理及实现</p>
+<p>2、全屏秒杀原理及实现</p>
+<p>三、总结</p>
+<p>四、白嫖</p>
+<p><strong>分析对象：CS1.6 5Eplay 版本</strong></p>
+<p><strong>编程工具：Visual Studio 2019</strong></p>
+<p><strong>工具：CheatEngine 6.7</strong></p>
+<h1 id="一引言">一、引言<a hidden class="anchor" aria-hidden="true" href="#一引言">#</a></h1>
+<p>不知道有多少人是经历过穿越X线的神仙时代。我只记得当时最疯狂的是一个房间充满着各种奇葩的科学家，例如飞天、遁地、隐身、加速、子弹穿墙，飞刀等等，但是，最有意思的还是Bug不掉血的卡箱和卡墙。这些东西虽说是游戏的漏洞造成的，但是当时那个时候玩起来依旧是很开心，毕竟当时的游戏环境还是很认可的，武器属性的平衡，玩家之间的默契度，战队里的开黑，都让我们对当时的一些保留着一无比忘怀的怀念。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled.png" alt="Untitled"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%201.png" alt="Untitled"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%202.png" alt="Untitled"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%203.png" alt="Untitled"  />
+</p>
+<h1 id="二正文">二、正文：<a hidden class="anchor" aria-hidden="true" href="#二正文">#</a></h1>
+<p>煽情完了，咱们开始正题。今儿咱们来说说远古时期的大发明-全屏飞刀和全屏秒杀。这篇文章依旧使用被无数次仙人跳的游戏来操作，嗯，没错就是CS1.6。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%204.png" alt="Untitled"  />
+</p>
+<p>在我们干事之前，稍微对游戏的一个动作进行思考，这里咱们先讲全屏飞刀，再讲全屏秒杀。</p>
+<p><strong>一、 全屏飞刀原理及实现</strong></p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%205.png" alt="Untitled"  />
+</p>
+<p>这里我总结了三种思路：1、通过游戏播放的音效来寻找。细心的同志可能会发现，挥刀的时候，打中和没打中是有两种音效播放的，所以我们只需要在游戏目录下找到这个音效的名字，然后去文件操作相关的api下断，看他什么时候去访问这个文件就行了，断下后直接返回应该就直接能找到关键代码处。2、只要是个有脑子的人，手里拿着枪的时候可以砰砰砰的射击，但是切刀之后就没法实现击中效果了。那么他肯定会有一个关键跳转来判断你当前武器是否是刀(有可能判断当前手持的模型ID)，这个时候找到这个跳转，搞就完事。3、都知道鼠标控制开火，那么鼠标消息肯定会经过关键代码，这个时候直接鼠标消息下断后去分析就行了，但是相比前两种方法，要分析的代码量更多，头发多的人推荐尝试。
+这里我用的是第二种方法，但是其他方法依旧希望大家去试试，毕竟技多不压身(其实就是懒得去弄)。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%206.png" alt="Untitled"  />
+</p>
+<p>在正式去找的时候我们先来整理一下思路。首先我们要找的是全屏飞刀，那什么是全屏飞刀？顾名思义，就是当我们拿着刀的时候不用贴着敌人也能打中敌人。此时我们是不是很容易去联想到攻击call？因为你的刀能不能攻击到别人是取决于你的攻击call的代码流程，所以在内部代码中极有可能存在着某条跳转用来判断你这个攻击是否有效，如果有效，给你击中；如果无效，直接给你ret。下面是给出的伪代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">bool</span> <span class="err">开始攻击</span><span class="p">(</span><span class="n">xxxxxxxx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">If</span> <span class="p">(</span> <span class="err">当前手持武器</span> <span class="o">==</span> <span class="err">刀</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">       <span class="n">If</span><span class="p">(</span><span class="err">可以攻击</span><span class="o">==</span><span class="err">假</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">Return</span> <span class="nb">false</span><span class="err">；</span> <span class="c1">//攻击失败
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> 
+</span></span><span class="line"><span class="cl">              <span class="err">攻击（）；</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">              <span class="n">Return</span> <span class="nb">true</span><span class="err">；</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>理论就说这么多，咱们直接找吧！</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%207.png" alt="Untitled"  />
+</p>
+<p>首先咱们要找到游戏对人物处理血量的关键代码处，然后下断返回，就能看到攻击call了。很简单，<strong>找到血量-&gt;访问血量-&gt;射他-&gt;出现代码-&gt;记录代码-&gt;甩进OD-&gt;开始分析</strong>，其中前5步我就不演示了，直接放甩进OD的部分。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%208.png" alt="Untitled"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%209.png" alt="Untitled"  />
+</p>
+<p>给他下个F2断点，然后用刀划他**(记住，一定要用刀划，因为我们先在是要找基于刀的攻击代码)**。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2010.png" alt="Untitled"  />
+</p>
+<p>这里我返回5层，因为我分析过，所以知道这5层内必有我们要找的东西，但是在实际分析其他游戏的时候，建议大家多返回。</p>
+<p>在开始分析这些call之前，我先和大家说两点非常关键的问题。</p>
+<p><strong>1）、我们从哪一层开始分析？</strong></p>
+<p>从最外层。为什么呢？很简单，因为越内层的call往往是对攻击处理，而不是对开始攻击逻辑的处理。实在不理解的话，咱们想一下咱们在写某个动作代码的时候，是不是先判断逻辑操作，再去执行核心代码？</p>
+<p><strong>2）、代码的执行逻辑</strong></p>
+<p>这个稍微有点难解释，因为他和第一个问题有小牵扯。如果我们对人物血量处理下断后返回层数不够多会怎么样？答案是，我们只得到了他攻击call处理代码。意思就是说当前得到的所有call是处理已经成功击打后的代码，而不是处理开始攻击逻辑的代码，导致在最外层下断的时候会出现一个问题，单纯挥刀不会断下，开枪才会断下**(因为你怎么开枪都会击中)**。解决的办法就是在人物血量处理地方下断后疯狂返回上一层并且记录，然后挨个下断挥刀，能断下说明找到了，断不下就再找。</p>
+<p>接下来依旧是我最喜欢的摊牌环节。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2011.png" alt="Untitled"  />
+</p>
+<p>其实在这5层中，第5层就是处理开始攻击逻辑的call，其他的全是成功击打的call。因为只有在第5层call下断挥刀的时候才会断下，其他call下断挥刀不断。不信的同志可以去试试，接下来我们就来分析第5层call。
+我们现在先下一个断。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2012.png" alt="Untitled"  />
+</p>
+<p>然后我们对着墙或者人物划一刀**(可以击中的状态)**，发现断点断下了。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2013.png" alt="Untitled"  />
+</p>
+<p>这个时候非常关键，我们F7进去后F8单步跟一下。 <strong>注意，记得标记跳转是否实现</strong></p>
+<p>在通过F8单步跟的时候，细心的人会发现一个东西。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2014.png" alt="Untitled"  />
+</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2015.png" alt="Untitled"  />
+</p>
+<p>他这里会播放wav，实际上他这里就是在判断你的刀是否击打到物体，击打到了就播放击打音效，反之播放未击打音效。其实hit是击打音效，slash是未击打音效，笔者也是在分析的过程中看到这个才萌发处第一种思路。而且在单步跟踪的时候发现他跳过了播放slash音效，而去播放了hit音效并且执行了我们记录的第4层call**(攻击处理)**，说明上面有相关跳转控制了击打判断。</p>
+<p>现在我们返回第5层call，下断，对着空气挥刀看看。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2016.png" alt="Untitled"  />
+</p>
+<p>同样F7进入后，F8单步跟，并且记录跳转是否实现。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2017.png" alt="Untitled"  />
+</p>
+<p>这里观察到之前的实现的跳转现在没有实现了，说明这里可能是一个关键点
+包括下面这张图的位置</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2018.png" alt="Untitled"  />
+</p>
+<p>最后会发现他去执行了这一串代码</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2019.png" alt="Untitled"  />
+</p>
+<p>这一串刚刚好是播放未击中音效的代码。再继续F8单步跟，发现他直接ret了，并没有去执行我们第4层的攻击代码。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2020.png" alt="Untitled"  />
+</p>
+<p>经过以上分析，我们得出了两个关键点，那就是那两个jne跳转。在我们对墙壁或者人挥刀并且成功击打的时候该跳转是实现的，但是现在我们对着空气挥刀发现他跳转没有被实现，那么说明该跳转就是关键跳转，而且他们都是对同一个地址进行了读操作，所以游戏很有可能是对该地址的值进行一个校验，来判断是否能击打。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2021.png" alt="Untitled"  />
+</p>
+<p>首先这个代码是一个很典型的浮点数比较代码，大概就是将0x19FEC660 和st(0)比较后把状态值传给ax，然后ah判断是否能击中物体。我们用CE看看这个地址的值。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2022.png" alt="Untitled"  />
+</p>
+<p>发现是0，我们尝试改为1。回到游戏的时候，发现我们挥刀的时候竟然是击中的音效。此时全屏飞刀已经实现。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2023.png" alt="Untitled"  />
+</p>
+<h3 id="一-全屏秒杀原理及实现">一、 全屏秒杀原理及实现<a hidden class="anchor" aria-hidden="true" href="#一-全屏秒杀原理及实现">#</a></h3>
+<p>虽然我们实现了全屏飞刀，但是会发现，当我们向敌人挥刀的时候，发现敌人并没有掉血，这个时候就会有人认为我在坑大家了。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2024.png" alt="Untitled"  />
+</p>
+<p>其实呢，咱们还得需要一个东西，那就是选择攻击对象。这里呢，不知道大家还记得我在文章开头写的那个伪代码吗？我们当前只是修改了第一个if，但是还有第二个if**(可能还有更多if)**没有修改。我们虽然让他成功全屏攻击了，但是他可能会判断，你这个人和敌人是否在可攻击距离内，如果不在的话直接给你攻击一个空对象，具体的逻辑代码大家可以去分析一下。</p>
+<p>现在咱们来说说这个全屏秒杀，无论你拿着什么武器，你要射人，那你肯定要有一个攻击对象吧。于是咱们可以去跟一下，看看他的攻击对象的来源，然后用第三方手段去修改，这样我们想打谁就打谁了。攻击对象很好找，因为你攻击call的参数必定有攻击对象，然后就去追这个对象的来源。这里呢我就直接放追到的来源。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2025.png" alt="Untitled"  />
+</p>
+<p>其实这里就是第4层call进来的内容，我在OD也注释了，他这里做了简单的判断，如果你的攻击对象为0那么就ret，否则就对攻击力进行一个赋值，然后进行攻击。在这里我们可以去观察我们全屏飞刀的时候，他的攻击对象一直为0，那就说明他没有选择一个攻击对象。我们换成枪，去打一下敌人，发现他的内容变了。我们直接锁定，然后换成刀去划，发现这个时候咱们的刀能打人了，而且对着哪里划都能打中，包括枪。咱们这时直接去修改攻击力，直接是一划既死。这个时候灵机一动。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2026.png" alt="Untitled"  />
+</p>
+<p>是不是我们直接让程序不断的向这个地址写入对象，然后在修改攻击力就完事了？没错。就是这样。下面是效果展示</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/826671_M6NVDG6VMQGA2YZ.gif" alt="826671_M6NVDG6VMQGA2YZ.gif"  />
+</p>
+<p>其实这里还有一个处理方法，在0x1A0665F8下一个写入断点，能来到这个地方</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2027.png" alt="Untitled"  />
+</p>
+<p>其实这里是对攻击对象和攻击力进行一个0的初始化。处理方法很简单，直接在头部ret，不让他初始0，然后再用程序去写入会更稳定些，因为游戏会调用这个call，进行清0。
+好了，基本上这就是全屏秒杀的分析。
+另外 攻击对象的值=对象]+0x7C]</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2028.png" alt="Untitled"  />
+</p>
+<h1 id="三总结">三、总结：<a hidden class="anchor" aria-hidden="true" href="#三总结">#</a></h1>
+<p>其实这个全屏飞刀的实现的思路是来源于我在很久之前就实现的植物大战僵尸的折叠种植功能，当时找的方法和本篇文章实现飞刀基本类似，就是用通过这种特殊的判断去分析的，在种植call下断后去实现一次普通的种植，然后跟进去记录跳转；然后再去种植call下断，直接去实现一次重叠种植，断下后F7进去单步直接可以发现关键跳转，然后直接改成jmp(好像是jmp)，直接就实现了折叠种植。昨天前段微风吹过脑壳，突发奇想来试试，果不其然，还真能实现！但是出现了无法攻击到对象的情况，然后偶然发现在飞刀的时候攻击call传进来的对象是0，于是就想到应该有一个地方有赋值对象的。然后努力了一波，就实现了全屏秒杀和全屏飞刀的效果。</p>
+<p><img loading="lazy" src="/posts/GameHacker/FPS%e5%85%a8%e5%b1%8f%e7%a7%92%e6%9d%80%e4%bb%a5%e5%8f%8a%e5%85%a8%e5%b1%8f%e9%a3%9e%e5%88%80%e6%bc%8f%e6%b4%9e%e7%9a%84%e9%80%86%e5%90%91%e5%88%86%e6%9e%90/Untitled%2029.png" alt="Untitled"  />
+</p>
+<p>虽说这个是对cs1.6的漏洞分析，但是其他游戏的实现原理我觉得是差不多的，就拿飞刀来说，游戏肯定是需要去判断你这个武器是不是刀，是刀给你ret；反之给你攻击。所以这个地方基本上可以成为一个突破点。至于全屏秒杀，只要找到攻击对象的赋值也就差不多了。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/gamehacker/">GameHacker</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/vulhub/cve-2022-22965%E5%90%91%E6%97%A5%E8%91%B5rce/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>CVE-2022-22965(向日葵RCE)</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/virus/qbot-outlook%E7%AA%83%E5%AF%86/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>QBot-Outlook窃密</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
