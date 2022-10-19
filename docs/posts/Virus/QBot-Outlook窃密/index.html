@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>QBot-Outlook窃密 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="Virus">
+<meta name="description" content="QBot-Outlook窃密">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/virus/qbot-outlook%E7%AA%83%E5%AF%86/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="QBot-Outlook窃密" />
+<meta property="og:description" content="QBot-Outlook窃密" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/virus/qbot-outlook%E7%AA%83%E5%AF%86/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="QBot-Outlook窃密"/>
+<meta name="twitter:description" content="QBot-Outlook窃密"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "QBot-Outlook窃密",
+      "item": "https://planejun.github.io/posts/virus/qbot-outlook%E7%AA%83%E5%AF%86/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "QBot-Outlook窃密",
+  "name": "QBot-Outlook窃密",
+  "description": "QBot-Outlook窃密",
+  "keywords": [
+    "Virus"
+  ],
+  "articleBody": "QBot-Outlook窃密 ⼀、加载器分析 1、样本标签 病毒名称 c8810d5eaaea95b36bbb529a2b9be5c5e6dda10f95992e7c35ac8bbf9f3a8f71 原始⽂件名 ⽆ MD5 93d6d599c37d1858cc86c0d8fe8fb8d4 ⽂件⼤⼩ 222.50 KB (227840 bytes) ⽂件格式 Win32 DLL 时间戳 2020-04-20 23:33:29 加壳类型 ⽆ 编译语⾔ C/C++ SHA1 f85a63cb462b8fd60da35807c63cd13226907901 CRC32 F0A18B09 2、详细分析 样本(93D6D599C37D1858CC86C0D8FE8FB8D4)⾃⾝为DLL⽂件,同时也是⼀个加载器。样本⼀旦被加载⾸先获取远线程注⼊所需要的API函数地址。\n其中样本中的所有字符串都是加密的，通过传⼊字符串对应的id解密出字符串。\n获取函数之后会通过token设置sid的⽅式进⾏提权。\n根据当前运⾏的环境是否为64位来获取Windows⽬录。接着在⽂件夹ProgramW6432ProgramFiles(x86)、ProgramFiles中搜索outlook.exe⽂件。\n如果存在outlook.exe⽂件后会根据⾃⾝进程位数来选择32位还是64位模式注⼊。\n注⼊⾸先会创建⼀个ping.exe进程作为傀儡，并且运⾏参数为**-t 127.0.0.1**，保证傀儡程序能持续运⾏。\n然后加载名为RES_DATA_1(如果是64位注⼊则为RES_DATA_2)的资源⽂件。\n⼆、邮箱窃密模块分析 由于32位和64位功能相同，这⾥只分析32位。\n1、样本标签 病毒名称 RES_DATA_1 原始⽂件名 emailcollector.dll MD5 9B0A4E5E5227B766EDE92340D7064545 ⽂件⼤⼩ 84.00 KB (86016 bytes) ⽂件格式 Win32 DLL 时间戳 2020-04-20 23:33:01 加壳类型 ⽆ 编译语⾔ C/C++ SHA1 369EE5FF9960BB9E73503E0B0A4B3A57A96EC549 CRC32 1654A136 2、详细分析 样本(9B0A4E5E5227B766EDE92340D7064545)为核⼼模块，负责窃取outlook的邮箱数据。当样本⾃⾝被成功加载时，与加载器相同。通过GetProAddress获取⼀些API函 数，其中字符串也是被加密状态，使⽤的算法也与加载器相同。\n初始化完毕后会通过CreateThread函数创建⼀个线程，开始进⾏窃密。\n2.1、窃密邮箱数据 样本⾸先会将当前⼯作⽬录设置为“C:\\User\\USERNAME\\”（该字符串在初始化时获取）\n然后在当前⽬录下创建⼀个⽂件夹，格式为“EmailStorage_计算机名_当前时间戳”。\n接着拼接⼀个名为collector_log.txt的⽂件名，⽤于输出执⾏的⽇志。\n样本通过MAPIXXXXXXX函数访问outlook的数据，获取当前outlook所存在的邮箱账号。\n然后开始遍历每⼀个邮箱账号，获取详细信息。\n为每个邮箱账号创建名为**”当前索引”**的⽂件夹⽤来保存数据，接着创建线程sub_10002af8执⾏。\n获取当前邮箱账号所存在的⽂件夹，⽂件夹的名字从数字0开始递增。\n然后获取⽂件夹中的所有邮件，每个邮件的命名从数字0开始递增。\n每获取完⼀个⽂件夹中的邮件时，会⽣成⼀个名为”folder.txt”的⽂件⽤来存储当前⽂件夹的名字。\n当邮箱中所有⽂件夹都获取完毕后，⽣成⼀个名为“email.txt”的⽂件⽤来存储当前邮箱账号。\n2.2、数据回传 如果能窃取到outlook邮箱数据，则进⾏数据回传。\n上传Log 样本将log⽂件读取到内存后，以zip压缩、base64编码的⽅式对内容进⾏加密。\n然后⽣成⼀个json⽂件。\n然后⽤https+post的⽅式回传⾄攻击者的服务器hxxps://82.118.22.125/bgate\n上传邮箱内容 遍历获取窃取到的邮件⽂件。\n将遍历到的邮件⽂件读取到内存。\n同样先将读取到的数据进⾏zip压缩，然后使⽤base64编码加密。\n然后将数据以json格式进⾏打包。\n最后回传到攻击者服务器。\n三、样本运⾏环境搭建 添加测试的QQ邮箱，添加途中需要到QQ邮箱开通IMAP权限，获取应⽤密码。\n然后设置Outlook为默认使⽤的邮件软件。Win+i打开设置→应⽤→默认设置。\n使⽤编写代码⽤来加载样本(93d6d599c37d1858cc86c0d8fe8fb8d4)\n打开fakenet和⽕绒剑后将编写好的程序拖⼊⽕绒剑进⾏监控。（因为样本使⽤的是HTTPS加密协议，需要过滤⽹络数据才能看到明⽂数据，所以使⽤fakenet）。\n可以看到样本执⾏过程中在遍历⽬录寻找Outlook.exe。\n且傀儡程序被加载。\n可以看到⽂件已经被窃取到指定⽬录下\nfakenet也能捕获到回传的数据。\n由于样本发送后会将⽂件删除，所以重复上⾯的操作，利⽤⽕绒剑⾃定义防护，禁⽌⽂件删除。\n拿到窃取的⽂件\nOutlook的⽂件夹数为14，刚好对应上窃取到的⽂件夹编号。\n且每个⽂件夹下都保存着实际⽂件夹名。\n四、IoC URL：\nhxxps://82.118.22.125/bgate\nMD5：\n93D6D599C37D1858CC86C0D8FE8FB8D4\n9B0A4E5E5227B766EDE92340D7064545\n18152190D3637C3A24BA40046324B79C\n开源报告：\n(An Old Bot’s Nasty New Tricks: Exploring Qbot’s Latest Attack Methods)https://research.checkpoint.com/2020/exploring-qbots-latest-attack-methods/\n",
+  "wordCount" : "124",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/virus/qbot-outlook%E7%AA%83%E5%AF%86/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      QBot-Outlook窃密
+    </h1>
+    <div class="post-description">
+      QBot-Outlook窃密
+    </div>
+    <div class="post-meta">时长:&nbsp;1分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#qbot-outlook%e7%aa%83%e5%af%86" aria-label="QBot-Outlook窃密">QBot-Outlook窃密</a></li>
+                    <li>
+                        <a href="#%e5%8a%a0%e8%bd%bd%e5%99%a8%e5%88%86%e6%9e%90" aria-label="⼀、加载器分析">⼀、加载器分析</a><ul>
+                            
+                    <li>
+                        <a href="#1%e6%a0%b7%e6%9c%ac%e6%a0%87%e7%ad%be" aria-label="1、样本标签"><strong>1</strong>、样本标签</a></li>
+                    <li>
+                        <a href="#2%e8%af%a6%e7%bb%86%e5%88%86%e6%9e%90" aria-label="2、详细分析">2、详细分析</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e9%82%ae%e7%ae%b1%e7%aa%83%e5%af%86%e6%a8%a1%e5%9d%97%e5%88%86%e6%9e%90" aria-label="⼆、邮箱窃密模块分析">⼆、邮箱窃密模块分析</a><ul>
+                            
+                    <li>
+                        <a href="#1%e6%a0%b7%e6%9c%ac%e6%a0%87%e7%ad%be-1" aria-label="1、样本标签"><strong>1</strong>、样本标签</a></li>
+                    <li>
+                        <a href="#2%e8%af%a6%e7%bb%86%e5%88%86%e6%9e%90-1" aria-label="2、详细分析">2、详细分析</a><ul>
+                            
+                    <li>
+                        <a href="#21%e7%aa%83%e5%af%86%e9%82%ae%e7%ae%b1%e6%95%b0%e6%8d%ae" aria-label="2.1、窃密邮箱数据">2.1、窃密邮箱数据</a></li>
+                    <li>
+                        <a href="#22%e6%95%b0%e6%8d%ae%e5%9b%9e%e4%bc%a0" aria-label="2.2、数据回传">2.2、数据回传</a></li></ul>
+                    </li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e4%b8%89%e6%a0%b7%e6%9c%ac%e8%bf%90%e7%8e%af%e5%a2%83%e6%90%ad%e5%bb%ba" aria-label="三、样本运⾏环境搭建">三、样本运⾏环境搭建</a></li>
+                    <li>
+                        <a href="#%e5%9b%9bioc" aria-label="四、IoC">四、IoC</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="qbot-outlook窃密">QBot-Outlook窃密<a hidden class="anchor" aria-hidden="true" href="#qbot-outlook窃密">#</a></h1>
+<h1 id="加载器分析">⼀、加载器分析<a hidden class="anchor" aria-hidden="true" href="#加载器分析">#</a></h1>
+<h2 id="1样本标签"><strong>1</strong>、样本标签<a hidden class="anchor" aria-hidden="true" href="#1样本标签">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>病毒名称</th>
+<th>c8810d5eaaea95b36bbb529a2b9be5c5e6dda10f95992e7c35ac8bbf9f3a8f71</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原始⽂件名</td>
+<td>⽆</td>
+</tr>
+<tr>
+<td>MD5</td>
+<td>93d6d599c37d1858cc86c0d8fe8fb8d4</td>
+</tr>
+<tr>
+<td>⽂件⼤⼩</td>
+<td>222.50 KB (227840 bytes)</td>
+</tr>
+<tr>
+<td>⽂件格式</td>
+<td>Win32 DLL</td>
+</tr>
+<tr>
+<td>时间戳</td>
+<td>2020-04-20 23:33:29</td>
+</tr>
+<tr>
+<td>加壳类型</td>
+<td>⽆</td>
+</tr>
+<tr>
+<td>编译语⾔</td>
+<td>C/C++</td>
+</tr>
+<tr>
+<td>SHA1</td>
+<td>f85a63cb462b8fd60da35807c63cd13226907901</td>
+</tr>
+<tr>
+<td>CRC32</td>
+<td>F0A18B09</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2详细分析">2、详细分析<a hidden class="anchor" aria-hidden="true" href="#2详细分析">#</a></h2>
+<p>样本(93D6D599C37D1858CC86C0D8FE8FB8D4)⾃⾝为DLL⽂件,同时也是⼀个加载器。样本⼀旦被加载⾸先获取远线程注⼊所需要的API函数地址。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image1.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image1.jpeg"  />
+</p>
+<p>其中样本中的所有字符串都是加密的，通过传⼊字符串对应的id解密出字符串。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image2.png" alt="/posts/Virus/QBot-Outlook窃密/image2.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image3.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image3.jpeg"  />
+</p>
+<p>获取函数之后会通过token设置sid的⽅式进⾏提权。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image4.png" alt="/posts/Virus/QBot-Outlook窃密/image4.png"  />
+</p>
+<p>根据当前运⾏的环境是否为64位来获取Windows⽬录。接着在⽂件夹<strong>ProgramW6432ProgramFiles(x86)</strong>、<strong>ProgramFiles</strong>中搜索<strong>outlook.exe</strong>⽂件。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image5.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image5.jpeg"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image6.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image6.jpeg"  />
+</p>
+<p>如果存在outlook.exe⽂件后会根据⾃⾝进程位数来选择32位还是64位模式注⼊。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image7.png" alt="/posts/Virus/QBot-Outlook窃密/image7.png"  />
+</p>
+<p>注⼊⾸先会创建⼀个<strong>ping.exe</strong>进程作为傀儡，并且运⾏参数为**-t 127.0.0.1**，保证傀儡程序能持续运⾏。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image8.png" alt="/posts/Virus/QBot-Outlook窃密/image8.png"  />
+</p>
+<p>然后加载名为RES_DATA_1(如果是64位注⼊则为RES_DATA_2)的资源⽂件。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image9.png" alt="/posts/Virus/QBot-Outlook窃密/image9.png"  />
+</p>
+<h1 id="邮箱窃密模块分析">⼆、邮箱窃密模块分析<a hidden class="anchor" aria-hidden="true" href="#邮箱窃密模块分析">#</a></h1>
+<p>由于32位和64位功能相同，这⾥只分析32位。</p>
+<h2 id="1样本标签-1"><strong>1</strong>、样本标签<a hidden class="anchor" aria-hidden="true" href="#1样本标签-1">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>病毒名称</th>
+<th>RES_DATA_1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原始⽂件名</td>
+<td>emailcollector.dll</td>
+</tr>
+<tr>
+<td>MD5</td>
+<td>9B0A4E5E5227B766EDE92340D7064545</td>
+</tr>
+<tr>
+<td>⽂件⼤⼩</td>
+<td>84.00 KB (86016 bytes)</td>
+</tr>
+<tr>
+<td>⽂件格式</td>
+<td>Win32 DLL</td>
+</tr>
+<tr>
+<td>时间戳</td>
+<td>2020-04-20 23:33:01</td>
+</tr>
+<tr>
+<td>加壳类型</td>
+<td>⽆</td>
+</tr>
+<tr>
+<td>编译语⾔</td>
+<td>C/C++</td>
+</tr>
+<tr>
+<td>SHA1</td>
+<td>369EE5FF9960BB9E73503E0B0A4B3A57A96EC549</td>
+</tr>
+<tr>
+<td>CRC32</td>
+<td>1654A136</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2详细分析-1">2、详细分析<a hidden class="anchor" aria-hidden="true" href="#2详细分析-1">#</a></h2>
+<p>样本(9B0A4E5E5227B766EDE92340D7064545)为核⼼模块，负责窃取outlook的邮箱数据。当样本⾃⾝被成功加载时，与加载器相同。通过GetProAddress获取⼀些API函 数，其中字符串也是被加密状态，使⽤的算法也与加载器相同。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image10.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image10.jpeg"  />
+</p>
+<p>初始化完毕后会通过<strong>CreateThread</strong>函数创建⼀个线程，开始进⾏窃密。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image12.png" alt="/posts/Virus/QBot-Outlook窃密/image12.png"  />
+</p>
+<h3 id="21窃密邮箱数据">2.1、窃密邮箱数据<a hidden class="anchor" aria-hidden="true" href="#21窃密邮箱数据">#</a></h3>
+<p>样本⾸先会将当前⼯作⽬录设置为“C:\User\USERNAME\”（该字符串在初始化时获取）</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image13.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image13.jpeg"  />
+</p>
+<p>然后在当前⽬录下创建⼀个⽂件夹，格式为“<strong>EmailStorage_计算机名_当前时间戳</strong>”。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image14.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image14.jpeg"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image15.png" alt="/posts/Virus/QBot-Outlook窃密/image15.png"  />
+</p>
+<p>接着拼接⼀个名为collector_log.txt的⽂件名，⽤于输出执⾏的⽇志。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image16.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image16.jpeg"  />
+</p>
+<p>样本通过MAPIXXXXXXX函数访问outlook的数据，获取当前outlook所存在的邮箱账号。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image17.png" alt="/posts/Virus/QBot-Outlook窃密/image17.png"  />
+</p>
+<p>然后开始遍历每⼀个邮箱账号，获取详细信息。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image18.png" alt="/posts/Virus/QBot-Outlook窃密/image18.png"  />
+</p>
+<p>为每个邮箱账号创建名为**”当前索引”**的⽂件夹⽤来保存数据，接着创建线程sub_10002af8执⾏。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image19.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image19.jpeg"  />
+</p>
+<p>获取当前邮箱账号所存在的⽂件夹，⽂件夹的名字从数字0开始递增。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image20.png" alt="/posts/Virus/QBot-Outlook窃密/image20.png"  />
+</p>
+<p>然后获取⽂件夹中的所有邮件，每个邮件的命名从数字<strong>0</strong>开始递增。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image22.png" alt="/posts/Virus/QBot-Outlook窃密/image22.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image23.png" alt="/posts/Virus/QBot-Outlook窃密/image23.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image24.png" alt="/posts/Virus/QBot-Outlook窃密/image24.png"  />
+</p>
+<p>每获取完⼀个⽂件夹中的邮件时，会⽣成⼀个名为”folder.txt”的⽂件⽤来存储当前⽂件夹的名字。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image25.png" alt="/posts/Virus/QBot-Outlook窃密/image25.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image26.png" alt="/posts/Virus/QBot-Outlook窃密/image26.png"  />
+</p>
+<p>当邮箱中所有⽂件夹都获取完毕后，⽣成⼀个名为“email.txt”的⽂件⽤来存储当前邮箱账号。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image27.png" alt="/posts/Virus/QBot-Outlook窃密/image27.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image28.png" alt="/posts/Virus/QBot-Outlook窃密/image28.png"  />
+</p>
+<h3 id="22数据回传">2.2、数据回传<a hidden class="anchor" aria-hidden="true" href="#22数据回传">#</a></h3>
+<p>如果能窃取到outlook邮箱数据，则进⾏数据回传。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image29.png" alt="/posts/Virus/QBot-Outlook窃密/image29.png"  />
+</p>
+<ul>
+<li>上传Log</li>
+</ul>
+<p>样本将log⽂件读取到内存后，以zip压缩、base64编码的⽅式对内容进⾏加密。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image30.png" alt="/posts/Virus/QBot-Outlook窃密/image30.png"  />
+</p>
+<p>然后⽣成⼀个json⽂件。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image31.png" alt="/posts/Virus/QBot-Outlook窃密/image31.png"  />
+</p>
+<p>然后⽤<strong>https+post</strong>的⽅式回传⾄攻击者的服务器<strong>hxxps://82.118.22.125/bgate</strong></p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image33.png" alt="/posts/Virus/QBot-Outlook窃密/image33.png"  />
+</p>
+<ul>
+<li>上传邮箱内容</li>
+</ul>
+<p>遍历获取窃取到的邮件⽂件。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image34.png" alt="/posts/Virus/QBot-Outlook窃密/image34.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image35.png" alt="/posts/Virus/QBot-Outlook窃密/image35.png"  />
+</p>
+<p>将遍历到的邮件⽂件读取到内存。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image37.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image37.jpeg"  />
+</p>
+<p>同样先将读取到的数据进⾏zip压缩，然后使⽤base64编码加密。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image38.png" alt="/posts/Virus/QBot-Outlook窃密/image38.png"  />
+</p>
+<p>然后将数据以json格式进⾏打包。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image40.png" alt="/posts/Virus/QBot-Outlook窃密/image40.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image41.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image41.jpeg"  />
+</p>
+<p>最后回传到攻击者服务器。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image42.png" alt="/posts/Virus/QBot-Outlook窃密/image42.png"  />
+</p>
+<h1 id="三样本运环境搭建">三、样本运⾏环境搭建<a hidden class="anchor" aria-hidden="true" href="#三样本运环境搭建">#</a></h1>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image43.png" alt="/posts/Virus/QBot-Outlook窃密/image43.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image44.png" alt="/posts/Virus/QBot-Outlook窃密/image44.png"  />
+</p>
+<blockquote>
+<p>添加测试的QQ邮箱，添加途中需要到QQ邮箱开通IMAP权限，获取应⽤密码。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image45.png" alt="/posts/Virus/QBot-Outlook窃密/image45.png"  />
+</p>
+</blockquote>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image46.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image46.jpeg"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image47.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image47.jpeg"  />
+</p>
+<p>然后设置Outlook为默认使⽤的邮件软件。Win+i打开设置→应⽤→默认设置。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image48.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image48.jpeg"  />
+</p>
+<p>使⽤编写代码⽤来加载样本(93d6d599c37d1858cc86c0d8fe8fb8d4)</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image49.png" alt="/posts/Virus/QBot-Outlook窃密/image49.png"  />
+</p>
+<p>打开fakenet和⽕绒剑后将编写好的程序拖⼊⽕绒剑进⾏监控。（因为样本使⽤的是HTTPS加密协议，需要过滤⽹络数据才能看到明⽂数据，所以使⽤fakenet）。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image50.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image50.jpeg"  />
+</p>
+<p>可以看到样本执⾏过程中在遍历⽬录寻找Outlook.exe。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image51.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image51.jpeg"  />
+</p>
+<p>且傀儡程序被加载。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image52.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image52.jpeg"  />
+</p>
+<p>可以看到⽂件已经被窃取到指定⽬录下</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image53.png" alt="/posts/Virus/QBot-Outlook窃密/image53.png"  />
+</p>
+<p>fakenet也能捕获到回传的数据。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image54.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image54.jpeg"  />
+</p>
+<p>由于样本发送后会将⽂件删除，所以重复上⾯的操作，利⽤⽕绒剑⾃定义防护，禁⽌⽂件删除。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image55.png" alt="/posts/Virus/QBot-Outlook窃密/image55.png"  />
+</p>
+<p>拿到窃取的⽂件</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image56.png" alt="/posts/Virus/QBot-Outlook窃密/image56.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image57.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image57.jpeg"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image58.png" alt="/posts/Virus/QBot-Outlook窃密/image58.png"  />
+</p>
+<p>Outlook的⽂件夹数为14，刚好对应上窃取到的⽂件夹编号。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image59.png" alt="/posts/Virus/QBot-Outlook窃密/image59.png"  />
+</p>
+<p>且每个⽂件夹下都保存着实际⽂件夹名。</p>
+<p><img loading="lazy" src="/posts/Virus/QBot-Outlook%e7%aa%83%e5%af%86/image60.jpeg" alt="/posts/Virus/QBot-Outlook窃密/image60.jpeg"  />
+</p>
+<h1 id="四ioc">四、IoC<a hidden class="anchor" aria-hidden="true" href="#四ioc">#</a></h1>
+<p><strong>URL</strong>：</p>
+<p>hxxps://82.118.22.125/bgate</p>
+<p><strong>MD5</strong>：</p>
+<p>93D6D599C37D1858CC86C0D8FE8FB8D4</p>
+<p>9B0A4E5E5227B766EDE92340D7064545</p>
+<p>18152190D3637C3A24BA40046324B79C</p>
+<p><strong>开源报告：</strong></p>
+<p>(An Old Bot’s Nasty New Tricks: Exploring Qbot’s Latest Attack Methods)<a href="https://research.checkpoint.com/2020/exploring-qbots-latest-attack-methods/">https://research.checkpoint.com/2020/exploring-qbots-latest-attack-methods/</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/virus/">Virus</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/gamehacker/fps%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>FPS全屏秒杀以及全屏飞刀漏洞的逆向分析</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/vulhub/thinkphp-rce%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>ThinkPHP RCE远程执行漏洞</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

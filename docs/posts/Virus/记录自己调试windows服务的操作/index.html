@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>记录自己调试windows服务的操作 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="Virus">
+<meta name="description" content="记录自己调试windows服务的操作">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="记录自己调试windows服务的操作" />
+<meta property="og:description" content="记录自己调试windows服务的操作" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="记录自己调试windows服务的操作"/>
+<meta name="twitter:description" content="记录自己调试windows服务的操作"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "记录自己调试windows服务的操作",
+      "item": "https://planejun.github.io/posts/virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "记录自己调试windows服务的操作",
+  "name": "记录自己调试windows服务的操作",
+  "description": "记录自己调试windows服务的操作",
+  "keywords": [
+    "Virus"
+  ],
+  "articleBody": "记录自己调试windows服务的操作 PlaneJun ・2022-1-9 23:25 如题，近日分析了一个样本，发现需要调试服务，然后自己也没调试过服务，就在国内查了一些资料，基本能用的也就看雪一个大哥发的教程。[原创]使用Windbg\u0026OllyDbg从头调试windows服务-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com\n但是跟着操作弄了一遍，虽然是弄好了，但是会出现一个情况就是调试器会非常的卡，而且过了一会就消失了，整个虚拟机就直接是卡死状态，研究了许久还是解决不了就放弃了。然后就自己办法弄，考虑过写驱动给拦截了，但是VS2022没有WDK，于是想到全局API Hook，然后发现svchost.exe不过消息队列。在觉得无望的时候，我在火绒剑发现了这么一个玩意。\n因为自己是没去研究过服务启动的一个流程，在分析样本的时候用的是sc命令启动，就以为服务是从sc.exe去加载的，然后去分析了半天，发现不行。于是乎发现了这么一个流程，服务的一个启动过程如下：\nservice.exe —–[CreateProcessW]——-\u003esvchost.exe——-[LoadLibrary]——–\u003e服务启动\n然后就有了一个想法，直接附加service.exe然后给CreateProcessW下断点，再启动服务，拦截到svchost.exe的创建后，把参数修改为PROCESS_SUSPEND_RESUME，最后再用调试器附加svchost.exe下断LoadLibrary,手动恢复线程后等待目标服务DLL加载。理论存在开始实践。\n法一： 启动服务后直接断下，然后直接查看参数，发现是包含了线程暂停。\n猜到后面会存在恢复线程操作，就稍微跟了一下。\nF8走几步发现了恢复线程的函数，这里直接Nop掉不让他执行。走完之后直接恢复这个地方的Call\n这个时候已经可以把调试器F9跑起来了，然后会突然断在异常上。\n这里的这个异常让我想到了另一种调试方法，在法二里。\n这个时候另一个调试器附加创建出来的进程。\n恢复线程，然后F9让调试器跑起来。这个时候这里是不会断下的，需要到第一个调试器F9，一直F9到第二个调试器断下。（这里猜测是因为services.exe的操作没跑完，然后svchost.exe单独跑就出现问题。）\n第二个调试器断下后，就可以直接单次F9等到目标DLL加载了。\n加载完毕，直接跳到目标DLL的函数下断即可。\n接下来配合IDA食用即可。\n法二： 这个方法是我在调试的时候发现的一个特征，不知道适不适用，就是直接暴力断网，因为恶意样本以服务形式启动，肯定不是为了好玩，其中肯定会有网络行为。那么断网会导致样本在通讯的时候会产生一个等待行为，那么这个等待行为就可以拿来用。举个例子，样本存在下面的代码。\na = URLDownloadToFileW() if(a) { ...... } else { return } 那么，在服务调用URLDownloadToFileW这个函数时，由于你网络断开，那么他就会有一个网络等待行为，通常这个等待行为不会很长也不会很久，在这个等待时间里，直接用火绒剑查看服务所存在的进程PID，然后调试器附加后到if(a)这个位置下断，然后把网连上即可，函数返回断下后就可以开始分析了。\n注意事项： 1）、服务加载的超时时间，因为调试原因，服务加载的时候超过了规定时间，就会直接结束调试，所以需要设置时间。设置方法，这里直接截图开头那位大哥帖子里的内容。\n2）、调试需要提前开启好两个，因为一但调试进行，电脑就会卡死，无法打开东西。（貌似可以通过cmd命令打开）\n3）、关闭系统异常时自动关机的选项，不然会突然直接提示一分钟后自动关机。（计算机右键-属性-高级系统设置）\n虽然我这两个方法确实有点乱七八槽，但确实是可以调试服务的。如果各位大哥还有啥好法子，也可以支支招。\n",
+  "wordCount" : "41",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      记录自己调试windows服务的操作
+    </h1>
+    <div class="post-description">
+      记录自己调试windows服务的操作
+    </div>
+    <div class="post-meta">时长:&nbsp;1分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c" aria-label="记录自己调试windows服务的操作">记录自己调试windows服务的操作</a><ul>
+                            
+                    <li>
+                        <a href="#%e6%b3%95%e4%b8%80" aria-label="法一：">法一：</a></li>
+                    <li>
+                        <a href="#%e6%b3%95%e4%ba%8c" aria-label="法二：">法二：</a></li>
+                    <li>
+                        <a href="#%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9" aria-label="注意事项：">注意事项：</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="记录自己调试windows服务的操作">记录自己调试windows服务的操作<a hidden class="anchor" aria-hidden="true" href="#记录自己调试windows服务的操作">#</a></h1>
+<ul>
+<li><a href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2022-1-9 23:25</li>
+</ul>
+<p>如题，近日分析了一个样本，发现需要调试服务，然后自己也没调试过服务，就在国内查了一些资料，基本能用的也就看雪一个大哥发的教程。<a href="https://bbs.pediy.com/thread-229643.htm">[原创]使用Windbg&amp;OllyDbg从头调试windows服务-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com</a></p>
+<p>但是跟着操作弄了一遍，虽然是弄好了，但是会出现一个情况就是调试器会非常的卡，而且过了一会就消失了，整个虚拟机就直接是卡死状态，研究了许久还是解决不了就放弃了。然后就自己办法弄，考虑过写驱动给拦截了，但是VS2022没有WDK，于是想到全局API Hook，然后发现svchost.exe不过消息队列。在觉得无望的时候，我在火绒剑发现了这么一个玩意。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId6.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId6.png"  />
+</p>
+<p>因为自己是没去研究过服务启动的一个流程，在分析样本的时候用的是sc命令启动，就以为服务是从sc.exe去加载的，然后去分析了半天，发现不行。于是乎发现了这么一个流程，服务的一个启动过程如下：</p>
+<p>service.exe &mdash;&ndash;[CreateProcessW]&mdash;&mdash;-&gt;svchost.exe&mdash;&mdash;-[LoadLibrary]&mdash;&mdash;&ndash;&gt;服务启动</p>
+<p>然后就有了一个想法，直接附加service.exe然后给CreateProcessW下断点，再启动服务，拦截到svchost.exe的创建后，把参数修改为PROCESS_SUSPEND_RESUME，最后再用调试器附加svchost.exe下断LoadLibrary,手动恢复线程后等待目标服务DLL加载。理论存在开始实践。</p>
+<h2 id="法一">法一：<a hidden class="anchor" aria-hidden="true" href="#法一">#</a></h2>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId7.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId7.png"  />
+</p>
+<p>启动服务后直接断下，然后直接查看参数，发现是包含了线程暂停。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId8.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId8.png"  />
+</p>
+<p>猜到后面会存在恢复线程操作，就稍微跟了一下。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId9.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId9.png"  />
+</p>
+<p>F8走几步发现了恢复线程的函数，这里直接Nop掉不让他执行。走完之后直接恢复这个地方的Call</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId10.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId10.png"  />
+</p>
+<p>这个时候已经可以把调试器F9跑起来了，然后会突然断在异常上。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId11.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId11.png"  />
+</p>
+<p>这里的这个异常让我想到了另一种调试方法，在法二里。</p>
+<p>这个时候另一个调试器附加创建出来的进程。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId12.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId12.png"  />
+</p>
+<p>恢复线程，然后F9让调试器跑起来。这个时候这里是不会断下的，需要到第一个调试器F9，一直F9到第二个调试器断下。（<strong>这里猜测是因为services.exe的操作没跑完，然后svchost.exe单独跑就出现问题。）</strong></p>
+<p>第二个调试器断下后，就可以直接单次F9等到目标DLL加载了。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId13.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId13.png"  />
+</p>
+<p>加载完毕，直接跳到目标DLL的函数下断即可。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId14.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId14.png"  />
+</p>
+<p>接下来配合IDA食用即可。</p>
+<h2 id="法二">法二：<a hidden class="anchor" aria-hidden="true" href="#法二">#</a></h2>
+<p>这个方法是我在调试的时候发现的一个特征，不知道适不适用，就是直接暴力断网，因为恶意样本以服务形式启动，肯定不是为了好玩，其中肯定会有网络行为。那么断网会导致样本在通讯的时候会产生一个等待行为，那么这个等待行为就可以拿来用。举个例子，样本存在下面的代码。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">a</span> <span class="o">=</span> <span class="n">URLDownloadToFileW</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">......</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">return</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>那么，在服务调用URLDownloadToFileW这个函数时，由于你网络断开，那么他就会有一个网络等待行为，通常这个等待行为不会很长也不会很久，在这个等待时间里，直接用火绒剑查看服务所存在的进程PID，然后调试器附加后到if(a)这个位置下断，然后把网连上即可，函数返回断下后就可以开始分析了。</p>
+<h2 id="注意事项">注意事项：<a hidden class="anchor" aria-hidden="true" href="#注意事项">#</a></h2>
+<p>1）、服务加载的超时时间，因为调试原因，服务加载的时候超过了规定时间，就会直接结束调试，所以需要设置时间。设置方法，这里直接截图开头那位大哥帖子里的内容。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId15.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId15.png"  />
+</p>
+<p>2）、调试需要提前开启好两个，因为一但调试进行，电脑就会卡死，无法打开东西。（貌似可以通过cmd命令打开）</p>
+<p>3）、关闭系统异常时自动关机的选项，不然会突然直接提示一分钟后自动关机。（计算机右键-属性-高级系统设置）</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId16.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId16.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId17.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId17.png"  />
+</p>
+<p>虽然我这两个方法确实有点乱七八槽，但确实是可以调试服务的。如果各位大哥还有啥好法子，也可以支支招。</p>
+<p><img loading="lazy" src="/posts/Virus/%e8%ae%b0%e5%bd%95%e8%87%aa%e5%b7%b1%e8%b0%83%e8%af%95windows%e6%9c%8d%e5%8a%a1%e7%9a%84%e6%93%8d%e4%bd%9c/document_image_rId18.png" alt="/posts/Virus/记录自己调试windows服务的操作/document_image_rId18.png"  />
+</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/virus/">Virus</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/virus/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>记一次头铁的病毒样本分析过程</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

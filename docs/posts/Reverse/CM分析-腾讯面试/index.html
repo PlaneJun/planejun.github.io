@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>CM分析-腾讯面试 | PlaneJun&#39;s Blog</title>
+<meta name="keywords" content="Reverse">
+<meta name="description" content="CM分析-腾讯面试">
+<meta name="author" content="
+作者:&nbsp;PlaneJun">
+<link rel="canonical" href="https://planejun.github.io/posts/reverse/cm%E5%88%86%E6%9E%90-%E8%85%BE%E8%AE%AF%E9%9D%A2%E8%AF%95/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d5b6afbe926845090cb4cd7d45d6160898139db8a25f6d941fa0f8ca24b359bc.css" integrity="sha256-1bavvpJoRQkMtM19RdYWCJgTnbiiX22UH6D4yiSzWbw=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+        onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="16x16" href="https://planejun.github.io/icon.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://planejun.github.io/icon.jpg">
+<link rel="apple-touch-icon" href="https://planejun.github.io/icon.jpg">
+<link rel="mask-icon" href="https://planejun.github.io/icon.jpg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = ""; 
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<meta property="og:title" content="CM分析-腾讯面试" />
+<meta property="og:description" content="CM分析-腾讯面试" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://planejun.github.io/posts/reverse/cm%E5%88%86%E6%9E%90-%E8%85%BE%E8%AE%AF%E9%9D%A2%E8%AF%95/" /><meta property="article:section" content="posts" />
+
+<meta property="og:site_name" content="PlaneJun&#39;s Blog" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="CM分析-腾讯面试"/>
+<meta name="twitter:description" content="CM分析-腾讯面试"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://planejun.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "CM分析-腾讯面试",
+      "item": "https://planejun.github.io/posts/reverse/cm%E5%88%86%E6%9E%90-%E8%85%BE%E8%AE%AF%E9%9D%A2%E8%AF%95/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "CM分析-腾讯面试",
+  "name": "CM分析-腾讯面试",
+  "description": "CM分析-腾讯面试",
+  "keywords": [
+    "Reverse"
+  ],
+  "articleBody": "CM分析-腾讯面试 一、反调试 1、分析 程序启动时会对Zw函数进行拷贝到自身内存中，并将内存加密。实现过掉常规API检测。\n然后对BeginDebug和ForceFlags标志位进行检测，如果根据是否进行调试来设置自定义值。\n执行到MFC入口后会首先判断Wow64Transition是否被hook。\n然后对PEB-\u003eProcessHeap-\u003eFlags、PEB-\u003eProcessHeap-\u003eForceFlag、PEB-\u003eBeginDebug、PEB-\u003eNtGlobalFlag多个标志位进行检查是否存在调试。\n除此之外，程序会通过解密自拷贝的Zw函数来进行反调试。\n通过设置ThreadInformation为ThreadHideFromDebugger，将调试器分离实现反调试。 通过查询调试对象来判断是否进行调试。 调试时默认会有一个调试对象，程序尝试创建一个调试对象后获取，如果获取不到则表明处于调试状态。 通过传递非法指针地址引发0xC0000005 异常，如果执行后返回的异常码不正确则表明调试器接管了异常处理，即存在调试。 常规API检测反调试。 查询系统信息 引发异常检测调试 其中，反调试检测大多在窗口消息中。\n包括文字的渲染。\n2、反反调试 2.1、Patch 通过nop 反调试函数方式或者修改返回值的方式的patch实现过掉反调试。\n2.2、Hook Zw 2.2.1 EAT 在程序启动初期，快速将ntdll.dll的导出函数进行替换后自写分发过滤。\n2.2.2 替换wow64transition 通过ce查看32位下的syscall。\n可以将mov edx,xxxxxx的硬编码20 8f 87 77 修改为自己的函数地址，然后通过eax的值判断函数后进行自定义处理。\n由于CM会检测wow64transition头部是否为0xE9(默认 FF 25 xxxxxxx)\n因此自定义函数的头字节不能为0xe9。但在实现后测试的环节中发现部分Zw函数调用时崩溃，原因也暂未查找，因此该方法只作为一个额外的思路。\n二、注册机 1、算法分析 Win32获取EditBox函数大多是GetWindowText，但是在ida中交叉引用发现并没有什么有价值的东西。但是在导入表看到OutputDebugStringA,然后尝试打开了DbgView看看能不能捕获到内容。\n发现当用户名和注册码输入长度较长时，点击注册有输出，但该输出并非正确的注册码。猜测上层有对注册逻辑处理，交叉引用后发现上层代码无法进行伪代码生成。\n简单分析后发现该段代码存在异常处理和花指令。\n在异常地址0x401B86和异常函数0x0415890下断点后Shift+F9跳转到自定义异常跟踪分析后，发现该处最终的跳转结果为0x401BA1。\n对代码进行修复后且nop无效代码后，ida已经可以进行伪代码生成。\n注册算法为从地址为0x401BA9处循环执行0x960次，每次以四字节大小读取地址数据后与初始值的Key(0x19820714)，进行异或运算得到最后一个校验值。然后生成三个固定常量表。\n紧接着获取用户名和注册码对应EditBox的内容。\n其中会判断用户名长度是否为8，注册码长度是否为24。\n最后将用户名和上边生成的三个表、Key进行计算注册码。\n计算完毕后会执行函数OutputDebugStringA将计算出来的注册码输出，但输出的方式为将计算出的注册码的头和尾字符各上升一个字符，及\"0\"-\u003e“1”。\n2、注册机实现 #include #include namespace MemTools { HANDLE\tm_hProcess; DWORD\tm_pid = NULL; void Attach(DWORD pid) { m_pid = pid; if (m_hProcess) CloseHandle(m_hProcess); m_hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid); } template\u003ctypename T\u003e T ReadMem(DWORD addr) { if (!m_hProcess) return T(); T value{}; ReadProcessMemory(m_hProcess, (LPVOID)addr, \u0026value, sizeof(T), NULL); return value; } } int main() { int key = 0x19820714; HWND hWnd = FindWindowA(NULL,\"CrackMeDemo\"); DWORD pid{}; GetWindowThreadProcessId(hWnd, \u0026pid); MemTools::Attach(pid); for (int i = 0; i \u003c 0x960; i++) key ^= MemTools::ReadMem\u003cDWORD\u003e(0x401ba9 + i*4); char v20[27] =\"0\"; char v26[27] = \"A\"; char v18[27] = \"a\"; for (int j = 1; j \u003c 26; ++j) // 生成表 { v20[j] = v20[j - 1] + 1; v26[j] = v26[j - 1] + 1; v18[j] = v18[j - 1] + 1; } char user[] = \"test1234\"; char pwd[1024]{}; if (strlen(user) != 8) return 0; for (int k = 0; k \u003c 8; k++) { user[k] ^= k; user[k] ^= MemTools::ReadMem\u003cBYTE\u003e(0x401BB9 +k); user[k] ^= MemTools::ReadMem\u003cBYTE\u003e(0x401BC9 +k); } *(DWORD*)(user) ^= key; *(DWORD*)\u0026user[4] ^= key; for (int m = 0; m \u003c 8; m++) { unsigned __int8 v8 = (unsigned __int8)(user[m] \u0026 0xE0) / 32; unsigned __int8 v6 = (user[m] \u0026 0x1c) / 4; unsigned __int8 v7 = user[m] \u0026 3; if (m % 3 == 2) { pwd[m * 3] = v20[v7]; pwd[m * 3 + 1] = v26[v8 + 8]; pwd[m * 3 + 2] = v18[v6 + 16]; } if (m % 3 == 1) { pwd[m * 3] = v26[v8 +16]; pwd[m * 3 + 1] = v18[v6 + 8]; pwd[m * 3 + 2] = v20[v7]; } if (!(m % 3)) { pwd[m * 3] = v26[v6 +16]; pwd[m * 3 + 1] = v18[v7 + 8]; pwd[m * 3 + 2] = v20[v8]; } } printf(\"%s\\n\",pwd); return(0); } DbgView捕获到的内容\n将头尾各降一个字符得到的内容与注册机一致。\nUk4Xm30PtWj6Vl13LtRk2Xp1 -\u003e Tk4Xm30PtWj6Vl13LtRk2Xp0\n",
+  "wordCount" : "353",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "PlaneJun"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://planejun.github.io/posts/reverse/cm%E5%88%86%E6%9E%90-%E8%85%BE%E8%AE%AF%E9%9D%A2%E8%AF%95/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PlaneJun's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://planejun.github.io/icon.jpg"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://planejun.github.io/" accesskey="h" title="PlaneJun&#39;s Blog (Alt + H)">
+            <img src="https://planejun.github.io/icon.jpg" alt="logo" aria-label="logo"
+                 height="45">PlaneJun&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://planejun.github.io/posts" title="Posts">
+                <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://planejun.github.io/tags" title="Categories">
+                <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/PlaneJun" title="Links">
+                <span>Links</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/adityatelange/hugo-PaperMod/wiki/" title="About">
+                <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main page">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://planejun.github.io/">主页</a>&nbsp;»&nbsp;<a href="https://planejun.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      CM分析-腾讯面试
+    </h1>
+    <div class="post-description">
+      CM分析-腾讯面试
+    </div>
+    <div class="post-meta">时长:&nbsp;2分钟&nbsp;|&nbsp;
+作者:&nbsp;PlaneJun
+
+
+
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">文章目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#cm%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95" aria-label="CM分析-腾讯面试">CM分析-腾讯面试</a></li>
+                    <li>
+                        <a href="#%e4%b8%80%e5%8f%8d%e8%b0%83%e8%af%95" aria-label="一、反调试">一、反调试</a><ul>
+                            
+                    <li>
+                        <a href="#1%e5%88%86%e6%9e%90" aria-label="1、分析">1、分析</a></li>
+                    <li>
+                        <a href="#2%e5%8f%8d%e5%8f%8d%e8%b0%83%e8%af%95" aria-label="2、反反调试">2、反反调试</a><ul>
+                            
+                    <li>
+                        <a href="#21patch" aria-label="2.1、Patch">2.1、Patch</a></li>
+                    <li>
+                        <a href="#22hook-zw" aria-label="2.2、Hook Zw">2.2、Hook Zw</a></li>
+                    <li>
+                        <a href="#221-eat" aria-label="2.2.1 EAT">2.2.1 EAT</a></li>
+                    <li>
+                        <a href="#222-%e6%9b%bf%e6%8d%a2wow64transition" aria-label="2.2.2 替换wow64transition">2.2.2 替换wow64transition</a></li></ul>
+                    </li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e4%ba%8c%e6%b3%a8%e5%86%8c%e6%9c%ba" aria-label="二、注册机">二、注册机</a><ul>
+                            
+                    <li>
+                        <a href="#1%e7%ae%97%e6%b3%95%e5%88%86%e6%9e%90" aria-label="1、算法分析">1、算法分析</a></li>
+                    <li>
+                        <a href="#2%e6%b3%a8%e5%86%8c%e6%9c%ba%e5%ae%9e%e7%8e%b0" aria-label="2、注册机实现">2、注册机实现</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="cm分析-腾讯面试">CM分析-腾讯面试<a hidden class="anchor" aria-hidden="true" href="#cm分析-腾讯面试">#</a></h1>
+<h1 id="一反调试">一、反调试<a hidden class="anchor" aria-hidden="true" href="#一反调试">#</a></h1>
+<h2 id="1分析">1、分析<a hidden class="anchor" aria-hidden="true" href="#1分析">#</a></h2>
+<p>程序启动时会对Zw函数进行拷贝到自身内存中，并将内存加密。实现过掉常规API检测。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId4.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId4.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId5.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId5.png"  />
+</p>
+<p>然后对<code>BeginDebug</code>和<code>ForceFlags</code>标志位进行检测，如果根据是否进行调试来设置自定义值。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId6.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId6.png"  />
+</p>
+<p>执行到MFC入口后会首先判断Wow64Transition是否被hook。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId7.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId7.png"  />
+</p>
+<p>然后对<code>PEB-&gt;ProcessHeap-&gt;Flags</code>、<code>PEB-&gt;ProcessHeap-&gt;ForceFlag</code>、<code>PEB-&gt;BeginDebug</code>、<code>PEB-&gt;NtGlobalFlag</code>多个标志位进行检查是否存在调试。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId8.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId8.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId9.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId9.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId10.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId10.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId11.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId11.png"  />
+</p>
+<p>除此之外，程序会通过解密自拷贝的Zw函数来进行反调试。</p>
+<ul>
+<li>通过设置ThreadInformation为<code>ThreadHideFromDebugger</code>，将调试器分离实现反调试。</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId12.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId12.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId13.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId13.png"  />
+</p>
+<ul>
+<li>通过查询调试对象来判断是否进行调试。</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId14.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId14.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId15.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId15.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId16.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId16.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId17.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId17.png"  />
+</p>
+<ul>
+<li>调试时默认会有一个调试对象，程序尝试创建一个调试对象后获取，如果获取不到则表明处于调试状态。</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId18.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId18.png"  />
+</p>
+<ul>
+<li>通过传递非法指针地址引发0xC0000005 异常，如果执行后返回的异常码不正确则表明调试器接管了异常处理，即存在调试。</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId19.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId19.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId20.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId20.png"  />
+</p>
+<ul>
+<li>常规API检测反调试。</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId21.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId21.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId22.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId22.png"  />
+</p>
+<ul>
+<li>查询系统信息</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId23.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId23.png"  />
+</p>
+<ul>
+<li>引发异常检测调试</li>
+</ul>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId24.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId24.png"  />
+</p>
+<p>其中，反调试检测大多在窗口消息中。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId25.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId25.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId26.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId26.png"  />
+</p>
+<p>包括文字的渲染。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId27.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId27.png"  />
+</p>
+<h2 id="2反反调试">2、反反调试<a hidden class="anchor" aria-hidden="true" href="#2反反调试">#</a></h2>
+<h3 id="21patch">2.1、Patch<a hidden class="anchor" aria-hidden="true" href="#21patch">#</a></h3>
+<p>通过nop 反调试函数方式或者修改返回值的方式的patch实现过掉反调试。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId28.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId28.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId29.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId29.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId30.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId30.png"  />
+</p>
+<h3 id="22hook-zw">2.2、Hook Zw<a hidden class="anchor" aria-hidden="true" href="#22hook-zw">#</a></h3>
+<h3 id="221-eat">2.2.1 EAT<a hidden class="anchor" aria-hidden="true" href="#221-eat">#</a></h3>
+<p>在程序启动初期，快速将ntdll.dll的导出函数进行替换后自写分发过滤。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId31.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId31.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId32.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId32.png"  />
+</p>
+<h3 id="222-替换wow64transition">2.2.2 替换wow64transition<a hidden class="anchor" aria-hidden="true" href="#222-替换wow64transition">#</a></h3>
+<p>通过ce查看32位下的syscall。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId33.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId33.png"  />
+</p>
+<p>可以将mov edx,xxxxxx的硬编码20 8f 87 77 修改为自己的函数地址，然后通过eax的值判断函数后进行自定义处理。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId34.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId34.png"  />
+</p>
+<p>由于CM会检测wow64transition头部是否为0xE9(默认 FF 25 xxxxxxx)</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId35.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId35.png"  />
+</p>
+<p>因此自定义函数的头字节不能为0xe9。但在实现后测试的环节中发现部分Zw函数调用时崩溃，原因也暂未查找，因此该方法只作为一个额外的思路。</p>
+<h1 id="二注册机">二、注册机<a hidden class="anchor" aria-hidden="true" href="#二注册机">#</a></h1>
+<h2 id="1算法分析">1、算法分析<a hidden class="anchor" aria-hidden="true" href="#1算法分析">#</a></h2>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId36.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId36.png"  />
+</p>
+<p>Win32获取EditBox函数大多是GetWindowText，但是在ida中交叉引用发现并没有什么有价值的东西。但是在导入表看到<code>OutputDebugStringA</code>,然后尝试打开了DbgView看看能不能捕获到内容。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId37.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId37.png"  />
+</p>
+<p>发现当用户名和注册码输入长度较长时，点击注册有输出，但该输出并非正确的注册码。猜测上层有对注册逻辑处理，交叉引用后发现上层代码无法进行伪代码生成。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId38.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId38.png"  />
+</p>
+<p>简单分析后发现该段代码存在异常处理和花指令。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId39.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId39.png"  />
+</p>
+<p>在异常地址0x401B86和异常函数0x0415890下断点后Shift+F9跳转到自定义异常跟踪分析后，发现该处最终的跳转结果为0x401BA1。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId40.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId40.png"  />
+</p>
+<p>对代码进行修复后且nop无效代码后，ida已经可以进行伪代码生成。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId41.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId41.png"  />
+</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId42.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId42.png"  />
+</p>
+<p>注册算法为从地址为0x401BA9处循环执行0x960次，每次以四字节大小读取地址数据后与初始值的Key(0x19820714)，进行异或运算得到最后一个校验值。然后生成三个固定常量表。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId43.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId43.png"  />
+</p>
+<p>紧接着获取用户名和注册码对应EditBox的内容。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId44.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId44.png"  />
+</p>
+<p>其中会判断用户名长度是否为8，注册码长度是否为24。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId45.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId45.png"  />
+</p>
+<p>最后将用户名和上边生成的三个表、Key进行计算注册码。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId46.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId46.png"  />
+</p>
+<p>计算完毕后会执行函数OutputDebugStringA将计算出来的注册码输出，但输出的方式为将计算出的注册码的头和尾字符各上升一个字符，及&quot;0&quot;-&gt;&ldquo;1&rdquo;。</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId47.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId47.png"  />
+</p>
+<h2 id="2注册机实现">2、注册机实现<a hidden class="anchor" aria-hidden="true" href="#2注册机实现">#</a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Windows.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">namespace</span> <span class="n">MemTools</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">HANDLE</span>	<span class="n">m_hProcess</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">DWORD</span>	<span class="n">m_pid</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kt">void</span> <span class="nf">Attach</span><span class="p">(</span><span class="n">DWORD</span> <span class="n">pid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">m_pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">m_hProcess</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="n">CloseHandle</span><span class="p">(</span><span class="n">m_hProcess</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">m_hProcess</span> <span class="o">=</span> <span class="n">OpenProcess</span><span class="p">(</span><span class="n">PROCESS_ALL_ACCESS</span><span class="p">,</span> <span class="n">FALSE</span><span class="p">,</span> <span class="n">pid</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">T</span> <span class="n">ReadMem</span><span class="p">(</span><span class="n">DWORD</span> <span class="n">addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">m_hProcess</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">T</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">		<span class="n">T</span> <span class="n">value</span><span class="p">{};</span>
+</span></span><span class="line"><span class="cl">		<span class="n">ReadProcessMemory</span><span class="p">(</span><span class="n">m_hProcess</span><span class="p">,</span> <span class="p">(</span><span class="n">LPVOID</span><span class="p">)</span><span class="n">addr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">key</span> <span class="o">=</span> <span class="mh">0x19820714</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">HWND</span> <span class="n">hWnd</span> <span class="o">=</span> <span class="n">FindWindowA</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="s">&#34;CrackMeDemo&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">DWORD</span> <span class="n">pid</span><span class="p">{};</span>
+</span></span><span class="line"><span class="cl">	<span class="n">GetWindowThreadProcessId</span><span class="p">(</span><span class="n">hWnd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pid</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MemTools</span><span class="o">::</span><span class="n">Attach</span><span class="p">(</span><span class="n">pid</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mh">0x960</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">key</span> <span class="o">^=</span> <span class="n">MemTools</span><span class="o">::</span><span class="n">ReadMem</span><span class="o">&lt;</span><span class="n">DWORD</span><span class="o">&gt;</span><span class="p">(</span><span class="mh">0x401ba9</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="mi">4</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">v20</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span> <span class="o">=</span><span class="s">&#34;0&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">v26</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;A&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">v18</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#34;a&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">26</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span>                  <span class="c1">// 生成表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">v20</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">v20</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">v26</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">v26</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">v18</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">v18</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">user</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;test1234&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">pwd</span><span class="p">[</span><span class="mi">1024</span><span class="p">]{};</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">user</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">^=</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">user</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">^=</span> <span class="n">MemTools</span><span class="o">::</span><span class="n">ReadMem</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">&gt;</span><span class="p">(</span><span class="mh">0x401BB9</span> <span class="o">+</span><span class="n">k</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="n">user</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">^=</span> <span class="n">MemTools</span><span class="o">::</span><span class="n">ReadMem</span><span class="o">&lt;</span><span class="n">BYTE</span><span class="o">&gt;</span><span class="p">(</span><span class="mh">0x401BC9</span> <span class="o">+</span><span class="n">k</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)(</span><span class="n">user</span><span class="p">)</span> <span class="o">^=</span> <span class="n">key</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="o">*</span><span class="p">(</span><span class="n">DWORD</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">user</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">^=</span> <span class="n">key</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">m</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		
+</span></span><span class="line"><span class="cl">		<span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">v8</span> <span class="o">=</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kr">__int8</span><span class="p">)(</span><span class="n">user</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0xE0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">32</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">v6</span> <span class="o">=</span> <span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x1c</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="kt">unsigned</span> <span class="kr">__int8</span> <span class="n">v7</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">m</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pwd</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">v20</span><span class="p">[</span><span class="n">v7</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pwd</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v26</span><span class="p">[</span><span class="n">v8</span> <span class="o">+</span> <span class="mi">8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pwd</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">v18</span><span class="p">[</span><span class="n">v6</span> <span class="o">+</span> <span class="mi">16</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">m</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pwd</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">v26</span><span class="p">[</span><span class="n">v8</span> <span class="o">+</span><span class="mi">16</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pwd</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v18</span><span class="p">[</span><span class="n">v6</span> <span class="o">+</span> <span class="mi">8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pwd</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">v20</span><span class="p">[</span><span class="n">v7</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">m</span> <span class="o">%</span> <span class="mi">3</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pwd</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">v26</span><span class="p">[</span><span class="n">v6</span> <span class="o">+</span><span class="mi">16</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pwd</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v18</span><span class="p">[</span><span class="n">v7</span> <span class="o">+</span> <span class="mi">8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">			<span class="n">pwd</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">v20</span><span class="p">[</span><span class="n">v8</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="n">pwd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId48.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId48.png"  />
+</p>
+<p>DbgView捕获到的内容</p>
+<p><img loading="lazy" src="/posts/Reverse/CM%e5%88%86%e6%9e%90-%e8%85%be%e8%ae%af%e9%9d%a2%e8%af%95/document_image_rId49.png" alt="/posts/Reverse/CM分析-腾讯面试/document_image_rId49.png"  />
+</p>
+<p>将头尾各降一个字符得到的内容与注册机一致。</p>
+<p>Uk4Xm30PtWj6Vl13LtRk2Xp1 -&gt; Tk4Xm30PtWj6Vl13LtRk2Xp0</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://planejun.github.io/tags/reverse/">Reverse</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://planejun.github.io/posts/vulhub/apache-tomcat%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/">
+    <span class="title">« 上一页</span>
+    <br>
+    <span>Apache Tomcat远程代码执行漏洞</span>
+  </a>
+  <a class="next" href="https://planejun.github.io/posts/vulhub/cve-2018-15473ssh%E7%94%A8%E6%88%B7%E6%9E%9A%E4%B8%BE/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>CVE-2018-15473(SSH用户枚举)</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+</main>
+
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://planejun.github.io/">PlaneJun&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
