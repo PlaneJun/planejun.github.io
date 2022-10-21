@@ -1,0 +1,715 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../../img/fluid.png">
+  <link rel="icon" href="../../../../../img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="PlaneJun">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="攻防世界-逆向题笔记{no-strings-attached}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="攻防世界-逆向题笔记{no-strings-attached}">
+<meta property="og:url" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/index.html">
+<meta property="og:site_name" content="PlaneJun&#39; Blog">
+<meta property="og:description" content="攻防世界-逆向题笔记{no-strings-attached}">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId4.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId5.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId6.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId7.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId8.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId9.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId10.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId11.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId12.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId13.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId14.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId15.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId16.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId17.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId18.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId19.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId20.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId21.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId22.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId23.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId24.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId25.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId26.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId27.png#center">
+<meta property="article:published_time" content="2022-10-21T02:03:28.949Z">
+<meta property="article:modified_time" content="2022-10-21T03:19:50.741Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId4.png#center">
+  
+  
+  
+  <title>攻防世界-逆向题笔记{no-strings-attached} - PlaneJun&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="../../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../../js/utils.js" ></script>
+  <script  src="../../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../../index.html">
+      <strong>PlaneJun&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../index.html">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/planejun">
+                <i class="iconfont icon-github-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../../img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="攻防世界-逆向题笔记{no-strings-attached}"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-21 10:03" pubdate>
+          2022年10月21日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          12 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">攻防世界-逆向题笔记{no-strings-attached}</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>分析对象：no-strings-attached</p>
+<p>工具：Kali-Linux、Ida、python、edb</p>
+<p>步骤：1）、运行查看效果</p>
+<p>2）、PE工具查壳</p>
+<p>3）、查看文件平台</p>
+<p>4）、如果有壳就脱壳，无壳进行第四步</p>
+<p>5）、文件拖入ida进行分析</p>
+<p>6）、解密</p>
+<p>6.1、手撕加密</p>
+<p>6.2、edb调试</p>
+<p><strong>一、运行查看效果</strong></p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId4.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><strong>二、PE工具查壳</strong></p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId5.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>无壳</p>
+<p><strong>三、查看文件平台</strong></p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId6.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>32位文件，故使用32位ida</p>
+<p><strong>四、脱壳</strong></p>
+<p>无</p>
+<p><strong>五、Ida分析</strong></p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId7.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>老方法，先搜索字符串</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId8.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>emmm，空空如也。那只能去<strong>main函数</strong>了。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId9.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>F5即可得到伪代码。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId10.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>经过简单的分析呢，发现最后一个函数为关键函数。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId11.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>双击进入该函数进行分析</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId12.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这里呢，两种方法，获取flag，也就是s2。一种是手动撕加密算法；另一种是让程序自身把所有加密运算完成后，直接获取加密的结果。由于s2的值来源于<strong>decrypt</strong>函数的返回值，所以我们直接在<strong>decrypt</strong>函数尾部，等待断下后看<strong>eax</strong>的值，因为<strong>eax</strong>的值通常为函数返回值。</p>
+<p><strong>六、解密</strong></p>
+<p><strong>第一种：</strong></p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId13.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>双击进入函数，发现该函数操作的是宽字节，也就是unicode(<strong>一个字符两字节保存</strong>)。然后返回外层双击两个参数查看值。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId14.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>首先看s的数据</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId15.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>发现他是 <strong>0x?? 0x14 0x00 0x00</strong> 这种格式去显示，为了显示更清楚，记录左边的地址，去十六进制数去看看</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId16.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>会发现他所有的数据都是这样的。刚刚说过unicode是一个字符用两个字节保存，但是这个仅限与window下，<strong>在linux系统中，unicode都是一个字符以四个字节保存</strong>，所以会看到每个数据都是以这种格式存放 <strong>0x?? 0x14 0x00 0x00</strong> ，其中<strong>0x14</strong>是无效字符，我们不用管，直接按照小尾方式读取。那么<strong>s</strong>的数据中第一个字符为<strong>0x3A(:)<strong>，其他字符也是一样。那么我们</strong>s</strong>的数据看完了，我们去看看<strong>byte_8048A90</strong>的数据。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId17.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>发现也是一样，都是 <strong>0x?? 0x14 0x00 0x00</strong>格式。知道这两个字符串保存什么之后，我们可以开始写脚本了。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId18.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><strong>第二种：</strong></p>
+<p>这种方法非常实用，也很快速得到flag。我们首先在linux运行edb。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId19.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>然后把我们的实验分析对象拖进去，或者也可以通过菜单 <strong>File-&gt;open</strong> 打开</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId20.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这个时候我们的程序已经在调试了，我们<strong>返回ida去看看加密运算的函数地址，</strong></p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId21.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>红框的位置是函数头，我们在edb中跳到这个地址。按下快捷键<strong>Ctrl+G</strong>，然后输入地址，记住一定要有<strong>前缀0x</strong>。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId22.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>点击OK，直接可以跳转到关键代码。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId23.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这几个函数和ida里的一样，所以我们是跳转到了正确地方。接下来按照前面的分析我们直接在这个函数尾部下断，然后观察<strong>eax</strong>的值，就可以拿到<strong>flag</strong>。我们往下拉会看到ret指令，我们选中这点指令按下<strong>F2</strong>下断，也可以单击<strong>左边红色的地址</strong>进行下断。下断成功会看到左边红色地址有一个<strong>小红点。</strong></p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId24.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>接下来我们按下F9或者点击工具栏的</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId25.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>让程序跑起来。运行了两次后，发现程序断在了我们下断的地方，我们看看eax</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId26.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>记录这个值，然后在左下方的<strong>DataDump中按下Ctrl+G</strong>，跳转到这个地址。</p>
+<p><img src="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bno-strings-attached%7D/document_image_rId27.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>依旧能看到flag，因为是unicode型的字符串，所以<strong>一个字符4个字节大小(Linux)。</strong></p>
+<p><strong>总结：</strong></p>
+<p>大概熟悉一下edb操作，如果本身会OD，那么edb操作基本不是问题。另外就是要知道一个东西，Window平台下的unicode是一个字符2个字节，Linux下是一个字符4个字节。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../../categories/CTF/" class="category-chain-item">CTF</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>攻防世界-逆向题笔记{no-strings-attached}</div>
+      <div>http://example.com/2022/10/21/CTF/攻防世界-逆向题笔记{no-strings-attached}/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>PlaneJun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bopen-source%7D/" title="攻防世界-逆向题笔记{open-source}">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">攻防世界-逆向题笔记{open-source}</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Blogmein%7D/" title="攻防世界-逆向题笔记{logmein}">
+                        <span class="hidden-mobile">攻防世界-逆向题笔记{logmein}</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../../js/events.js" ></script>
+<script  src="../../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

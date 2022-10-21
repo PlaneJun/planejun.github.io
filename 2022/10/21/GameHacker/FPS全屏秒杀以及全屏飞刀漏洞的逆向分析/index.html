@@ -1,0 +1,737 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../../img/fluid.png">
+  <link rel="icon" href="../../../../../img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="PlaneJun">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析">
+<meta property="og:url" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="PlaneJun&#39; Blog">
+<meta property="og:description" content="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%201.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%202.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%203.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%204.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%205.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%206.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%207.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%208.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%209.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2010.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2011.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2012.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2013.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2014.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2015.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2016.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2017.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2018.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2019.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2020.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2021.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2022.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2023.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2024.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2025.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2026.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/826671_M6NVDG6VMQGA2YZ.gif#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2027.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2028.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2029.png#center">
+<meta property="article:published_time" content="2022-10-21T02:03:29.106Z">
+<meta property="article:modified_time" content="2022-10-21T04:03:34.999Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/10/21/GameHacker/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled.png#center">
+  
+  
+  
+  <title>FPS全屏秒杀以及全屏飞刀漏洞的逆向分析 - PlaneJun&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="../../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../../js/utils.js" ></script>
+  <script  src="../../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../../index.html">
+      <strong>PlaneJun&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../index.html">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/planejun">
+                <i class="iconfont icon-github-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../../img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-21 10:03" pubdate>
+          2022年10月21日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">FPS全屏秒杀以及全屏飞刀漏洞的逆向分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析"><a href="#FPS全屏秒杀以及全屏飞刀漏洞的逆向分析" class="headerlink" title="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析"></a>FPS全屏秒杀以及全屏飞刀漏洞的逆向分析</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2019-11-19 20:45</li>
+</ul>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>一、引言</p>
+<p>二、正文</p>
+<p>1、全屏飞刀原理及实现</p>
+<p>2、全屏秒杀原理及实现</p>
+<p>三、总结</p>
+<p>四、白嫖</p>
+<p><strong>分析对象：CS1.6 5Eplay 版本</strong></p>
+<p><strong>编程工具：Visual Studio 2019</strong></p>
+<p><strong>工具：CheatEngine 6.7</strong></p>
+<h1 id="一、引言"><a href="#一、引言" class="headerlink" title="一、引言"></a>一、引言</h1><p>不知道有多少人是经历过穿越X线的神仙时代。我只记得当时最疯狂的是一个房间充满着各种奇葩的科学家，例如飞天、遁地、隐身、加速、子弹穿墙，飞刀等等，但是，最有意思的还是Bug不掉血的卡箱和卡墙。这些东西虽说是游戏的漏洞造成的，但是当时那个时候玩起来依旧是很开心，毕竟当时的游戏环境还是很认可的，武器属性的平衡，玩家之间的默契度，战队里的开黑，都让我们对当时的一些保留着一无比忘怀的怀念。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%201.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%202.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%203.png#center" srcset="/img/loading.gif" lazyload></p>
+<h1 id="二、正文："><a href="#二、正文：" class="headerlink" title="二、正文："></a>二、正文：</h1><p>煽情完了，咱们开始正题。今儿咱们来说说远古时期的大发明-全屏飞刀和全屏秒杀。这篇文章依旧使用被无数次仙人跳的游戏来操作，嗯，没错就是CS1.6。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%204.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>在我们干事之前，稍微对游戏的一个动作进行思考，这里咱们先讲全屏飞刀，再讲全屏秒杀。</p>
+<p><strong>一、 全屏飞刀原理及实现</strong></p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%205.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这里我总结了三种思路：1、通过游戏播放的音效来寻找。细心的同志可能会发现，挥刀的时候，打中和没打中是有两种音效播放的，所以我们只需要在游戏目录下找到这个音效的名字，然后去文件操作相关的api下断，看他什么时候去访问这个文件就行了，断下后直接返回应该就直接能找到关键代码处。2、只要是个有脑子的人，手里拿着枪的时候可以砰砰砰的射击，但是切刀之后就没法实现击中效果了。那么他肯定会有一个关键跳转来判断你当前武器是否是刀(有可能判断当前手持的模型ID)，这个时候找到这个跳转，搞就完事。3、都知道鼠标控制开火，那么鼠标消息肯定会经过关键代码，这个时候直接鼠标消息下断后去分析就行了，但是相比前两种方法，要分析的代码量更多，头发多的人推荐尝试。<br>这里我用的是第二种方法，但是其他方法依旧希望大家去试试，毕竟技多不压身(其实就是懒得去弄)。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%206.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>在正式去找的时候我们先来整理一下思路。首先我们要找的是全屏飞刀，那什么是全屏飞刀？顾名思义，就是当我们拿着刀的时候不用贴着敌人也能打中敌人。此时我们是不是很容易去联想到攻击call？因为你的刀能不能攻击到别人是取决于你的攻击call的代码流程，所以在内部代码中极有可能存在着某条跳转用来判断你这个攻击是否有效，如果有效，给你击中；如果无效，直接给你ret。下面是给出的伪代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">bool</span> 开始攻击(xxxxxxxx)<br> <br>&#123;<br> <br><span class="hljs-built_in">If</span> ( 当前手持武器 == 刀)<br> <br>       <span class="hljs-built_in">If</span>(可以攻击==假)<br> <br>Return <span class="hljs-literal">false</span>； <span class="hljs-comment">//攻击失败</span><br> <br>              攻击（）；<br> <br>              Return <span class="hljs-literal">true</span>；<br> <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>理论就说这么多，咱们直接找吧！</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%207.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>首先咱们要找到游戏对人物处理血量的关键代码处，然后下断返回，就能看到攻击call了。很简单，<strong>找到血量-&gt;访问血量-&gt;射他-&gt;出现代码-&gt;记录代码-&gt;甩进OD-&gt;开始分析</strong>，其中前5步我就不演示了，直接放甩进OD的部分。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%208.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%209.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>给他下个F2断点，然后用刀划他**(记住，一定要用刀划，因为我们先在是要找基于刀的攻击代码)**。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2010.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这里我返回5层，因为我分析过，所以知道这5层内必有我们要找的东西，但是在实际分析其他游戏的时候，建议大家多返回。</p>
+<p>在开始分析这些call之前，我先和大家说两点非常关键的问题。</p>
+<p><strong>1）、我们从哪一层开始分析？</strong></p>
+<p>从最外层。为什么呢？很简单，因为越内层的call往往是对攻击处理，而不是对开始攻击逻辑的处理。实在不理解的话，咱们想一下咱们在写某个动作代码的时候，是不是先判断逻辑操作，再去执行核心代码？</p>
+<p><strong>2）、代码的执行逻辑</strong></p>
+<p>这个稍微有点难解释，因为他和第一个问题有小牵扯。如果我们对人物血量处理下断后返回层数不够多会怎么样？答案是，我们只得到了他攻击call处理代码。意思就是说当前得到的所有call是处理已经成功击打后的代码，而不是处理开始攻击逻辑的代码，导致在最外层下断的时候会出现一个问题，单纯挥刀不会断下，开枪才会断下**(因为你怎么开枪都会击中)**。解决的办法就是在人物血量处理地方下断后疯狂返回上一层并且记录，然后挨个下断挥刀，能断下说明找到了，断不下就再找。</p>
+<p>接下来依旧是我最喜欢的摊牌环节。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2011.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>其实在这5层中，第5层就是处理开始攻击逻辑的call，其他的全是成功击打的call。因为只有在第5层call下断挥刀的时候才会断下，其他call下断挥刀不断。不信的同志可以去试试，接下来我们就来分析第5层call。<br>我们现在先下一个断。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2012.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>然后我们对着墙或者人物划一刀**(可以击中的状态)**，发现断点断下了。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2013.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这个时候非常关键，我们F7进去后F8单步跟一下。 <strong>注意，记得标记跳转是否实现</strong></p>
+<p>在通过F8单步跟的时候，细心的人会发现一个东西。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2014.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2015.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>他这里会播放wav，实际上他这里就是在判断你的刀是否击打到物体，击打到了就播放击打音效，反之播放未击打音效。其实hit是击打音效，slash是未击打音效，笔者也是在分析的过程中看到这个才萌发处第一种思路。而且在单步跟踪的时候发现他跳过了播放slash音效，而去播放了hit音效并且执行了我们记录的第4层call**(攻击处理)**，说明上面有相关跳转控制了击打判断。</p>
+<p>现在我们返回第5层call，下断，对着空气挥刀看看。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2016.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>同样F7进入后，F8单步跟，并且记录跳转是否实现。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2017.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这里观察到之前的实现的跳转现在没有实现了，说明这里可能是一个关键点<br>包括下面这张图的位置</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2018.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>最后会发现他去执行了这一串代码</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2019.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这一串刚刚好是播放未击中音效的代码。再继续F8单步跟，发现他直接ret了，并没有去执行我们第4层的攻击代码。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2020.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>经过以上分析，我们得出了两个关键点，那就是那两个jne跳转。在我们对墙壁或者人挥刀并且成功击打的时候该跳转是实现的，但是现在我们对着空气挥刀发现他跳转没有被实现，那么说明该跳转就是关键跳转，而且他们都是对同一个地址进行了读操作，所以游戏很有可能是对该地址的值进行一个校验，来判断是否能击打。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2021.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>首先这个代码是一个很典型的浮点数比较代码，大概就是将0x19FEC660 和st(0)比较后把状态值传给ax，然后ah判断是否能击中物体。我们用CE看看这个地址的值。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2022.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>发现是0，我们尝试改为1。回到游戏的时候，发现我们挥刀的时候竟然是击中的音效。此时全屏飞刀已经实现。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2023.png#center" srcset="/img/loading.gif" lazyload></p>
+<h3 id="一、-全屏秒杀原理及实现"><a href="#一、-全屏秒杀原理及实现" class="headerlink" title="一、 全屏秒杀原理及实现"></a>一、 全屏秒杀原理及实现</h3><p>虽然我们实现了全屏飞刀，但是会发现，当我们向敌人挥刀的时候，发现敌人并没有掉血，这个时候就会有人认为我在坑大家了。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2024.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>其实呢，咱们还得需要一个东西，那就是选择攻击对象。这里呢，不知道大家还记得我在文章开头写的那个伪代码吗？我们当前只是修改了第一个if，但是还有第二个if**(可能还有更多if)**没有修改。我们虽然让他成功全屏攻击了，但是他可能会判断，你这个人和敌人是否在可攻击距离内，如果不在的话直接给你攻击一个空对象，具体的逻辑代码大家可以去分析一下。</p>
+<p>现在咱们来说说这个全屏秒杀，无论你拿着什么武器，你要射人，那你肯定要有一个攻击对象吧。于是咱们可以去跟一下，看看他的攻击对象的来源，然后用第三方手段去修改，这样我们想打谁就打谁了。攻击对象很好找，因为你攻击call的参数必定有攻击对象，然后就去追这个对象的来源。这里呢我就直接放追到的来源。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2025.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>其实这里就是第4层call进来的内容，我在OD也注释了，他这里做了简单的判断，如果你的攻击对象为0那么就ret，否则就对攻击力进行一个赋值，然后进行攻击。在这里我们可以去观察我们全屏飞刀的时候，他的攻击对象一直为0，那就说明他没有选择一个攻击对象。我们换成枪，去打一下敌人，发现他的内容变了。我们直接锁定，然后换成刀去划，发现这个时候咱们的刀能打人了，而且对着哪里划都能打中，包括枪。咱们这时直接去修改攻击力，直接是一划既死。这个时候灵机一动。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2026.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>是不是我们直接让程序不断的向这个地址写入对象，然后在修改攻击力就完事了？没错。就是这样。下面是效果展示</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/826671_M6NVDG6VMQGA2YZ.gif#center" srcset="/img/loading.gif" lazyload alt="826671_M6NVDG6VMQGA2YZ)"></p>
+<p>其实这里还有一个处理方法，在0x1A0665F8下一个写入断点，能来到这个地方</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2027.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>其实这里是对攻击对象和攻击力进行一个0的初始化。处理方法很简单，直接在头部ret，不让他初始0，然后再用程序去写入会更稳定些，因为游戏会调用这个call，进行清0。<br>好了，基本上这就是全屏秒杀的分析。<br>另外 攻击对象的值&#x3D;对象]+0x7C]</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2028.png#center" srcset="/img/loading.gif" lazyload></p>
+<h1 id="三、总结："><a href="#三、总结：" class="headerlink" title="三、总结："></a>三、总结：</h1><p>其实这个全屏飞刀的实现的思路是来源于我在很久之前就实现的植物大战僵尸的折叠种植功能，当时找的方法和本篇文章实现飞刀基本类似，就是用通过这种特殊的判断去分析的，在种植call下断后去实现一次普通的种植，然后跟进去记录跳转；然后再去种植call下断，直接去实现一次重叠种植，断下后F7进去单步直接可以发现关键跳转，然后直接改成jmp(好像是jmp)，直接就实现了折叠种植。昨天前段微风吹过脑壳，突发奇想来试试，果不其然，还真能实现！但是出现了无法攻击到对象的情况，然后偶然发现在飞刀的时候攻击call传进来的对象是0，于是就想到应该有一个地方有赋值对象的。然后努力了一波，就实现了全屏秒杀和全屏飞刀的效果。</p>
+<p><img src="../FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/Untitled%2029.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>虽说这个是对cs1.6的漏洞分析，但是其他游戏的实现原理我觉得是差不多的，就拿飞刀来说，游戏肯定是需要去判断你这个武器是不是刀，是刀给你ret；反之给你攻击。所以这个地方基本上可以成为一个突破点。至于全屏秒杀，只要找到攻击对象的赋值也就差不多了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../../categories/GameHacker/" class="category-chain-item">GameHacker</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>FPS全屏秒杀以及全屏飞刀漏洞的逆向分析</div>
+      <div>http://example.com/2022/10/21/GameHacker/FPS全屏秒杀以及全屏飞刀漏洞的逆向分析/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>PlaneJun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="../U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/" title="U3D逆向-Mono另类解密">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">U3D逆向-Mono另类解密</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../2022%E6%B8%B8%E6%88%8F%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF%E7%AB%9E%E8%B5%9B-%E5%88%9D%E8%B5%9B/" title="2022游戏安全技术竞赛-初赛">
+                        <span class="hidden-mobile">2022游戏安全技术竞赛-初赛</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../../js/events.js" ></script>
+<script  src="../../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

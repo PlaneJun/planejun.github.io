@@ -1,0 +1,726 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../../img/fluid.png">
+  <link rel="icon" href="../../../../../img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="PlaneJun">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="关于LOL动态皮肤修改的逆向与实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于LOL动态皮肤修改的逆向与实现">
+<meta property="og:url" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="PlaneJun&#39; Blog">
+<meta property="og:description" content="关于LOL动态皮肤修改的逆向与实现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%201.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%202.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%203.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%204.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%205.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%206.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%207.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%208.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%209.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2010.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2011.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2012.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2013.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2014.png#center">
+<meta property="article:published_time" content="2022-10-21T02:03:29.108Z">
+<meta property="article:modified_time" content="2022-10-21T03:44:29.348Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/10/21/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled.png#center">
+  
+  
+  
+  <title>关于LOL动态皮肤修改的逆向与实现 - PlaneJun&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="../../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../../js/utils.js" ></script>
+  <script  src="../../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../../index.html">
+      <strong>PlaneJun&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../index.html">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/planejun">
+                <i class="iconfont icon-github-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../../img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="关于LOL动态皮肤修改的逆向与实现"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-21 10:03" pubdate>
+          2022年10月21日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          45 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">关于LOL动态皮肤修改的逆向与实现</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="关于LOL动态皮肤修改的逆向与实现"><a href="#关于LOL动态皮肤修改的逆向与实现" class="headerlink" title="关于LOL动态皮肤修改的逆向与实现"></a>关于LOL动态皮肤修改的逆向与实现</h1><p>• <a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2018-12-3 09:18</p>
+<p>第一次在看雪这种地方发这种帖子，心里很动荡不安。因为我本身很菜，所以有哪里不足的请大佬多多包涵并指出。</p>
+<p>最近莫名其妙又染上LOL这个游戏了，然后突然想到之前网上的动态换肤辅助，所以就打算下载一个然后搞搞事，最后虽然是弄出来了，但是因为技术比较差。在实现方面会因为和游戏主线程冲突，导致游戏崩掉（原因看文章结尾）。下面我开始上分析。<strong>Ps：本人技术以及表达能力都很差，请大家见谅。(因为在写这篇文章的时候，我是一边分析一边写这篇文章所以游戏可能是已经结束的状态。但是如果有需要调试游戏的话，我会重新打开游戏进行调试，所以会发现有一些图片和数据是不一样的，重要的是分析)</strong></p>
+<p>在开始分析的时候，因为我以前搞过这游戏，所以我知道这个实现动态换皮肤是需要一个皮肤ID的。所以我就直接打开下载好的辅助，来进行找这个ID。</p>
+<p>辅助图片如下：</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>在这里先说一下如何去找一个<code>英雄皮肤ID</code>，所谓的英雄皮肤ID指的是某个英雄他的皮肤数从0开始算，比如【暗裔剑魔】有4个皮肤，那么他的皮肤ID就是0(默认皮肤)、1、2、3。如下图：</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%201.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>于是我在寻找这个ID的时候就是按照这种方法来寻找，因为默认皮肤的ID为0，所以我通过辅助来换到下一个皮肤的时候，我搜索1，这样慢慢的搜索，最后就会剩下一个我们需要的地址。下面我以【剑圣】为例(搜索好了的)。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%202.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>然后我们右键访问这个地址，然后去自杀。因为在人物复活的时候皮肤CALL会访问这个皮肤ID来重新对皮肤进行初始化，然后我们就可以通过这个来找出皮肤CALL。下图是该地址在人物复活的时候被访问。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%203.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>现在出现了下面两条：</p>
+<blockquote>
+<p>00581B6B - 89 46 40  - mov [esi+0x40],eax        -1<br>00582CB7 - 8B 5F 40  - mov ebx,[edi+0x40]        -2</p>
+</blockquote>
+<p>我们选择第一条点击详细信息</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%204.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>我们会发现eax&#x3D;0，esi&#x3D;7DE7D2E8。回到游戏我们会发现我们原本换好的皮肤现在变成默认的皮肤了，也就是皮肤ID变成了0。然后还会发现esi+0x40&#x3D;7DE7D328，而7DE7D328这个地址刚刚好就是我们搜索出来的皮肤ID地址，就是说我们在复活的时候游戏会把0赋值给我们的皮肤ID地址，让我们的皮肤变成默认的皮肤。那么这个地方很可能就是一个皮肤CALL的传参关键。。。。。然后我们看第二条，一样查看详细信息。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%205.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>发现edi&#x3D;7DE7D2E8，然后把edi+0x40的值传进ebx，而这个edi+0x40刚好是我们搜索到的这个皮肤ID地址。可是我们来想一下，此时这个时候皮肤ID地址的值已经为0，说明游戏在执行到这个语句之前，皮肤ID的值已经被改变，就是说在执行到这条语句之前皮肤已经被修改过，所以这条语句不太可能是调用皮肤CALL之前的语句，而是在调用皮肤CALL之后的语句。<br>以上分析后，发现只有第一条。</p>
+<blockquote>
+<p>00581B6B - 89 46 40  - mov [esi+0x40],eax</p>
+</blockquote>
+<p>符合我们的要求，我们记录他的地址00581B6B，然后扔到OD里查看。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%206.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>我们打开OD，Ctrl+G输入我们记录的地址然后回车跳到这一行代码。有意思的地方到了，在反汇编窗口中可以看到在eax传进皮肤ID地址后，立即去执行了一个CALL，这个就引起了我们的注意，因为我上面说过，调用皮肤CALL需要的一个参数就是皮肤ID值。现在我们在这个CALL下一个断点，然后去送自杀，等待复活。<strong>注意：这个CALL需要在即将复活的那一瞬间下断，不然会被其他地方调用的时候断下，这个时候所返回的数据是不正确的。</strong></p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%207.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>当人物即将重生的时候游戏断了下来，看右边，EAX的值依然为0。这个时候往上看一下EAX的来源：</p>
+<blockquote>
+<p>mov eax,dword ptr ss:[esp+0x10]</p>
+</blockquote>
+<p>然后在我开始研究的时候，第一想法是去追这个esp的来源然后想直接通过找到的最终地址加上各种偏移来修改皮肤的，然后发现追不到。结果重新思考一下发现是没有必要的去追这个esp的，因为我直接可以在调用这段的时候给eax一个皮肤ID的值或者直接把皮肤ID的值传进皮肤ID地址(esi+0x40)里，然后直接调用下面的那个CALL就ojbk了。于是我就打算尝试直接调用这个CALL看看效果。为了弄懂调用这个CALL需要哪些参数的需要，我们继续分析。<br>这里先贴上这个部分的反汇编代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-number">00581B</span>67    <span class="hljs-number">8B</span>CE            mov ecx,esi       <br><span class="hljs-number">00581B</span>69    <span class="hljs-number">6</span>A <span class="hljs-number">01</span>           push <span class="hljs-number">0x1</span><br><span class="hljs-number">00581B</span>6B    <span class="hljs-number">8946</span> <span class="hljs-number">40</span>         mov dword ptr ds:[esi+<span class="hljs-number">0x40</span>],eax <br><span class="hljs-number">00581B</span>6E    E8 <span class="hljs-number">1</span>D110000     call League_o<span class="hljs-number">.00582</span>C90<br></code></pre></td></tr></table></figure>
+
+<p>首先：把esi传进了ecx，然后压入一个1，之后把eax传进[esi+0x40]，最后就直接去调用CALL。到发现这里没看到esi的值是哪里来的，所以要么esi的传值操作在上面，要么就在上一层。我们往上找看看有没有对esi赋值的语句。哟西,果然有</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-number">00581B</span>48    <span class="hljs-number">8B</span>F1            mov esi,ecx<br></code></pre></td></tr></table></figure>
+
+<p>把ecx的值传进esi，然后又发现上面没有对ecx的传值操作，那只能去上一层找。我们在程序头下断点，然后去自杀，等复活。等我们即将复活的时候断点断了下来，我们直接快捷键返回上一层，这个时候会看到有对ecx的传值操作。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-number">0061E0</span>B0 - <span class="hljs-number">8</span>D <span class="hljs-number">8F</span> B8320000        - lea ecx,[edi+<span class="hljs-number">0x32B8</span>]<br></code></pre></td></tr></table></figure>
+
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%208.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>我们在这里下一个断然后去自杀等复活，看看断下来的时候edi的值。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%209.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>edi&#x3D;5D395010，我们把这个值扔进CE去搜索一下 。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2010.png#center" srcset="/img/loading.gif" lazyload alt="Untitled%210"></p>
+<p>会发现出现一个绿色的值，我们把它拉下来查看地址。</p>
+<p><strong>032A6DCC (“League of Legends.exe”+2EA6DCC)</strong></p>
+<p>那么<strong>032A6DCC</strong>这个估计就是人物地址了，所以</p>
+<p><strong>ecx&#x3D;[0x032A6DC]+0x32B8C   &#x2F;&#x2F; lea ecx,[edi+0x32B8]</strong></p>
+<p><strong>因为esi&#x3D;ecx，由此可知皮肤ID的地址&#x3D;[0x032A6DC]+0x32B8C+0x40</strong></p>
+<p>我们现在找出ecx的值了，我们返回到刚刚的这个位置。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2011.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>现在我们回车进入到这个CALL里。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2012.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这个时候会发现在这个CALL里面有一条语句就是上面我们用CE调试的时候访问我们皮肤ID地址的语句。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-number">00582</span>CB7 - <span class="hljs-number">8B</span> <span class="hljs-number">5F</span> <span class="hljs-number">40</span> - mov ebx,[edi+<span class="hljs-number">0x40</span>]<br></code></pre></td></tr></table></figure>
+
+<p>而这一条语句是在皮肤ID已经传入皮肤ID地址这个操作后才执行的，这个时候我就估计这个是皮肤CALL的内部。刚刚那个外层就是调用这个CALL来实现更换皮肤的，并且EAX是一个皮肤ID。现在我们从程序头开始分析。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-number">00582</span>C90    <span class="hljs-number">83</span>EC <span class="hljs-number">2</span>C         sub esp,<span class="hljs-number">0x2C</span><br><span class="hljs-number">00582</span>C93    A1 D0D49E01     mov eax,dword ptr ds:[<span class="hljs-number">0x19ED4D0</span>]<br><span class="hljs-number">00582</span>C98    <span class="hljs-number">33</span>C4            <span class="hljs-keyword">xor</span> eax,esp<br><span class="hljs-number">00582</span>C9A    <span class="hljs-number">894424</span> <span class="hljs-number">28</span>       mov dword ptr ss:[esp+<span class="hljs-number">0x28</span>],eax<br><span class="hljs-number">00582</span>C9E    <span class="hljs-number">53</span>              push ebx                                 <br><span class="hljs-number">00582</span>C9F    <span class="hljs-number">55</span>              push ebp<br><span class="hljs-number">00582</span>CA0    <span class="hljs-number">56</span>              push esi<br><span class="hljs-number">00582</span>CA1    <span class="hljs-number">57</span>              push edi<br></code></pre></td></tr></table></figure>
+
+<p>从开头到这为止都没有问题，然后到</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-number">00582</span>CA2 <span class="hljs-number">8B</span>F9 mov edi,ecx<br></code></pre></td></tr></table></figure>
+
+<p>看一下这一句，把ecx的值传给edi，因为从程序头到这一行都没有为ecx传值操作，所以可知ecx是上一层传进来的，而我们已经分析出ecx的来源，所以ecx是一个参数。然后在往下看，发现都在不断的从edi+偏移里读取东西，而edi来源于ecx，那么可以确定之前找到那个绿色的地址就是人物地址，而[人物地址]+0x32B8应该是关于人物模型之类的，然后再加一个偏移就是对应的属性。然后继续往下分析，直到这个CALL结束(一路顺畅)。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-number">00582E8</span>F    C2 <span class="hljs-number">0400</span>         retn <span class="hljs-number">0x4</span><br></code></pre></td></tr></table></figure>
+
+<p>发现retn 04 ，说明这个call就push了一个，就是之前那个1，到这里大部分都已经分析完了，现在我们来整理一下，这里贴上游戏调用这个CALL的原型：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-number">00581B</span>63    <span class="hljs-number">8B</span>4424 <span class="hljs-number">10</span>     mov eax,dword ptr ss:[esp+<span class="hljs-number">0x10</span>]    <span class="hljs-comment">//从某个地方获取ID</span><br><span class="hljs-number">00581B</span>67    <span class="hljs-number">8B</span>CE          mov ecx,esi   <br><span class="hljs-number">00581B</span>69    <span class="hljs-number">6</span>A <span class="hljs-number">01</span>         push <span class="hljs-number">0x1</span><br><span class="hljs-number">00581B</span>6B    <span class="hljs-number">8946</span> <span class="hljs-number">40</span>       mov dword ptr ds:[esi+<span class="hljs-number">0x40</span>],eax   <span class="hljs-comment">//传入皮肤ID</span><br><span class="hljs-number">00581B</span>6E    E8 <span class="hljs-number">1</span>D110000   call League_o<span class="hljs-number">.00582</span>C90   <span class="hljs-comment">//调用CALL</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>人物基址&#x3D;0x032A6DC</strong></p>
+<p><strong>ecx&#x3D;esi&#x3D;[人物基址]+0x32B8</strong></p>
+<p><strong>皮肤ID的地址&#x3D;[人物基址]+0x32B8C+0x40</strong></p>
+<p><strong>调用CALL所需要的参数：</strong></p>
+<p><strong>ecx      &#x2F;&#x2F;通过mov把人物基址+0x32B8传入ecx</strong></p>
+<p><strong>1          &#x2F;&#x2F;通过push压入</strong></p>
+<p><strong>皮肤ID  &#x2F;&#x2F;通过mov传进皮肤ID地址([人物基址]+0x32B8C+0x40&#x3D;ecx+0x40)</strong></p>
+<p>最后来测试一下，其中这一句我们就不用加入到代码了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-number">00581B</span>63 <span class="hljs-number">8B</span>4424 <span class="hljs-number">10</span> mov eax,dword ptr ss:[esp+<span class="hljs-number">0x10</span>]<br></code></pre></td></tr></table></figure>
+
+<p>我们只直接给皮肤ID地址传进一个ID值。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2013.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>在这里我换第二个皮肤，注入远程代码。</p>
+<p><img src="../%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/Untitled%2014.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>调用成功，那么这个CALL应该就是调用皮肤的CALL。</p>
+<p><strong>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</strong></p>
+<p><strong>崩溃原因：如果你们跟着我这个文章一步一步操作的话，会发现在下断点的时候，我们人物即使在没死或者没有复活的情况下也会断下，为什么？因为游戏的主线程也在调用这一段代码，但是具体干什么用我不懂，所以如果你在调用这段换肤CALL的时候主线程刚好也在调用这段换肤CALL，那么这个时候就会撞车，主线程就会不知所措，游戏就会崩溃。如何解决这个，就你们自己弄了，这里就不讨论了。</strong></p>
+<p><strong>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</strong></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../../categories/GameHacker/" class="category-chain-item">GameHacker</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>关于LOL动态皮肤修改的逆向与实现</div>
+      <div>http://example.com/2022/10/21/GameHacker/关于LOL动态皮肤修改的逆向与实现/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>PlaneJun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/" title="利用U3D引擎特性快递定位数组">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">利用U3D引擎特性快递定位数组</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/" title="U3D逆向-Mono另类解密">
+                        <span class="hidden-mobile">U3D逆向-Mono另类解密</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../../js/events.js" ></script>
+<script  src="../../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

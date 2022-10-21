@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../../img/fluid.png">
+  <link rel="icon" href="../../../../../img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="PlaneJun">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="一、GameObject">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一、GameObject">
+<meta property="og:url" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/index.html">
+<meta property="og:site_name" content="PlaneJun&#39; Blog">
+<meta property="og:description" content="一、GameObject">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image1.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image2.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image3.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image4.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image5.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image6.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/Untitled.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image8.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image9.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image10.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image11.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image12.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image13.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image14.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image15.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image16.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image17.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image18.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image19.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image20.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image21.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image22.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image23.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image24.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image25.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/Untitled%201.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image27.png#center">
+<meta property="og:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/Untitled%202.png#center">
+<meta property="article:published_time" content="2022-10-21T02:03:29.515Z">
+<meta property="article:modified_time" content="2022-10-21T03:53:38.170Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/10/21/Unity3D/%E4%B8%80%E3%80%81GameObject/image1.jpeg#center">
+  
+  
+  
+  <title>一、GameObject - PlaneJun&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="../../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../../js/utils.js" ></script>
+  <script  src="../../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../../index.html">
+      <strong>PlaneJun&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../index.html">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/planejun">
+                <i class="iconfont icon-github-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../../img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="一、GameObject"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-21 10:03" pubdate>
+          2022年10月21日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          69 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">一、GameObject</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="一、GameObject"><a href="#一、GameObject" class="headerlink" title="一、GameObject"></a>一、GameObject</h1><h1 id="1、吹⽜⼤王"><a href="#1、吹⽜⼤王" class="headerlink" title="1、吹⽜⼤王"></a><strong>1</strong>、吹⽜⼤王</h1><p>Unity 3D简称u3d，是由 Unity Technologies 公司开发的⼀个让玩家轻松创建诸如三维视频游戏、建筑可视化、实时三维动画等类型互动内容的<strong>多平台的综合型游戏开发⼯具</strong>。类似的开发⼯具还有UnrealEngine(ue4)、Source(起源)、寒霜 等等。</p>
+<p>有很多由Unity 引擎提供⽀持的游戏。国内例如原批、永劫⽆间、枪⽕重⽣、王者荣耀、⽣死狙击等；国外例如Rust、逃离塔克夫、ECO、糖⾖⼈、动物派对等。</p>
+<h1 id="2、开发环境"><a href="#2、开发环境" class="headerlink" title="2、开发环境"></a><strong>2</strong>、开发环境</h1><p>由于u3d主打的开发环境是C#(其实还有js、B啥的语⾔)，加上C#的环境机制，导致u3d的游戏逆向难度降低，在⾮加密的情况下，游戏极易容易遭到破坏。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image1.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>在游戏未对⾃⾝运⾏环境的检查下，甚⾄可以⾃写插件的形式让游戏加载(类似win32下的劫持注⼊和远线程注⼊)。除了编程语⾔上的选择，u3d的开发的游戏存在两种环境：Mono和il2cpp。参考资料:<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/352463394">https://zhuanlan.zhihu.com/p/352463394</a></p>
+<ul>
+<li>Mono</li>
+</ul>
+<p>Mono是⼀个由Xamarin公司所主持的⾃由开放源码项⽬。⽬标是在尽可能多的平台上使.net标准的东⻄能正常运⾏的⼀套⼯具，核⼼在于“跨平台的让.net代码能运⾏起来。</p>
+<p>C#的执⾏与通常的WIN32程序不同，C#在编译初期会被翻译成⼀种被称为IL的中间语⾔，然后将IL执⾏在.net的虚拟机中。⽽Mono的作⽤就是将IL编译成对应平台的原⽣码，实现跨平台。但mono编译IL的过程较为复杂切繁琐，因此在⼀些⼤型游戏上移植后的运⾏效率并不是那么出⾊。因此IL2CPP出⽣了!!!</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image2.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li>IL2CPP</li>
+</ul>
+<p>IL2CPP (Intermediate Language To C++)是新开发的脚本后端。简单来说就是把IL代码转换为 C++代码,并且C++的⾼移植性和⾼效率的优点也⼀并继承过来。⼤脚本被编译成IL，在游戏运⾏的时候，IL和项⽬⾥其他第三⽅兼容的DLL⼀起，放⼊Mono VM虚拟机，由虚拟机解析成机器码，并且执⾏IL2CPP做的改变由下图红⾊部分标明：</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image3.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>Mono和IL2CPP的编译⽅法如下：</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image4.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image5.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image6.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>选择想要编译的平台后Build即可。</p>
+<hr>
+<h1 id="3、引擎结构"><a href="#3、引擎结构" class="headerlink" title="3、引擎结构"></a><strong>3</strong>、引擎结构</h1><p><img src="../%E4%B8%80%E3%80%81GameObject/Untitled.png#center" srcset="/img/loading.gif" lazyload alt="这个图我不知道烂⼤街了没，反正有⼀些地⽅是不对的，但是我懒得改了，凑合看吧。"></p>
+<p>这个图我不知道烂⼤街了没，反正有⼀些地⽅是不对的，但是我懒得改了，凑合看吧。</p>
+<h2 id="3-1、GOM"><a href="#3-1、GOM" class="headerlink" title="3.1、GOM"></a>3.1、<strong>GOM</strong></h2><p>u3d的每⼀个元素都是⼀个对象(<strong>GameObject</strong>)，并且有⼀个全局的对象管理器管理(<strong>Game Object Manager</strong>，简称<strong>GOM</strong>)，GOM为双链表结构。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">GameObjectManager</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>	BaseObject* m_lastTaggedObject; <span class="hljs-comment">//0x0000 </span><br>	BaseObject* m_taggedObjects; <span class="hljs-comment">//0x0008 </span><br>	BaseObject* m_lastActiveObject; <span class="hljs-comment">//0x0010 </span><br>	BaseObject* m_activeObjects; <span class="hljs-comment">//0x0018</span><br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">BaseObject</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>	BaseObject* m_lastObject; <span class="hljs-comment">//0x0000 </span><br>	BaseObject* m_nextObjects; <span class="hljs-comment">//0x0008 </span><br>	GameObject* m_objectEntity; <span class="hljs-comment">//0x0010</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>在GOM中你可以找到在游戏世界中存在的对象。你可以使⽤C++代码进⾏遍历。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">//通过tag名字来查找对象</span><br><span class="hljs-function">ULONG64 <span class="hljs-title">GameData::GetObjectFromList</span><span class="hljs-params">(ULONG64 listPtr, ULONG64 lastObjectPtr, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* objectName)</span></span><br><span class="hljs-function"></span>&#123;<br>	BaseObject activeObject = <span class="hljs-built_in">ReadBase</span>(listPtr); <br>	ULONG64 classNamePtr = <span class="hljs-number">0</span>;<br>	<span class="hljs-type">char</span> buf[<span class="hljs-number">40</span>];<br>	<span class="hljs-keyword">if</span> (activeObject.Object != <span class="hljs-number">0</span>)<br>	&#123;<br>		<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; <br>		<span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>)<br>		&#123;<br>			i++;<br>			<span class="hljs-keyword">if</span> (i &gt;= <span class="hljs-number">1000</span>)<br>				<span class="hljs-keyword">break</span>;<br>			classNamePtr = <span class="hljs-built_in">ReadMem</span>&lt;ULONG64&gt;(activeObject.Object + <span class="hljs-number">0x60</span>); <br>			<span class="hljs-built_in">ReadVirtual</span>((LPVOID)classNamePtr, &amp;buf, <span class="hljs-built_in">sizeof</span>(buf));<br>			<span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(buf, objectName) == <span class="hljs-number">0</span>) <br>				<span class="hljs-keyword">break</span>;<br>			activeObject = <span class="hljs-built_in">ReadBase</span>(activeObject.nextObjectLink);<br>		&#125;<br>		classNamePtr = <span class="hljs-built_in">ReadMem</span>&lt;ULONG64&gt;(activeObject.Object + <span class="hljs-number">0x60</span>); <br>		<span class="hljs-built_in">ReadVirtual</span>((LPVOID)classNamePtr, &amp;buf, <span class="hljs-built_in">sizeof</span>(buf));<br>		<span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(buf, objectName) == <span class="hljs-number">0</span>) <br>			<span class="hljs-keyword">return</span> activeObject.Object;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>但我不建议你那么操作，因为游戏通常会存在⼤量对象，遍历起来会⾮常慢也⾮常低效。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image8.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>GOM的查找⽅法，可以根据u3d的固定字符串 <code>Tag: tag name is null or empty.</code> .</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs cpp">。text:<span class="hljs-number">00007F</span>FF81DC9FF0 											sub_7FFF81DC9FF0 proc near 	; CODE XREF: sub_7FFF819C1D80+<span class="hljs-number">144</span>↑p<br>.text:<span class="hljs-number">00007F</span>FF81DC9FF0 																										; sub_7FFF819C2560+<span class="hljs-number">170</span>↑p<br>.text:<span class="hljs-number">00007F</span>FF81DC9FF0 																										; DATA XREF: ...<br>.text:<span class="hljs-number">00007F</span>FF81DC9FF0<br>.text:<span class="hljs-number">00007F</span>FF81DC9FF0 											var_18 	= byte ptr <span class="hljs-number">-18</span>h<br>.text:<span class="hljs-number">00007F</span>FF81DC9FF0 											arg_0 	= qword ptr <span class="hljs-number">8</span><br>.text:<span class="hljs-number">00007F</span>FF81DC9FF0<br>.text:<span class="hljs-number">00007F</span>FF81DC9FF0 <span class="hljs-number">48</span> <span class="hljs-number">89</span> <span class="hljs-number">5</span>C <span class="hljs-number">24</span> <span class="hljs-number">08</span> 							mov [rsp+arg_0], rbx<br>.text:<span class="hljs-number">00007F</span>FF81DC9FF5 <span class="hljs-number">57</span> 													  push rdi<br>.text:<span class="hljs-number">00007F</span>FF81DC9FF6 <span class="hljs-number">48</span> <span class="hljs-number">83</span> EC <span class="hljs-number">30</span> 									sub rsp, <span class="hljs-number">30</span>h<br>.text:<span class="hljs-number">00007F</span>FF81DC9FFA <span class="hljs-number">80</span> <span class="hljs-number">79</span> <span class="hljs-number">20</span> <span class="hljs-number">01</span> 									cmp byte ptr [rcx+<span class="hljs-number">20</span>h], <span class="hljs-number">1</span><br>.text:<span class="hljs-number">00007F</span>FF81DC9FFE <span class="hljs-number">48</span> <span class="hljs-number">8B</span> FA 										mov rdi, rdx<br>.text:<span class="hljs-number">00007F</span>FF81DCA001 <span class="hljs-number">48</span> <span class="hljs-number">8B</span> D9 										mov rbx, rcx<br>.text:<span class="hljs-number">00007F</span>FF81DCA004 <span class="hljs-number">75</span> <span class="hljs-number">0F</span> 												jnz <span class="hljs-type">short</span> loc_7FFF81DCA015<br>.text:<span class="hljs-number">00007F</span>FF81DCA006 <span class="hljs-number">48</span> <span class="hljs-number">0F</span> BE <span class="hljs-number">41</span> <span class="hljs-number">18</span> 							movsx rax, byte ptr [rcx+<span class="hljs-number">18</span>h]<br>.text:<span class="hljs-number">00007F</span>FF81DCA00B B9 <span class="hljs-number">18</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> 							mov ecx, <span class="hljs-number">18</span>h<br>.text:<span class="hljs-number">00007F</span>FF81DCA010 <span class="hljs-number">48</span> <span class="hljs-number">2B</span> C8 										sub rcx, rax<br>.text:<span class="hljs-number">00007F</span>FF81DCA013 EB <span class="hljs-number">04</span> 												jmp <span class="hljs-type">short</span> loc_7FFF81DCA019<br>.text:<span class="hljs-number">00007F</span>FF81DCA015 ; ---------------------------------------------------------------------------<br>.text:<span class="hljs-number">00007F</span>FF81DCA015<br>.text:<span class="hljs-number">00007F</span>FF81DCA015 												loc_7FFF81DCA015: 				; CODE XREF: sub_7FFF81DC9FF0+<span class="hljs-number">14</span>↑j<br>.text:<span class="hljs-number">00007F</span>FF81DCA015 <span class="hljs-number">48</span> <span class="hljs-number">8B</span> <span class="hljs-number">49</span> <span class="hljs-number">10</span> 									mov rcx, [rcx+<span class="hljs-number">10</span>h]<br>.text:<span class="hljs-number">00007F</span>FF81DCA019<br>.text:<span class="hljs-number">00007F</span>FF81DCA019 												loc_7FFF81DCA019: 				; CODE XREF: sub_7FFF81DC9FF0+<span class="hljs-number">23</span>↑j<br>.text:<span class="hljs-number">00007F</span>FF81DCA019 <span class="hljs-number">48</span> <span class="hljs-number">85</span> C9 										test rcx, rcx<br>.text:<span class="hljs-number">00007F</span>FF81DCA01C <span class="hljs-number">75</span> <span class="hljs-number">13</span> 												jnz <span class="hljs-type">short</span> loc_7FFF81DCA031<br>.text:<span class="hljs-number">00007F</span>FF81DCA01E <span class="hljs-number">48</span> <span class="hljs-number">8</span>D <span class="hljs-number">15</span> <span class="hljs-number">3B</span> <span class="hljs-number">51</span> <span class="hljs-number">27</span> <span class="hljs-number">01</span> 				lea rdx, aTagTagNameIsNu ; <span class="hljs-string">&quot;Tag: tag name is null or empty.&quot;</span><br>.text:<span class="hljs-number">00007F</span>FF81DCA025 <span class="hljs-number">48</span> <span class="hljs-number">8</span>D <span class="hljs-number">4</span>C <span class="hljs-number">24</span> <span class="hljs-number">20</span> 							lea rcx, [rsp+<span class="hljs-number">38</span>h+var_18]<br>.text:<span class="hljs-number">00007F</span>FF81DCA02A E8 <span class="hljs-number">21</span> <span class="hljs-number">20</span> <span class="hljs-number">1</span>A <span class="hljs-number">00</span> 							call sub_7FFF81F6C050<br>.text:<span class="hljs-number">00007F</span>FF81DCA02F EB <span class="hljs-number">32</span> 												jmp <span class="hljs-type">short</span> loc_7FFF81DCA063<br>.text:<span class="hljs-number">00007F</span>FF81DCA031 ; ---------------------------------------------------------------------------<br>.text:<span class="hljs-number">00007F</span>FF81DCA031<br>.text:<span class="hljs-number">00007F</span>FF81DCA031 												loc_7FFF81DCA031: 			; CODE XREF: sub_7FFF81DC9FF0+<span class="hljs-number">2</span>C↑j<br>.text:<span class="hljs-number">00007F</span>FF81DCA031 E8 <span class="hljs-number">4</span>A <span class="hljs-number">7</span>E DF FF 							call sub_7FFF81BC1E80<br>.text:<span class="hljs-number">00007F</span>FF81DCA036 <span class="hljs-number">48</span> <span class="hljs-number">8B</span> D3 										mov rdx, rbx<br>.text:<span class="hljs-number">00007F</span>FF81DCA039 <span class="hljs-number">48</span> <span class="hljs-number">8B</span> C8 										mov rcx, rax<br>.text:<span class="hljs-number">00007F</span>FF81DCA03C E8 <span class="hljs-number">6F</span> AA DF FF 							call sub_7FFF81BC4AB0<br>.text:<span class="hljs-number">00007F</span>FF81DCA041 <span class="hljs-number">83</span> F8 FF 										cmp eax, <span class="hljs-number">0F</span>FFFFFFFh<br>.text:<span class="hljs-number">00007F</span>FF81DCA044 <span class="hljs-number">75</span> <span class="hljs-number">3B</span> 												jnz <span class="hljs-type">short</span> loc_7FFF81DCA081<br>.text:<span class="hljs-number">00007F</span>FF81DCA046 <span class="hljs-number">80</span> <span class="hljs-number">7B</span> <span class="hljs-number">20</span> <span class="hljs-number">01</span> 									cmp byte ptr [rbx+<span class="hljs-number">20</span>h], <span class="hljs-number">1</span><br>.text:<span class="hljs-number">00007F</span>FF81DCA04A <span class="hljs-number">74</span> <span class="hljs-number">03</span> 												jz <span class="hljs-type">short</span> loc_7FFF81DCA04F<br>.text:<span class="hljs-number">00007F</span>FF81DCA04C <span class="hljs-number">48</span> <span class="hljs-number">8B</span> <span class="hljs-number">1B</span> 										mov rbx, [rbx]<br>.text:<span class="hljs-number">00007F</span>FF81DCA04F<br>.text:<span class="hljs-number">00007F</span>FF81DCA04F 												loc_7FFF81DCA04F: 			; CODE XREF: sub_7FFF81DC9FF0+<span class="hljs-number">5</span>A↑j<br>.text:<span class="hljs-number">00007F</span>FF81DCA04F <span class="hljs-number">4</span>C <span class="hljs-number">8B</span> C3 										mov r8, rbx<br>.text:<span class="hljs-number">00007F</span>FF81DCA052 <span class="hljs-number">48</span> <span class="hljs-number">8</span>D <span class="hljs-number">15</span> <span class="hljs-number">27</span> <span class="hljs-number">51</span> <span class="hljs-number">27</span> <span class="hljs-number">01</span> 				lea rdx, aTagSIsNotDefin ; <span class="hljs-string">&quot;Tag: %s is not defined.&quot;</span><br>.text:<span class="hljs-number">00007F</span>FF81DCA059 <span class="hljs-number">48</span> <span class="hljs-number">8</span>D <span class="hljs-number">4</span>C <span class="hljs-number">24</span> <span class="hljs-number">20</span> 							lea rcx, [rsp+<span class="hljs-number">38</span>h+var_18]<br>.text:<span class="hljs-number">00007F</span>FF81DCA05E E8 <span class="hljs-number">9</span>D <span class="hljs-number">25</span> <span class="hljs-number">1</span>A <span class="hljs-number">00</span> 							call sub_7FFF81F6C600<br>.text:<span class="hljs-number">00007F</span>FF81DCA063<br>.text:<span class="hljs-number">00007F</span>FF81DCA063 												loc_7FFF81DCA063: 			; CODE XREF: sub_7FFF81DC9FF0+<span class="hljs-number">3F</span>↑j<br>.text:<span class="hljs-number">00007F</span>FF81DCA063 <span class="hljs-number">4</span>C <span class="hljs-number">8B</span> <span class="hljs-number">00</span> 										mov r8, [rax]<br>.text:<span class="hljs-number">00007F</span>FF81DCA066 <span class="hljs-number">48</span> <span class="hljs-number">8B</span> D7 										mov rdx, rdi<br>.text:<span class="hljs-number">00007F</span>FF81DCA069 <span class="hljs-number">33</span> C9 												<span class="hljs-keyword">xor</span> ecx, ecx<br>.text:<span class="hljs-number">00007F</span>FF81DCA06B <span class="hljs-number">48</span> <span class="hljs-number">8B</span> D8 										mov rbx, rax<br>.text:<span class="hljs-number">00007F</span>FF81DCA06E FF <span class="hljs-number">15</span> <span class="hljs-number">24</span> <span class="hljs-number">09</span> <span class="hljs-number">65</span> <span class="hljs-number">01</span> 						call cs:qword_7FFF8341A998<br>.text:<span class="hljs-number">00007F</span>FF81DCA074 <span class="hljs-number">48</span> <span class="hljs-number">8B</span> <span class="hljs-number">43</span> <span class="hljs-number">08</span> 									mov rax, [rbx+<span class="hljs-number">8</span>]<br>.text:<span class="hljs-number">00007F</span>FF81DCA078 <span class="hljs-number">48</span> <span class="hljs-number">89</span> <span class="hljs-number">47</span> <span class="hljs-number">08</span> 									mov [rdi+<span class="hljs-number">8</span>], rax<br>.text:<span class="hljs-number">00007F</span>FF81DCA07C B8 FF FF FF FF 							mov eax, <span class="hljs-number">0F</span>FFFFFFFh<br>.text:<span class="hljs-number">00007F</span>FF81DCA081<br>.text:<span class="hljs-number">00007F</span>FF81DCA081 												loc_7FFF81DCA081: 			; CODE XREF: sub_7FFF81DC9FF0+<span class="hljs-number">54</span>↑j<br>.text:<span class="hljs-number">00007F</span>FF81DCA081 <span class="hljs-number">48</span> <span class="hljs-number">8B</span> <span class="hljs-number">5</span>C <span class="hljs-number">24</span> <span class="hljs-number">40</span> 							mov rbx, [rsp+<span class="hljs-number">38</span>h+arg_0]<br>.text:<span class="hljs-number">00007F</span>FF81DCA086 <span class="hljs-number">48</span> <span class="hljs-number">83</span> C4 <span class="hljs-number">30</span> 									add rsp, <span class="hljs-number">30</span>h<br>.text:<span class="hljs-number">00007F</span>FF81DCA08A <span class="hljs-number">5F</span> 													  pop rdi<br>.text:<span class="hljs-number">00007F</span>FF81DCA08B C3 													  retn<br></code></pre></td></tr></table></figure>
+
+<p>对该函数头交叉引⽤。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image9.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>进⼊下⼀个函数。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image10.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>其中⼀个是直接返回GOM。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image11.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>另⼀个是在头部返回GOM。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image12.png#center" srcset="/img/loading.gif" lazyload></p>
+<h2 id="3-2、GameObject"><a href="#3-2、GameObject" class="headerlink" title="3.2、GameObject"></a>3.2、<strong>GameObject</strong></h2><p>u3d所有的元素都是⼀个GameObject对象，并且以绑定脚本的形式为对象赋能。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image13.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>GameObject的结构并不复杂，其内存成员的属性和内容与u3d编辑器⾯板所表⽰的基本⼀致，但仍需要了解⼀些固定的结构。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">GameObject</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-type">void</span>* m_vtable;<span class="hljs-comment">//0x0000</span><br>	Class&lt;T&gt;* m_instance;<br>	Array&lt;Component&gt;* m_components; <span class="hljs-comment">//0x0030</span><br>	<span class="hljs-type">uint32_t</span> m_componentCount; <span class="hljs-comment">//0x0040</span><br>	<span class="hljs-type">uint16_t</span> m_tag; <span class="hljs-comment">//0x0054</span><br>	<span class="hljs-type">char</span>* m_name; <span class="hljs-comment">//0x0060</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>上⾯列出了在GameObject中较为重要的结构成员。</p>
+<ul>
+<li><strong>vtable</strong>为对象的虚表，记录着操作的函数。</li>
+<li>m_instance是⼀个⾮常<strong>重要</strong>的成员，主要⽤于组件，此处先略过，下⼀⼩节会说。</li>
+<li>m_components记录着所有绑定在该对象上的组件实例。需要注意的是，每个对象的第⼀个组件<strong>默认</strong>绑定⼀个名为<strong>Transform</strong>的组件**(+0x0008)**⽤来表⽰该对象的位移数据。其次才是开发者⾃添加的脚本。</li>
+</ul>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image14.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image15.png#center" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li><p>m_componentCount表⽰该对象被绑定的组件数。</p>
+<p>  <img src="../%E4%B8%80%E3%80%81GameObject/image16.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+</li>
+<li><p>m_tag为⼀个常数，也等同于Group ID。可以通过设置这个tag来标识该对象为哪个组，tag可以为⾃定义值。⽐如u3d的Camera相机通常为常数5。</p>
+</li>
+</ul>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image17.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li>m_name表⽰对象的名字，也就是tag上⽅的那⼀栏。</li>
+</ul>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image18.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>GameObject成员属性这⾥也就介绍”完了”，使⽤双引号是因为这⾥列举出的GameObject并⾮完整的结构，只是列举的这些 成成员相对来说⽐较重要。在这些成员之后其实还有⼀些属性，⽐如isActivity、isStatic等。这⾥⼤家可以⾃⾏去查看， 也算是⼀个作业。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image19.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<h2 id="3-3、组件"><a href="#3-3、组件" class="headerlink" title="3.3、组件"></a>3.3、组件</h2><p>⼀个存粹的对象是毫⽆意义的，因此u3d以组件的形式绑定在对象上，使得对象百花⻬放。这⾥随便打开⼀个绑定在对象上的组件。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image20.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image21.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>可以看到只要是组件都会继承⼀个叫做<code>MonoBehaviour</code>的基类。这个⾮常重要，因为会涉及到之后编写mono插件。然后对⽐⼀下组件⾯板的成员和打开的源码。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image22.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>可以看到类中使⽤了public修饰词的变量都会出现在⾯板上，这就意味着这些变量修改后会存在⼀些效果，上⼀⼩节，我们有⼀个属性m_instance没讲解是因为这个成员只有当对象为组件时才存在意义。</p>
+<p>我们拿到<code>Enemy_HoverBot</code>的对象地址<code>0x25C002CE990</code>,然后跳转到+0x30的位置查看⼀下内容。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image23.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>由于0x0008为Transform组件，这⾥我们⽤第⼆个组件(0x0018)来讲解。展开后得到</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image24.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>先来看⼀下m_instance的泛型类型Class。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Class</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>	T* m_runtime; <span class="hljs-comment">//0x0000</span><br>	GameObject* m_cachePtr; <span class="hljs-comment">//0x0010 上⼀层指针</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>其中只关注的第⼀个成员，也就是m_runtime,它的类型为泛型T,即开发者⾃定义的类。通⽤结构如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> __MONO__</span><br>	Info* m_info; <span class="hljs-comment">//0x0000</span><br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>	Info m_info; <span class="hljs-comment">//0x0010</span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><span class="hljs-comment">//这⾥开始为类的数据</span><br>&#125;;<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Info</span><br>&#123;<br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> __MONO__</span><br>	<span class="hljs-type">char</span>* className; <span class="hljs-comment">//0x0048</span><br>	<span class="hljs-type">char</span>* <span class="hljs-keyword">namespace</span>; <span class="hljs-comment">//0x0050</span><br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>	<span class="hljs-type">char</span>* className; <span class="hljs-comment">//0x0000</span><br>	<span class="hljs-type">char</span>* <span class="hljs-keyword">namespace</span>; <span class="hljs-comment">//0x0008</span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以看到模板类中既可以通过Info结构获取到类的<strong>名字</strong>和所属的<strong>命名空间</strong>，也可以获取到类的<strong>成员数据</strong>。下⾯是Mono的效果。**(这是个⾮常重要的东⻄对于U3D的逆向,拿到⼀个对象，可以知道他下边绑定了什么组件，组件叫啥)**</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image25.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/Untitled%201.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>u3d⼏乎所有的组件都遵循这样的规律，但Transform组件除外。Transform的数据在0x38的位置，该处被称为AccessReadOnly。</p>
+<p><img src="../%E4%B8%80%E3%80%81GameObject/image27.png#center" srcset="/img/loading.gif" lazyload></p>
+<aside>
+💡 ⽣活⼩妙招1：U3D的矩阵，直接暴⼒遍历GOM，判断tag是否为相机，然后进⼊相机的Transform]+0x0038]下看
+⼀下就能发现矩阵哦!
+
+</aside>
+
+<p><img src="../%E4%B8%80%E3%80%81GameObject/Untitled%202.png#center" srcset="/img/loading.gif" lazyload></p>
+<aside>
+💡 ⽣活⼩妙招2：万物皆对象，包括游戏中的⾓⾊，⼀般游戏都会默认绑定⼀个Transform，通过这个就可以获取对象
+坐标哦!
+
+</aside>
+
+<h2 id="3-4、通⽤回调"><a href="#3-4、通⽤回调" class="headerlink" title="3.4、通⽤回调"></a>3.4、通⽤回调</h2><p>u3d为每个组件设置了默认的回调函数，如下：</p>
+<ul>
+<li>void Start() is called is the GameObject is enabled</li>
+<li>void Awake() is called prior to Start()</li>
+<li>void Update() is called every frame, can be skipped for several frames to keep FPS up</li>
+<li>void FixedUpdate() is called every frame, will not be skipped</li>
+<li>void LateUpdate() is called after all other Update-methods</li>
+<li>void OnEnable()&#x2F;OnDiable() is called when the GameObject is enabled&#x2F;disabled</li>
+<li>void OnDestroy() is called when the GameObject is destroyed (via GameObject.Destroy)</li>
+<li>void OnGUI() is called when drawing and allows the script to use the GUI-API (described<br>later on)</li>
+</ul>
+<p>⼝头描述可能不太好理解，这⾥直接举个实际例⼦。</p>
+<p>现在我要做⼀个⽜逼的盖，我对我的盖呢，我对我的盖有下列要求：</p>
+<ul>
+<li>创建⼀个线程⽤来实时获取数据。</li>
+<li>创建⼀个线程⽤来实时处理数据。</li>
+<li>创建⼀个线程⽤来绘制。</li>
+</ul>
+<p>然后碰巧，这个B游戏咧，他不给你创建线程，他会检测你的线程。当然你可以过掉，但是还有⼀个⽅法，那就是hook&#x2F;替换⼀<br>个持久化存在的对象的回调函数。hook你可以vmt也可以inline，这样把这个对象变成你⾃⼰的对象，那是不是就更⾼级⼀点<br>了捏。</p>
+<p>Start()→我⽤来初始化我的盖数据<br>Update()→我⽤来获取数据<br>LateUpdate()→我⽤来处理获取到的数据<br>OnGUI()→我拿来绘制<br>就是这个意思。⾄于怎么⽤，以及怎么去获取这些函数，后⾯再说。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../../categories/Unity3D/" class="category-chain-item">Unity3D</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>一、GameObject</div>
+      <div>http://example.com/2022/10/21/Unity3D/一、GameObject/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>PlaneJun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="../../UnrealEngine/%E4%B8%80%E3%80%81%E4%BA%86%E8%A7%A3UE4%E5%BC%95%E6%93%8E%E5%8F%8A%E6%95%B0%E6%8D%AE%E6%9F%A5%E6%89%BE/" title="一、了解UE4引擎及数据查找">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">一、了解UE4引擎及数据查找</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../../Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/" title="撕开易语言程序">
+                        <span class="hidden-mobile">撕开易语言程序</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../../js/events.js" ></script>
+<script  src="../../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
