@@ -16,12 +16,12 @@
   <meta name="author" content="PlaneJun">
   <meta name="keywords" content="">
   
-    <meta name="description" content="反截图技术的原理及简单实现">
+    <meta name="description" content="PlaneJun ・2020-10-15 12:32  前言该文章将邀请世界第一的编程语言-易语言来为我们演示。 吹逼随着好玩的游戏越来越多，盖佬人才越来越突出，好玩的游戏+一款牛逼的WG成为了一个老挂逼的日常生活。鲁迅说过‘有乐同享，有难同当‘，于是乎，老挂逼们开始投身于直播行业，以‘高超’的技术，来向大众传递游戏胜利的快乐。为了防止大众偷学到自己的技术，一种技术诞生了-反截图。  啥叫反截图">
 <meta property="og:type" content="article">
 <meta property="og:title" content="反截图技术的原理及简单实现">
 <meta property="og:url" content="http://example.com/2022/10/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/index.html">
 <meta property="og:site_name" content="PlaneJun&#39; Blog">
-<meta property="og:description" content="反截图技术的原理及简单实现">
+<meta property="og:description" content="PlaneJun ・2020-10-15 12:32  前言该文章将邀请世界第一的编程语言-易语言来为我们演示。 吹逼随着好玩的游戏越来越多，盖佬人才越来越突出，好玩的游戏+一款牛逼的WG成为了一个老挂逼的日常生活。鲁迅说过‘有乐同享，有难同当‘，于是乎，老挂逼们开始投身于直播行业，以‘高超’的技术，来向大众传递游戏胜利的快乐。为了防止大众偷学到自己的技术，一种技术诞生了-反截图。  啥叫反截图">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId5.png#center">
 <meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId6.png#center">
@@ -45,7 +45,7 @@
 <meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId25.png#center">
 <meta property="og:image" content="http://example.com/2022/10/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId26.png#center">
 <meta property="article:published_time" content="2022-10-21T02:03:29.110Z">
-<meta property="article:modified_time" content="2022-10-21T03:21:14.776Z">
+<meta property="article:modified_time" content="2022-10-21T05:09:03.370Z">
 <meta property="article:author" content="PlaneJun">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://example.com/2022/10/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId5.png#center">

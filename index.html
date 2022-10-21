@@ -219,7 +219,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/" target="_self">
         <div>
-          一、保护模式
+          1、保护模式简介CPU分有：实模式、保护模式、虚拟8086模式，大多数操作系统都运行在保护模式下。 保护模式主要是用来保护寄存器、数据结构、指令，实际上也就是保护寄存器，因为cpu的数据都存放在寄存器中。 保护模式的特点：段和页。  实模式：16位系统DOS，访问的都是物理地址，不安全。 保护模式：将物理地址隔阂后，使用一种线性的虚拟地址来访问，相对实模式来说比较安全。并用段和页的特点来维护虚拟地
         </div>
       </a>
 
@@ -273,7 +273,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Vulhub/ThinkPHP%20RCE%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" target="_self">
         <div>
-          ThinkPHP RCE远程执行漏洞
+          唐榕 - 2022-09-02 17:30  一、事件概述近日，阿里云安全监测到一种挖矿蠕虫，正在互联网上加速传播。阿里云安全根据它使用ProtonMail邮箱地址作为矿池用户名的行为，将其命名为ProtonMiner。其中，ProtonMiner利用了远程RCE漏洞攻击手段，攻击了ThinkPHP服务，将然后利用受害者主机进行挖矿。(报告链接: https://www.freebuf.com/
         </div>
       </a>
 
@@ -327,7 +327,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Vulhub/CVE-2022-22965(%E5%90%91%E6%97%A5%E8%91%B5RCE)/" target="_self">
         <div>
-          CVE-2022-22965(向日葵RCE)
+          1、运行带有漏洞的向日葵版本，然后使用火绒剑查看端口。  2、通过直接访问ip:port验证端口号。  3、接着使用参数/cgi-bin/rpc?action=verify-haras访问后获取临时的授权。  4、由于漏洞存在check、control控制器，于是拼接url。  http://172.20.10.3:65198/check?cmd=ping%20127.0.0.1%20    ht
         </div>
       </a>
 
@@ -381,7 +381,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Vulhub/CVE-2021-40444%E6%81%B6%E6%84%8FWord%E6%96%87%E6%A1%A3%E9%AA%8C%E8%AF%81/" target="_self">
         <div>
-          CVE-2021-40444恶意Word文档验证
+          标题 链接 漏洞利用及传播 MD5    南亚Patchwork APT组织新活动特点分析 https://www.freebuf.com/articles/network/343294.html 利用CVE-2021-40444漏洞生成恶意的Microsoft Office文档，诱导目标点击文档从而在目标机器上执行任意代码，在受控机器上植入后续木马。 d41a9a2c1c7aa3d0add
         </div>
       </a>
 
@@ -435,7 +435,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Vulhub/CVE-2019-17758(Solr%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5RCE)/" target="_self">
         <div>
-          CVE-2019-17758(Solr模板注入RCE)
+          2022&#x2F;10&#x2F;19 11:58  一、漏洞原理当攻击者可以直接访问Solr控制台时，可以通过发送类似/节点名/config的POST请求对该节点的配置文件做更改。 Apache Solr默认集成VelocityResponseWriter插件，在该插件的初始化参数中的params.resource.loader.enabled这个选项是用来控制是否允许参数资源加载器在Sol
         </div>
       </a>
 
@@ -489,7 +489,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Vulhub/CVE-2018-15473(SSH%E7%94%A8%E6%88%B7%E6%9E%9A%E4%B8%BE)/" target="_self">
         <div>
-          CVE-2018-15473(SSH用户枚举)
+          唐榕 - 2022-08-23 16:14  一、漏洞说明由于SSH对用户验证的代码不严谨，在验证用户身份时，首先会验证用户是否存在于SSH用户列表,如果存在则校验公钥是否合法，反之验证函数返回0，即用户不存在。通过对校验公钥的操作进行拦截，使其部分直接中断返回，然后根据返回值即可判断用户名是否存在。 二、影响版本 OpenSSH 7.7及其以前版本  三、漏洞分析1、源码分析 根据openss
         </div>
       </a>
 
@@ -543,7 +543,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Vulhub/Apache%20Tomcat%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" target="_self">
         <div>
-          Apache Tomcat远程代码执行漏洞
+          唐榕 - 2022-09-13 15:58  一、事件概述腾讯安全御见威胁情报中心于2019年11月11日检测到挖矿蠕虫病毒BuleHero升级到4.0版。在此次更新中，BuleHero引入了多种新漏洞的使用，包括Tomcat任意文件上传漏洞(CVE-2017-12617)、Apache Struts2远程代码执行漏洞、Weblogic反序列化任意代码执行漏洞，此次又引入了Drupal远程代码执
         </div>
       </a>
 
@@ -589,15 +589,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="2022/10/21/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/" target="_self">
-          记录自己调试windows服务的操作
+        <a href="2022/10/21/Virus/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/" target="_self">
+          记一次头铁的病毒样本分析过程
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Virus/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/" target="_self">
         <div>
-          记录自己调试windows服务的操作
+          记一次头铁的病毒样本分析过程 PlaneJun ・2021-10-27 05:07  一、样本： [1]运行效果： 点击确定后就无任何反应。 二、静态分析[1]程序信息 MD5    fdd9fd0249d48d8c6d991741c67fcfebSHA-1    ff0181242825b5bb8cac1d4d17e8377352e3aa55SHA-256    6a9bdabc45996185
         </div>
       </a>
 
@@ -643,15 +643,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="2022/10/21/Virus/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/" target="_self">
-          记一次头铁的病毒样本分析过程
+        <a href="2022/10/21/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/" target="_self">
+          记录自己调试windows服务的操作
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Virus/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/" target="_self">
         <div>
-          记一次头铁的病毒样本分析过程
+          记录自己调试windows服务的操作 PlaneJun ・2022-1-9 23:25  如题，近日分析了一个样本，发现需要调试服务，然后自己也没调试过服务，就在国内查了一些资料，基本能用的也就看雪一个大哥发的教程。[原创]使用Windbg&amp;OllyDbg从头调试windows服务-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com 但是跟着操作弄了一遍，虽然是弄好了，但是
         </div>
       </a>
 
@@ -705,7 +705,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="2022/10/21/Virus/%E5%BD%A9%E8%99%B9%E7%8C%AB%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90/" target="_self">
         <div>
-          彩虹猫病毒分析
+          彩虹猫病毒分析 PlaneJun ・2021-10-26 20:30  这里没有放虚拟机运行，直接放微云沙盒跑，样本运行效果如下  提示是否要继续运行，之后电脑会出现各种弹窗，然后会重启，重启后直接出现彩虹猫并且播放音频  样本分析    样本名 彩虹猫    MD5 19dbec50735b5f2a72d4199c4e184960   SHA-1 6fed7732f7cb6f59743795b2
         </div>
       </a>
 

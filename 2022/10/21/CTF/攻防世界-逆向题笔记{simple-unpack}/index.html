@@ -16,12 +16,12 @@
   <meta name="author" content="PlaneJun">
   <meta name="keywords" content="">
   
-    <meta name="description" content="攻防世界-逆向题笔记{simple-unpack}">
+    <meta name="description" content="分析对象：simple-unpack 工具：Kali-Linux、Ida 步骤：1）、运行查看效果 2）、PE工具查壳 3）、查看文件平台 4）、如果有壳就脱壳，无壳进行第四步 5）、文件拖入ida进行分析 前言： 进行第一步之前，我们首先说一下这个这次题目的文件。这次的文件并非windows平台下的文件，而是属于linux文件。如何知道呢？把文件拖进PE工具就可以看到提示。  不是winEXE-">
 <meta property="og:type" content="article">
 <meta property="og:title" content="攻防世界-逆向题笔记{simple-unpack}">
 <meta property="og:url" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bsimple-unpack%7D/index.html">
 <meta property="og:site_name" content="PlaneJun&#39; Blog">
-<meta property="og:description" content="攻防世界-逆向题笔记{simple-unpack}">
+<meta property="og:description" content="分析对象：simple-unpack 工具：Kali-Linux、Ida 步骤：1）、运行查看效果 2）、PE工具查壳 3）、查看文件平台 4）、如果有壳就脱壳，无壳进行第四步 5）、文件拖入ida进行分析 前言： 进行第一步之前，我们首先说一下这个这次题目的文件。这次的文件并非windows平台下的文件，而是属于linux文件。如何知道呢？把文件拖进PE工具就可以看到提示。  不是winEXE-">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bsimple-unpack%7D/document_image_rId4.png#center">
 <meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bsimple-unpack%7D/document_image_rId5.png#center">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bsimple-unpack%7D/document_image_rId13.png#center">
 <meta property="og:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bsimple-unpack%7D/document_image_rId14.png#center">
 <meta property="article:published_time" content="2022-10-21T02:03:28.953Z">
-<meta property="article:modified_time" content="2022-10-21T03:20:27.621Z">
+<meta property="article:modified_time" content="2022-10-21T05:15:25.855Z">
 <meta property="article:author" content="PlaneJun">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://example.com/2022/10/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bsimple-unpack%7D/document_image_rId4.png#center">
