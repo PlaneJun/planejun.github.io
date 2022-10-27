@@ -1,0 +1,675 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../../img/fluid.png">
+  <link rel="icon" href="../../../../../img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="PlaneJun">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="记录自己调试windows服务的操作 PlaneJun ・2022-1-9 23:25  如题，近日分析了一个样本，发现需要调试服务，然后自己也没调试过服务，就在国内查了一些资料，基本能用的也就看雪一个大哥发的教程。[原创]使用Windbg&amp;OllyDbg从头调试windows服务-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com 但是跟着操作弄了一遍，虽然是弄好了，但是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记录自己调试windows服务的操作">
+<meta property="og:url" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="PlaneJun&#39; Blog">
+<meta property="og:description" content="记录自己调试windows服务的操作 PlaneJun ・2022-1-9 23:25  如题，近日分析了一个样本，发现需要调试服务，然后自己也没调试过服务，就在国内查了一些资料，基本能用的也就看雪一个大哥发的教程。[原创]使用Windbg&amp;OllyDbg从头调试windows服务-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com 但是跟着操作弄了一遍，虽然是弄好了，但是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId6.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId7.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId8.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId9.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId10.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId11.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId12.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId13.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId14.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId15.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId16.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId17.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId18.png#center">
+<meta property="article:published_time" content="2022-10-27T05:20:55.901Z">
+<meta property="article:modified_time" content="2022-10-21T05:12:12.241Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId6.png#center">
+  
+  
+  
+  <title>记录自己调试windows服务的操作 - PlaneJun&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="../../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../../js/utils.js" ></script>
+  <script  src="../../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../../index.html">
+      <strong>PlaneJun&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../index.html">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/planejun">
+                <i class="iconfont icon-github-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../../img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="记录自己调试windows服务的操作"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-27 13:20" pubdate>
+          2022年10月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">记录自己调试windows服务的操作</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="记录自己调试windows服务的操作"><a href="#记录自己调试windows服务的操作" class="headerlink" title="记录自己调试windows服务的操作"></a>记录自己调试windows服务的操作</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2022-1-9 23:25</li>
+</ul>
+<p>如题，近日分析了一个样本，发现需要调试服务，然后自己也没调试过服务，就在国内查了一些资料，基本能用的也就看雪一个大哥发的教程。<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-229643.htm">[原创]使用Windbg&amp;OllyDbg从头调试windows服务-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com</a></p>
+<p>但是跟着操作弄了一遍，虽然是弄好了，但是会出现一个情况就是调试器会非常的卡，而且过了一会就消失了，整个虚拟机就直接是卡死状态，研究了许久还是解决不了就放弃了。然后就自己办法弄，考虑过写驱动给拦截了，但是VS2022没有WDK，于是想到全局API Hook，然后发现svchost.exe不过消息队列。在觉得无望的时候，我在火绒剑发现了这么一个玩意。</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId6.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>因为自己是没去研究过服务启动的一个流程，在分析样本的时候用的是sc命令启动，就以为服务是从sc.exe去加载的，然后去分析了半天，发现不行。于是乎发现了这么一个流程，服务的一个启动过程如下：</p>
+<p>service.exe —–[CreateProcessW]——-&gt;svchost.exe——-[LoadLibrary]——–&gt;服务启动</p>
+<p>然后就有了一个想法，直接附加service.exe然后给CreateProcessW下断点，再启动服务，拦截到svchost.exe的创建后，把参数修改为PROCESS_SUSPEND_RESUME，最后再用调试器附加svchost.exe下断LoadLibrary,手动恢复线程后等待目标服务DLL加载。理论存在开始实践。</p>
+<h2 id="法一："><a href="#法一：" class="headerlink" title="法一："></a>法一：</h2><p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId7.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>启动服务后直接断下，然后直接查看参数，发现是包含了线程暂停。</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId8.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>猜到后面会存在恢复线程操作，就稍微跟了一下。</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId9.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>F8走几步发现了恢复线程的函数，这里直接Nop掉不让他执行。走完之后直接恢复这个地方的Call</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId10.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这个时候已经可以把调试器F9跑起来了，然后会突然断在异常上。</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId11.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这里的这个异常让我想到了另一种调试方法，在法二里。</p>
+<p>这个时候另一个调试器附加创建出来的进程。</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId12.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>恢复线程，然后F9让调试器跑起来。这个时候这里是不会断下的，需要到第一个调试器F9，一直F9到第二个调试器断下。（<strong>这里猜测是因为services.exe的操作没跑完，然后svchost.exe单独跑就出现问题。）</strong></p>
+<p>第二个调试器断下后，就可以直接单次F9等到目标DLL加载了。</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId13.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>加载完毕，直接跳到目标DLL的函数下断即可。</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId14.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>接下来配合IDA食用即可。</p>
+<h2 id="法二："><a href="#法二：" class="headerlink" title="法二："></a>法二：</h2><p>这个方法是我在调试的时候发现的一个特征，不知道适不适用，就是直接暴力断网，因为恶意样本以服务形式启动，肯定不是为了好玩，其中肯定会有网络行为。那么断网会导致样本在通讯的时候会产生一个等待行为，那么这个等待行为就可以拿来用。举个例子，样本存在下面的代码。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c">a = URLDownloadToFileW()<br><span class="hljs-keyword">if</span>(a)<br>&#123;<br>......<br>&#125;<br><span class="hljs-keyword">else</span><br>&#123;<br><span class="hljs-keyword">return</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>那么，在服务调用URLDownloadToFileW这个函数时，由于你网络断开，那么他就会有一个网络等待行为，通常这个等待行为不会很长也不会很久，在这个等待时间里，直接用火绒剑查看服务所存在的进程PID，然后调试器附加后到if(a)这个位置下断，然后把网连上即可，函数返回断下后就可以开始分析了。</p>
+<h2 id="注意事项："><a href="#注意事项：" class="headerlink" title="注意事项："></a>注意事项：</h2><p>1）、服务加载的超时时间，因为调试原因，服务加载的时候超过了规定时间，就会直接结束调试，所以需要设置时间。设置方法，这里直接截图开头那位大哥帖子里的内容。</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId15.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>2）、调试需要提前开启好两个，因为一但调试进行，电脑就会卡死，无法打开东西。（貌似可以通过cmd命令打开）</p>
+<p>3）、关闭系统异常时自动关机的选项，不然会突然直接提示一分钟后自动关机。（计算机右键-属性-高级系统设置）</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId16.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId17.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>虽然我这两个方法确实有点乱七八槽，但确实是可以调试服务的。如果各位大哥还有啥好法子，也可以支支招。</p>
+<p><img src="../%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId18.png#center" srcset="/img/loading.gif" lazyload></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../../categories/Virus/" class="category-chain-item">Virus</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>记录自己调试windows服务的操作</div>
+      <div>http://example.com/2022/10/27/Virus/记录自己调试windows服务的操作/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>PlaneJun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="../../Vulhub/Apache%20Tomcat%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="Apache Tomcat远程代码执行漏洞">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Apache Tomcat远程代码执行漏洞</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/" title="记一次头铁的病毒样本分析过程">
+                        <span class="hidden-mobile">记一次头铁的病毒样本分析过程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../../js/events.js" ></script>
+<script  src="../../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

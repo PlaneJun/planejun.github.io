@@ -1,0 +1,712 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../../img/fluid.png">
+  <link rel="icon" href="../../../../../img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="PlaneJun">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="利用U3D引擎特性快递定位数组 PlaneJun ・2021-8-18 15:11  作为当代不争气的青年代表，在放弃挣扎前奋笔写下最后一篇文章，之后不问江湖事。  IL2CPP我就不介绍了，显得水文字。搞过U3D的男人都懂，IL2CPP模式打包的游戏，游戏下面会存在一个名为global-metadata.dat的文件，这个东西解包之后会得到一个dump.cs和Mono模式下的所有DLL。那么综合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用U3D引擎特性快递定位数组">
+<meta property="og:url" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/index.html">
+<meta property="og:site_name" content="PlaneJun&#39; Blog">
+<meta property="og:description" content="利用U3D引擎特性快递定位数组 PlaneJun ・2021-8-18 15:11  作为当代不争气的青年代表，在放弃挣扎前奋笔写下最后一篇文章，之后不问江湖事。  IL2CPP我就不介绍了，显得水文字。搞过U3D的男人都懂，IL2CPP模式打包的游戏，游戏下面会存在一个名为global-metadata.dat的文件，这个东西解包之后会得到一个dump.cs和Mono模式下的所有DLL。那么综合">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId5.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId6.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId7.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId8.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId9.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId10.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId11.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId12.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId13.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId14.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId15.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId16.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId17.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId18.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId19.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId20.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId21.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId22.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId23.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId24.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId25.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId26.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId27.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId28.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId29.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId30.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId31.png#center">
+<meta property="article:published_time" content="2022-10-27T05:20:55.303Z">
+<meta property="article:modified_time" content="2022-10-21T05:09:09.103Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/10/27/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId5.png#center">
+  
+  
+  
+  <title>利用U3D引擎特性快递定位数组 - PlaneJun&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="../../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../../js/utils.js" ></script>
+  <script  src="../../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../../index.html">
+      <strong>PlaneJun&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../index.html">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/planejun">
+                <i class="iconfont icon-github-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../../img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="利用U3D引擎特性快递定位数组"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-27 13:20" pubdate>
+          2022年10月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">利用U3D引擎特性快递定位数组</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="利用U3D引擎特性快递定位数组"><a href="#利用U3D引擎特性快递定位数组" class="headerlink" title="利用U3D引擎特性快递定位数组"></a>利用U3D引擎特性快递定位数组</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2021-8-18 15:11</li>
+</ul>
+<p>作为当代不争气的青年代表，在放弃挣扎前奋笔写下最后一篇文章，之后不问江湖事。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId5.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>IL2CPP我就不介绍了，显得水文字。搞过U3D的男人都懂，IL2CPP模式打包的游戏，游戏下面会存在一个名为<strong>global-metadata.dat</strong>的文件，这个东西解包之后会得到一个dump.cs和Mono模式下的所有DLL。那么综合网上大部分的教程来说，他们只会用dump.cs来看偏移，虽然直接用dnspy打开dll看也是可以的，但是dump.cs更偏向于sdk文件，可以直接把它的内容当作头文件来用，更加方便。接下来我将给大家带来一套组合拳，教大家如何正确的使用这个玩意来快速找到一个游戏的数组。这里插个题外话，标题虽然这次讲解的是针对IL2CPP,但是相对来说，Mono也是可以的，只不过在偏移和一些结构上面略显差异。</p>
+<p>老早时期，精力旺盛，在一次乱翻内存之中发现了u3d的一个惊天大秘密，然后经过一系列的操作和研究后就总结出了一套自己独有的使用方式。是这样的，u3d里的对象，假设对象地址是0x1000000000,那么在这个对象的某一个地方是会存着这个对象的类名，并且寻址的偏移还是固定的，之前查了一会，这玩意好像叫做反射。那么，这个有什么用捏？我这里先模拟一下传统的找数组方法：<strong>首先CE搜索人物的某项数据，比如坐标，然后一层一层往上跟到本人地址，然后通过访问本人地址或者扫指针，最后找出数组。</strong>这些看起来都是非常常规的方法，但是如果放到u3d游戏上来说是非常恶心的。众所周知，u3d有用的偏移大部分都是10层起步，像这种偏移量，先不说你有没有那个耐心用CE跟出来，就算你扫指针，那也是吃不消的，况且你还要去做数据对比。所以说整个流程下来，即使你找到数组，那也是累得半死的。这个时候，类名就派上用场了。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId6.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>我们知道凡是U3D打包的游戏，源代码基本都在<strong>Assembly-CSharp.dll</strong>这个DLL里，那么我们可不可以大胆猜测一下，<strong>游戏有一个主管理器类，里面存放着很多数据，其中就包括玩家数组，模型数组之类的，然后我们通过用DnSpy这个工具来找到这个类在游戏的实际名字，最后通过搜索类名的方法，反推到对象名</strong>。上面我提到过了，对象到类名的偏移是固定的，那么找到类的实例对象就相当于做小学加减法。存在既合理，下面开干。这里用的是<strong>枪火重生</strong>这个游戏，我们用il2cppDumper把GM文件解包之后用DnSpy打开DLL。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId7.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>既然是找有玩家数组的类，我们第一步就是去找玩家类，玩家类可以通过玩家的属性去找，常见的是血量，对应的关键词大部分是<strong>HP,Health</strong>，这个游戏用的是HP。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId8.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><strong>左边表示成员，右边表示所在的类</strong>。放眼看去，只有<strong>PlayerProp</strong>符合我们的要求，我们双击后，左边的列表将会定位到该类，我们点击展开按钮查看内部的内容。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId9.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>发现里面都是一些属性，从类名也可以判断出这个是存放玩家属性的类而不是玩家类，并且应该是属于玩家类的一个成员，所以我们只需要查找那个类引用了<strong>PlayerProp</strong>这个类。对这个类右键点分析，在右下角点开被使用。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId10.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>根据类名可以发现有两个可能是玩家类，经过两者内容对比，最终确认<strong>NewPlayerObject</strong>为玩家类。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId11.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId12.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>既然已经找到了玩家类，那么数找组就很容易了。同样的操作，对玩家类右键点分析，然后点击被使用，通过根据类名进行了一系列筛选后，判定<strong>NewPlayerManager</strong>为<strong>主管理类，而且为静态类。</strong></p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId13.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId14.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>并且在该类下面也发现了很多数组。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId15.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>到这里，我们基本工作就已经完成了。到时候我们直接到游戏找到这个类然后通过DnSpy显示的偏移或Dump.cs显示的偏移拿到对应数组即可。</p>
+<p>上面我提到过，U3D的对象都会在自身下的某的地方存着该对象的类型，而且该偏移是固定的。那么这个偏移怎么找？我也不知道。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId16.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>因为是当时偶然间在CE内存翻到的，然后去对比了其他游戏，发现偏移是固定的。目前只知道这个玩意叫做<strong>runtimeType.</strong></p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId17.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId18.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>由于万物继承object，所以直接在头部翻就能找到了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp">Il2cpp：<br>        obj+<span class="hljs-number">0x10</span>]=className<br>        obj+<span class="hljs-number">0x18</span>]=spaceName<br>  Mono：<br>        obj+<span class="hljs-number">0x0</span>]+<span class="hljs-number">0x48</span>]=className<br>        obj+<span class="hljs-number">0x0</span>]+<span class="hljs-number">0x50</span>]=spaceName<br></code></pre></td></tr></table></figure>
+
+<p>这里说一个细节，在il2cpp中，className的内存属性是只读，Mono中是可读可写，然后就是className的后面紧接的字符串是该类的成员函数名和成员变量名，可以通过这个细节来筛选其他数据。</p>
+<p>进入游戏**(这里建议一定要进入游戏，因为进入游戏后才会有对象，有了对象才能方便我们查看数组对象)**，打开CE搜索我们找到的类NewPlayerManager。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId19.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>这里只有一个结果，那么通过查看内存数据再对比DnSpy,发现该地址是正确的，然后开始做加减法。将该地址放到CE搜索<strong>（记得恢复查找的内存属性）。</strong></p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId20.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>发现这里有两个，这个时候不要慌，都拿下来减0x10.</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId21.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>第二个为0，u3d的对象头部不可能为0，这是经验之谈。这个时候0x 2E99B5E6060，实际上已经是NewPlayerManager的实例了，现在可以通过跟地址或者扫指针去找基地址，但是因为这个类是静态类所以这里直接搜索一下看看有没有基地址存着这个地址。有一个，那么这个就可以用了。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId22.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>数据都找好了，现在就来看看数组吧，我们打开dump.cs，然后讲这个地址添加到ce的数据结构工具。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId23.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>此时会存在一个问题，dump中显示0x10是一个字典，但是当先的0x10却是类名，那这就很尴尬。。这里在说一个点，也算是经验之谈。当前我们这个地址<strong>0x 2E99B5E6060，</strong>只能算是一个假体，真正实体在<strong>0xB8</strong>的位置，至于为什么，我也不懂，分析多了，见多了就默认了。我们进入<strong>0xB8</strong>的位置.</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId24.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>发现现在数据相似度已经很高了。我们直接去看看怪物的数组<strong>（0x48）</strong></p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId25.png#center" srcset="/img/loading.gif" lazyload></p>
+<p><strong>进去后0x10是数组指针，0x18为数量，这是List固定的，然后进入0x10。</strong></p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId26.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>同样数组是从0x20开始的，也是固定的。这些其实不是说我在瞎说，因为U3D的List他内存结构就是这样的。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId27.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>当前敌人也只有一个，然后0x20的指针，类名也是NewPlayerObject。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId28.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>然后剩下的，就是查看dump.cs去拿到对应偏移即可。</p>
+<h3 id="补充一下"><a href="#补充一下" class="headerlink" title="补充一下"></a>补充一下</h3><p>在NewPlayerManager类中由于该类直接是继承object，所以该类的0x10直接是类名。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId29.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>但是像NewPlayerObject类基类并不是object，所以需要在0x0的地方读一层之后0x10的位置才是类名。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId30.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>因为是文字叙述，无法将所有细节给描述出来。所以大部分东西直接一笔带过，至于为什么，多去实践就知道了。这次针对的是il2cpp，所以在其他也是il2cpp的游戏中可能操作起来的相似度较高，Mono上可能有一些差异，但并不碍事，我只是想说有那么个方法可以快速拿到数据而已，至于能不能做到看自己的造化。文章中难免出现先一些错误，各位就留点情面吧。</p>
+<p>这大概也是我最后一次写这种类型的技术文了。。留个纪念吧。</p>
+<p><img src="../%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId31.png#center" srcset="/img/loading.gif" lazyload></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../../categories/GameHacker/" class="category-chain-item">GameHacker</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>利用U3D引擎特性快递定位数组</div>
+      <div>http://example.com/2022/10/27/GameHacker/利用U3D引擎特性快递定位数组/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>PlaneJun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="../%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" title="反截图技术的原理及简单实现">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">反截图技术的原理及简单实现</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/" title="U3D逆向-Mono另类解密">
+                        <span class="hidden-mobile">U3D逆向-Mono另类解密</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../../js/events.js" ></script>
+<script  src="../../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

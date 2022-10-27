@@ -1,0 +1,850 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../../img/fluid.png">
+  <link rel="icon" href="../../../../../img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="PlaneJun">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1、保护模式简介CPU分有：实模式、保护模式、虚拟8086模式，大多数操作系统都运行在保护模式下。 保护模式主要是用来保护寄存器、数据结构、指令，实际上也就是保护寄存器，因为cpu的数据都存放在寄存器中。 保护模式的特点：段和页。  实模式：16位系统DOS，访问的都是物理地址，不安全。 保护模式：将物理地址隔阂后，使用一种线性的虚拟地址来访问，相对实模式来说比较安全。并用段和页的特点来维护虚拟地">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一、保护模式">
+<meta property="og:url" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="PlaneJun&#39; Blog">
+<meta property="og:description" content="1、保护模式简介CPU分有：实模式、保护模式、虚拟8086模式，大多数操作系统都运行在保护模式下。 保护模式主要是用来保护寄存器、数据结构、指令，实际上也就是保护寄存器，因为cpu的数据都存放在寄存器中。 保护模式的特点：段和页。  实模式：16位系统DOS，访问的都是物理地址，不安全。 保护模式：将物理地址隔阂后，使用一种线性的虚拟地址来访问，相对实模式来说比较安全。并用段和页的特点来维护虚拟地">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_1.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_2.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_3.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_1.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_2.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_3.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_4.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_5.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_6.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_7.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_8.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_9.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_10.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_11.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_12.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_13.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_14.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_15.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_16.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_17.png#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_4.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_5.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_6.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_7.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_8.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_9.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_10.jpeg#center">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_11.jpeg#center">
+<meta property="article:published_time" content="2022-10-27T05:20:56.261Z">
+<meta property="article:modified_time" content="2022-10-21T05:16:20.008Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled.jpeg#center">
+  
+  
+  
+  <title>一、保护模式 - PlaneJun&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="../../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../../js/utils.js" ></script>
+  <script  src="../../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../../index.html">
+      <strong>PlaneJun&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../index.html">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/planejun">
+                <i class="iconfont icon-github-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../../img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="一、保护模式"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-27 13:20" pubdate>
+          2022年10月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          69 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">一、保护模式</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="1、保护模式简介"><a href="#1、保护模式简介" class="headerlink" title="1、保护模式简介"></a>1、保护模式简介</h1><p>CPU分有：<code>实模式</code>、<code>保护模式</code>、<code>虚拟8086</code>模式，大多数操作系统都运行在保护模式下。</p>
+<p>保护模式主要是用来保护寄存器、数据结构、指令，实际上也就是保护寄存器，因为cpu的数据都存放在寄存器中。</p>
+<p>保护模式的特点：段和页。</p>
+<ul>
+<li>实模式：16位系统DOS，访问的都是物理地址，不安全。</li>
+<li>保护模式：将物理地址隔阂后，使用一种线性的虚拟地址来访问，相对实模式来说比较安全。并用段和页的特点来维护虚拟地址。</li>
+</ul>
+<p>保护模式具体资料可以在 Intel白皮书第三卷 中查看。</p>
+<h1 id="2、段寄存器"><a href="#2、段寄存器" class="headerlink" title="2、段寄存器"></a>2、段寄存器</h1><h2 id="2-1-段选择子"><a href="#2-1-段选择子" class="headerlink" title="2.1 段选择子"></a>2.1 段选择子</h2><p>CPU一共有八个段寄存器：ES CS SS DS FS GS LDTR TR ，OD可见前6个，但GS段寄存器windows并未使用（32位下）。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>如果运行在实模式下，则只有前四个有用。</p>
+<p>如果是64位，则使用GS而不是FS。</p>
+<p>当执行下列汇编代码时</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nasm">mov [0x12345678],eax<br></code></pre></td></tr></table></figure>
+
+<p>实际上cpu所“看到的”代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">mov dword ptr ds:[<span class="hljs-number">0x12345678</span>],eax<br><span class="hljs-comment">//ds.base+0x12345678</span><br><span class="hljs-comment">//cs.base+0x12345678</span><br><span class="hljs-comment">//ss.base+0x12345678</span><br></code></pre></td></tr></table></figure>
+
+<p>💡 ds段寄存器通常时用来存放要访问数据的段地址。cs段寄存器表示要执行的代码。ss段寄存器表示堆栈的段地址。[…]则表示一个内存单元，比如ds:[1],cs:[1],ss:[1]。——王爽《汇编语言》</p>
+<p>段寄存器结构： 共96位， 16位可见，80位不可见。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_1.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SegMen</span>&#123;</span>  <br>  WORD Selector;<span class="hljs-comment">//16位  </span><br>  WORD Attributes;<span class="hljs-comment">//16位  </span><br>  DWORD Base;<span class="hljs-comment">//32位  </span><br>  DWORD Limit;<span class="hljs-comment">//32位</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>读段寄存器指令：mov ax,es <strong>只能读16位</strong>（可见部分）</p>
+<p>写段寄存器指令：mov ds,ax <strong>写了96位的</strong>。</p>
+<p>段寄存器可以用mov指令读写，但是LDTR和TR除外。</p>
+<p>加载段描述符至段寄存器的指令共有三种：</p>
+<ul>
+<li>mov ss,ax 使用mov指令</li>
+<li><strong>les lss lds lfs lgs</strong>修改对应的段寄存器</li>
+<li>cs不能通过上述指令改变，否则会导致EIP的改变，必须保证cs与eip一起改。后文会讲解如何修改CS并在需要时提升权限。</li>
+</ul>
+<p>其中选择子(Selector)有如下结构：</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>打开OD，随便加载一个程序可以看到段寄存器对应的选择子。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_2.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>以fs的选择子为例进行解析：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs dns">fs=<span class="hljs-number">0</span>x0053 =&gt; <span class="hljs-number">0000 0000</span> <span class="hljs-number">0101 0011</span><br>由于前面两个字节为<span class="hljs-number">0</span>，因此单独拿后面两个字节讲解。<br><span class="hljs-number">0101 0011</span><br>根据上面给出的Selector表可以对这两个字节划分。<br><span class="hljs-number">01010 0 11</span><br><br>值     |    含义<br>- ------------------------------------------------<br><span class="hljs-number">01010</span>  |    欲查表的索引号,此处为十进制<span class="hljs-number">5</span><br><span class="hljs-number">0</span>      |    欲查哪一块表<span class="hljs-comment">;0-&gt;GDT 1-&gt;LDT</span><br><span class="hljs-number">11</span>     |    哪一环的权限(RPL),此处为十进制<span class="hljs-number">3</span>,因此为<span class="hljs-number">3</span>环<br>根据公式 addr = GDT + <span class="hljs-number">8</span> * index计算后可得到fs的段描述符<br>addr = <span class="hljs-number">0</span>xfffff<span class="hljs-number">88004590000</span> + <span class="hljs-number">8</span> * <span class="hljs-number">5</span> = <span class="hljs-number">0</span>xfffff<span class="hljs-number">88004590028</span><br><br><span class="hljs-number">2</span>: kd&gt; dq fffff<span class="hljs-number">88004590028</span><br>fffff8<span class="hljs-number">80`04590028</span>  **<span class="hljs-number">00</span>cff300`<span class="hljs-number">0000</span>ffff** <span class="hljs-number">0020</span>fb<span class="hljs-number">00`00000000</span><br>fffff8<span class="hljs-number">80`04590038</span>  <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">04008b58</span>`f<span class="hljs-number">0000067</span><br>fffff8<span class="hljs-number">80`04590048</span>  <span class="hljs-number">00000000</span>`fffff880 ff40f3fd`f000bc00<br>fffff8<span class="hljs-number">80`04590058</span>  <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00</span>cf9a00`<span class="hljs-number">0000</span>ffff<br>fffff8<span class="hljs-number">80`04590068</span>  <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span><br>fffff8<span class="hljs-number">80`04590078</span>  <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span><br>fffff8<span class="hljs-number">80`04590088</span>  <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span><br>fffff8<span class="hljs-number">80`04590098</span>  <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>GDT：全局描述表（Global Description Table），在操作系统加载完毕后就存在的一快内存。实际上就是一个数组，每一个元素就是一个描述符，多个组合一起就构成了全局描述符表。而每一个描述符共64位，包含了以下的这些信息：段基址、段长度、属性。段寄存器通过解析选择子后得到索引后在GDT中跳转获取对应描述符。</p>
+</blockquote>
+<blockquote>
+<p>LDT：局部描述表（Local Description Table），与GDT功能一致，但不能单独存在，只能嵌套在GDT中。</p>
+</blockquote>
+<ul>
+<li><strong>windbg获取GDT</strong></li>
+</ul>
+<p>GDT可以使用windbg的命令可以查看gdt表的地址：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs x86asm">gdtr寄存器（windbg伪寄存器，是windbg通过<span class="hljs-keyword">sgdt</span> <span class="hljs-keyword">lgdt</span>指令获取的，为了方便用户，才模拟了一个寄存器叫gdtr，实际是没有这个寄存器的） :<br>存两个值，一个是GDT表在哪里，一个是GDT表有多大   <span class="hljs-number">48</span>位  有<span class="hljs-number">32</span>位存储在哪里，<span class="hljs-number">16</span>位存储大小<br>r gdtr  r查看gdtr寄存器的地址<br>r gdtl  r查看gdtr寄存器的大小  都查gdtr<br><span class="hljs-built_in">dd</span>  xxxx       <span class="hljs-number">4</span>字节查看内存<br><span class="hljs-built_in">dq</span>  XXXX       <span class="hljs-number">8</span>字节查看内存<br><span class="hljs-built_in">dq</span>  xxxx Lnum    查看固定数量元素的内存<br></code></pre></td></tr></table></figure>
+
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_3.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li><strong>r3代码获取GDT</strong></li>
+</ul>
+<p>通过指令sgdt获取。其中共获取到6个字节,前两个字节位gdt寄存器的大小,后面四个字节为gdt的地址。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_1.png#center" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> var[<span class="hljs-number">6</span>]=&#123;<span class="hljs-number">0</span>&#125;;<br>	_asm&#123;<br>		sgdt var<br>	&#125;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x,%x\n&quot;</span>,*(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>*)&amp;var[<span class="hljs-number">2</span>],*(<span class="hljs-type">unsigned</span> <span class="hljs-type">short</span>*)&amp;var[<span class="hljs-number">0</span>]);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_2.png#center" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2-2-段描述符"><a href="#2-2-段描述符" class="headerlink" title="2.2 段描述符"></a>2.2 段描述符</h2><p>段描述符有如下结构：</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_3.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>将<code>0x00cff300</code>0000ffff&#96;进行拆分可得到如下</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">base:0x00000000<br>attr:0x0cf3(前面的0是补齐2字节)<br>limit:0xfffff(前面的0是补齐4字节)<br><br>attr的属性又可以细分如下：<br><span class="hljs-section">0xc = 1100</span><br><span class="hljs-section">----------------------------</span><br>G:1;1-&gt;limit以4k对齐,limit = ( limit + 1 ) * 4096 - 1    0-&gt;字节对齐,limit = limit<br>D/B:1<br>0:0<br>AVL:0<br><br><span class="hljs-section">0xf3 = 1111 0011</span><br><span class="hljs-section">-----------------------------</span><br>P:1<br>DPL:11<br>S:1<br>Type:0011(3)<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>G位</strong></p>
+<p>  段对齐粒度。 也就是决定了Limit大小的一个位。</p>
+<p>  在上文填充段寄存器隐藏部分时，Limit在描述符中只有5个16进制位表示，剩下的3个16进制位就需要看G位。</p>
+<p>  当G为0时，整个段将以字节对齐，Limit大小单位为字节，所以精确到1。Limit直接就是段长。段寄存器中的Limit高位补0。</p>
+<p>  当G为1时，整个段将以4KB对齐，Limit大小单位为4KB，所以段的末尾处一定是以FFF结尾。段寄存器中的Limit低位补FFF。</p>
+</li>
+<li><p><strong>D&#x2F;B位</strong></p>
+<p>  <strong>&#x3D;0</strong>表示是16位的单位,<strong>&#x3D;1</strong>表示32位的单位。</p>
+<p>  如果是代码段的描述符,那么称为D;如果是数据段的描述符,称为B。</p>
+<p>  大段或者小段，分为三种情况：</p>
+<p>  <strong>对CS段来说：</strong></p>
+<p>  为1时，默认为32位寻址。</p>
+<p>  为0时，默认为16位寻址。</p>
+<p>  前缀67改变寻址方式。</p>
+<p>  <strong>对SS段来说：</strong></p>
+<p>  为1时，隐式堆栈访问指令（PUS H POP CALL RETN等）修改的是32位寄存器ESP</p>
+<p>  为0时，隐式堆栈访问指令（PUSH POP CALL RETN等）修改的是16位寄存器SP</p>
+<p>  对于向下扩展的数据段：</p>
+<p>  为1时，段上限大小为4GB(2的32次方)。 为0时 段上限大小为64KB(2的16次方)。</p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_4.png#center" srcset="/img/loading.gif" lazyload></p>
+</li>
+<li><p>P位</p>
+<p>  有效位 1：描述符有效 0：描述符无效</p>
+<p>  当描述符无效时，任何尝试加载该描述符、访问该描述符对应的段间地址都会报错。</p>
+</li>
+<li><p><strong>DPL位</strong></p>
+<p>  能访问段描述符的权限。</p>
+<p>  💡 DPL、CPL、RPL的区别在于，DPL是段描述符的权限,属于固定且默认。RPL是段寄存器的权限，CRL同样是段寄存器的权限,但与RPL区别就是CRL指的是当前代码执行的时候所访问段寄存器的权限。 mov eax,dword ptr ds:[0x12345678] ;此时CRL指的是ds寄存器的权限,其他寄存器的权限称为RPL. <strong>总之,用哪个段寄存器,那个寄存器的权限就叫做CRL。常规情况下,代码的每次执行都会用到CS和SS段寄存去,所以这两个段寄存器称为CRL,其他的叫做RPL。</strong></p>
+</li>
+<li><p>S位</p>
+<p>  描述符类型位。 为0时，是<strong>系统段描述符</strong>。 为1时，是<strong>代码或数据段描述符</strong>。具体类型需要搭配type属性来判断。</p>
+</li>
+<li><p>Type位</p>
+<p>  由S位决定了具体是代码段还是数据段描述符</p>
+<ul>
+<li><strong>当S&#x3D;1,type表示为数据段的描述</strong></li>
+</ul>
+<blockquote>
+<p>数据段： A位：数据段是否被访问过位，访问过为1，未访问过为0  段描述符是否被加载过 W位：数据段是否可写位，可写为1，不可写为0 E位：向下扩展位，0向上扩展：段寄存器.base+limit区域可访问。1向下扩展：除了base+limit以外的部分可访问。</p>
+</blockquote>
+<blockquote>
+<p>代码段： A位：代码段是否被访问过位，访问过为1，未访问过为0  段描述符是否被加载过 R位：代码段是否可读位，可读为1，不可读为0。(但R位为0,代码段照样可以读) C位：一致位。1：一致代码段(0环的函数在3环可以调用)。   0：非一致代码段(各调各的)</p>
+</blockquote>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_5.png#center" srcset="/img/loading.gif" lazyload></p>
+<h1 id="针对E位的理解与实验："><a href="#针对E位的理解与实验：" class="headerlink" title="针对E位的理解与实验："></a>针对E位的理解与实验：</h1><p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_6.png#center" srcset="/img/loading.gif" lazyload alt="左边为向上扩展,右边为向下扩展。红色代表可以访问,绿色不可访问"></p>
+<p>  左边为向上扩展,右边为向下扩展。红色代表可以访问,绿色不可访问</p>
+<p>  <code>Tip:段描述符有没有4G,首先是看E位的拓展方向,其次是看Base和limit之间的大小。</code></p>
+<p>  首先构造一条段描述符.</p>
+  <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">00cff700</span>`<span class="hljs-number">0000</span>ffff<br><br><span class="hljs-attribute">base</span>:<span class="hljs-number">00000000</span> <br><span class="hljs-attribute">attr</span>:<span class="hljs-number">0</span>cf7 <br><span class="hljs-attribute">limit</span>:fffff   ;由于G位是<span class="hljs-number">1</span>所以这里实际为(<span class="hljs-number">0</span>xfffff+<span class="hljs-number">1</span>) * <span class="hljs-number">0</span>x1000 - <span class="hljs-number">1</span> = <span class="hljs-number">0</span>xFFFFFFFF<br><br><span class="hljs-attribute">E</span>位:<span class="hljs-number">0111</span>,**向下扩展**<br></code></pre></td></tr></table></figure>
+<p>  通过windbg的<code>e[b|d|D|f|p|q|w] address [Values]</code>指令可以修改GDT中保存的段描述符。修改8003f090(GDTR &#x3D; 8003f000),然后输出gdt查看前20个描述表,<code>dq address l20</code>。(注意是小写L,不是数字1)。</p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_7.png#center" srcset="/img/loading.gif" lazyload></p>
+<h2 id="测试代码1"><a href="#测试代码1" class="headerlink" title="测试代码1"></a>测试代码1</h2><hr>
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//code1:</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> var = <span class="hljs-number">0</span>; <span class="hljs-comment">//全局变量</span><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	_asm&#123;<br>		mov ax,<span class="hljs-number">0x93</span> <span class="hljs-comment">//10010 011 -&gt; index = 18 * 8 = 144 (0x90)</span><br>		mov ds,ax<br>		mov dword ptr ds:[var],<span class="hljs-number">0x20</span><br>	&#125;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%X\n&quot;</span>,var);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>  运行出错。</p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_8.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>  <strong>分析：</strong>异常断在了赋值var的地方。首先在描述符中attr为0x0cf7,Type&#x3D;0111表示为向下扩展、可读写、已访问。根据上图可知,如果E位为向下扩展,则base+limit这段区域是无法访问的。回到代码中可以看到变量var为全局变量,通常情况下数据都是存放在数据段,即<strong>ds段</strong>中,因此变量var的虚拟地址存放在base+limit中,此时因为无法访问该区域,因此在写数据时发生了错误。<strong>修复方法为将E位修改为向上扩展(E&#x3D;0)，或者将limit修改为一个小范围值,使得其他区域的内存可以访问(在demo2实现)。</strong></p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_9.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_10.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>  实验成功!</p>
+<h2 id="测试代码2"><a href="#测试代码2" class="headerlink" title="测试代码2"></a>测试代码2</h2><hr>
+<p>  首先将0x8003f090修改回0x00cff700&#96;0000ffff。</p>
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> var = <span class="hljs-number">0</span>; <span class="hljs-comment">//局部变量</span><br>	_asm&#123;<br>		mov ax,<span class="hljs-number">0x93</span><br>		mov ds,ax<br>		mov dword ptr ds:[var],<span class="hljs-number">0x20</span><br>	&#125;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%X\n&quot;</span>,var);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>  运行同样报错。</p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_11.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>  <strong>分析：</strong>需要注意的是中断打在了printf上,说明我们上边的ASM代码没问题!那么一个新问题来了,为什么demo1中中断打在了var赋值上?虽然我们显式使用了ds段来描述变量var,但仍存在一个问题,<strong>变量var属于堆栈地址</strong>,所以实际上<code>mov dword ptr ds:[var]</code>被编译器翻译成了<code>mov dword ptr ss:[var]</code></p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_12.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_13.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>  因为我们没有修改ss段,所以上面对ss段的操作没问题。根据单步执行,可以发现中断的位置是printf函数。</p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_14.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>  根据我们构造的描述符可知,base&#x3D;0,limit的范围为0xFFFFFFFF,然后又属于向下扩展,所以0x0-0xFFFFFFFF的区域无法访问,printf中必然有用到ds段的数据,但这些数据有没有访问权限,因此访问中断了。<strong>修复方法为将limit设置为一个很小的范围,这样其他的区域就可以访问了。比如0x1FFF。(00c0f700&#96;00000001)</strong></p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_15.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_16.png#center" srcset="/img/loading.gif" lazyload></p>
+<p>  实验完成!</p>
+<ul>
+<li><p><strong>当S&#x3D;0,type表示为系统描述</strong></p>
+<p>  (小于8是16位的系统描述,大于8是32位)</p>
+<p>  <img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_17.png#center" srcset="/img/loading.gif" lazyload></p>
+</li>
+</ul>
+</li>
+</ul>
+<p>使用windbg的<code>dg segment</code>命令可以快速查看段寄存器对应的段描述符。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_4.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_5.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2-3-段寄存器证明"><a href="#2-3-段寄存器证明" class="headerlink" title="2.3 段寄存器证明"></a>2.3 段寄存器证明</h2><p>读的时候只能读到16位(选择子)，但写的时候却写入了96位。如何证明剩下的80位是否存在？</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_6.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li><strong>Attribute探测</strong></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc,<span class="hljs-type">char</span>* argv[])</span>&#123;<br>	<span class="hljs-type">int</span> var = <span class="hljs-number">0</span>;<br>	__asm&#123;<br>		mov ax,ss                <span class="hljs-comment">//ss可读可写</span><br>		mov ds,ax                <span class="hljs-comment">//ds可读可写</span><br>		mov dword ptr ds:[var],eax        <span class="hljs-comment">//ds此时为ss，不报错，说明两个段寄存器权限相同</span><br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc,<span class="hljs-type">char</span>* argv[])</span>&#123;<br>	<span class="hljs-type">int</span> var = <span class="hljs-number">0</span>;<br>		__asm&#123;<br>			mov ax,cs            <span class="hljs-comment">//cs可读可执行不可写</span><br>			mov ds,ax            <span class="hljs-comment">//ds可读可写</span><br>			mov dword ptr ds:[var],eax        <span class="hljs-comment">//ds此时为cs，写入时报错，说明Attribute属性存在</span><br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Base探测</strong></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc,<span class="hljs-type">char</span>* argv[])</span>&#123;<br>	<span class="hljs-type">int</span> var = <span class="hljs-number">0</span>;<br>	__asm&#123;<br>		mov ax,fs            <span class="hljs-comment">//fs 的 base为TEB  用ds编译不过去</span><br>		mov gs,ax            <span class="hljs-comment">//gs 的 base为0</span><br>		mov eax,gs:[<span class="hljs-number">0</span>]        <span class="hljs-comment">//gs此时为fs，写入不出错，说明Base属性存在  fs.base+0</span><br>		mov dword ptr gs:[var],eax<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>Limit探测</strong></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc,<span class="hljs-type">char</span>* argv[])</span>&#123;<br>	<span class="hljs-type">int</span> var = <span class="hljs-number">0</span>;<br>	__asm&#123;<br>		mov ax,fs            <span class="hljs-comment">//fs 的 base为TEB  用ds编译不过去</span><br>		mov gs,ax            <span class="hljs-comment">//gs 的 base为0</span><br>		mov eax,gs:[<span class="hljs-number">0x1000</span>]        <span class="hljs-comment">//写入出错，超过了fs的limit，说明Limit属性存在 fs.base+0x1000</span><br>		<span class="hljs-comment">//mov eax,ds:[0x7FFDF000+0x1000]  不报错</span><br>		mov dword ptr gs:[var],eax<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-4-段寄存器权限"><a href="#2-4-段寄存器权限" class="headerlink" title="2.4 段寄存器权限"></a>2.4 段寄存器权限</h2><p>利用les指令修改es段寄存器，代码如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	<span class="hljs-comment">//0x12345678 = EAX</span><br>	<span class="hljs-comment">//0x001b = ES</span><br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> var[<span class="hljs-number">6</span>]=&#123;<span class="hljs-number">0x78</span>,<span class="hljs-number">0x56</span>,<span class="hljs-number">0x34</span>,<span class="hljs-number">0x12</span>,<span class="hljs-number">0x1b</span>,<span class="hljs-number">00</span>&#125;;<br>	_asm&#123;<br>		les eax,fword ptr ds:[var] <span class="hljs-comment">//因为是写入6字节,所以需要显式fword赋值</span><br>	&#125;<br>	<span class="hljs-comment">/*</span><br><span class="hljs-comment">	_asm&#123;</span><br><span class="hljs-comment">		mov ax,0x1b</span><br><span class="hljs-comment">		mov es,ax</span><br><span class="hljs-comment">	&#125;</span><br><span class="hljs-comment">	/*</span><br><span class="hljs-comment">	return 0;</span><br><span class="hljs-comment">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>运行正常，效果如下：</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_7.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>上面代码中写入ES的值位0x001b,对应二进制位<code>0000 0000 0001 1011</code>,按照选择子结构划分后得到<code>0011 0 11</code>,末尾两位十进制为3,即CRL为3环权限。当前实验环境同样为3环，因此程序正常。此时将代码的0x001b修改为0x0010,重新运行后报错。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_8.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>因为0x0010按照选择子结构划分后,得到的CRL为0,属于0环权限。CPU由于保护机制,不允许3环程序访问0环程序的数据，因此程序发生错误。在修改段寄存器时需要遵守<strong>CRL ≤ DRL。</strong></p>
+<hr>
+<blockquote>
+<p>mov ds,ax</p>
+</blockquote>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs abnf"><span class="hljs-comment">;执行步骤</span><br><span class="hljs-comment">;1、检查CS.CPL&gt;=CS.DPL(是否有权限执行,无权限则中断)</span><br><span class="hljs-comment">;2、检查ds是否等于ax,如果相等则不做任何处理。否则接着第三步</span><br><span class="hljs-comment">;3、检查ax的DS.RPL&gt;=DS.DPL(是否有权限执行,无权限则中断)</span><br><span class="hljs-comment">;4、赋值成功,刷新缓存。</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="Demo1"><a href="#Demo1" class="headerlink" title="Demo1"></a>Demo1</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	_asm&#123;<br>		mov ax,<span class="hljs-number">0x20</span> <span class="hljs-comment">//0x20表示为0环权限,对应描述符为00cff300`0000ffff -&gt; DPL=3</span><br>		mov ds,ax<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;;执行步骤<br>;<span class="hljs-number">1</span>、检查CS.CPL&gt;=CS.DPL(是否有权限执行,无权限则中断)<br>;<span class="hljs-number">2</span>、检查ds是否等于ax,如果相等则不做任何处理。否则接着第三步<br>;<span class="hljs-number">3</span>、检查ax的DS.RPL&gt;=DS.DPL(是否有权限执行,无权限则中断)<br>;<span class="hljs-number">4</span>、赋值成功,刷新缓存。<br></code></pre></td></tr></table></figure>
+
+<p>运行后没问题。因为CS.CPL≥CS.DPL,DS.RPL≥DS.DPL</p>
+<h2 id="Demo2"><a href="#Demo2" class="headerlink" title="Demo2"></a>Demo2</h2><p>首先修改<code>0x8003f090</code>为<code>0x00cf9300</code>0000ffff&#96;即0环权限。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_9.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	_asm&#123;<br>		mov ax,<span class="hljs-number">0x93</span> <span class="hljs-comment">//0x93表示为3环权限,对应描述符00cf9300`0000ffff -&gt; DPL=0</span><br>		mov ds,ax<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>运行后中断。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_10.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>因为此时DS.RLP&lt;DS.DPL(3环访问0环数据,不合法)。将代码进行修改如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	_asm&#123;<br>	mov ax,<span class="hljs-number">0x90</span> <span class="hljs-comment">//0x90表示为0环权限,对应描述符00cf9300`0000ffff -&gt; DPL=0</span><br>	mov ds,ax<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>运行后依然报错。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled_11.jpeg#center" srcset="/img/loading.gif" lazyload></p>
+<p>虽然DS.RPL≥DS.DPL,但是CS.CPL&lt;DS.RPL,导致3环空间无法访问0环空间,所以中断了。(理论上,把CS、SS、DS的DPL、CPL、RPL都改成0环,就能直接在0环搞事,但是CS和SS不好改,需要特权指令。)</p>
+<ul>
+<li><strong>总结:CS.CPL ≥ CS.DPL &amp;&amp; DS.RPL ≥ DS.DPL &amp;&amp; CS.CPL ≥ DS.RPL最终得到</strong></li>
+<li><strong>CS.CPL≥CS.DPL &amp;&amp; CS.CPL≥DS.DPL</strong></li>
+</ul>
+<p>💡 由于CS是代码段寄存器,代码的执行必定是需要用到堆栈,因此CS和SS的CPL、DPL、RPL必须一致。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../../categories/Windows-Kernel/" class="category-chain-item">Windows-Kernel</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>一、保护模式</div>
+      <div>http://example.com/2022/10/27/Window-Kernel/一、保护模式/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>PlaneJun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../../Vulhub/ThinkPHP%20RCE%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" title="ThinkPHP RCE远程执行漏洞">
+                        <span class="hidden-mobile">ThinkPHP RCE远程执行漏洞</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../../js/events.js" ></script>
+<script  src="../../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
