@@ -77,9 +77,16 @@
 <meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029162514739.png">
 <meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029162813573.png">
 <meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029162956265.png">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030123121116.png">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030122710511.png">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030122744380.png">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030122813632.png">
 <meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029164026531.png">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030124607785.png">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030124837901.png">
+<meta property="og:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030124917851.png">
 <meta property="article:published_time" content="2022-10-27T05:20:56.261Z">
-<meta property="article:modified_time" content="2022-10-29T08:47:03.568Z">
+<meta property="article:modified_time" content="2022-10-30T05:11:41.802Z">
 <meta property="article:author" content="PlaneJun">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://example.com/2022/10/27/Window-Kernel/%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Untitled.jpeg#center">
@@ -262,7 +269,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          13k 字
+          14k 字
         
       </span>
     
@@ -273,7 +280,7 @@
         
         
         
-          108 分钟
+          121 分钟
         
       </span>
     
@@ -600,7 +607,10 @@
 <blockquote>
 <p>补充：设置完DbgView了之后重新打开就行了。</p>
 </blockquote>
-<h1 id="4、中断门"><a href="#4、中断门" class="headerlink" title="4、中断门"></a>4、中断门</h1><p>中断门，CPU执行如下的指令：<code>INT N</code>，查询的是另外一张表，这张表叫IDT表。</p>
+<h1 id="4、中断门"><a href="#4、中断门" class="headerlink" title="4、中断门"></a>4、中断门</h1><blockquote>
+<p>硬件叫做中断，软件叫做异常。</p>
+</blockquote>
+<p>中断门，CPU执行如下的指令：<code>INT N</code>，查询的是另外一张表，这张表叫IDT表。</p>
 <p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029154208996.png" srcset="/img/loading.gif" lazyload></p>
 <p>表的含义与调用门基本一致。这里面的D代表了default默认是1。windbg同样也提供了类似GDT表查询的指令,<code>r idtr</code>、<code>r idtl</code>。</p>
 <p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029154542770.png" srcset="/img/loading.gif" lazyload></p>
@@ -613,11 +623,11 @@
 <p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029155527981.png" srcset="/img/loading.gif" lazyload></p>
 <p>windbg同样提供了<code>!idt n</code>指令用于查看对应中断序号的中断函数。</p>
 <p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029155648779.png" srcset="/img/loading.gif" lazyload></p>
-<h2 id="实验一-构造中断门"><a href="#实验一-构造中断门" class="headerlink" title="实验一:构造中断门"></a>实验一:构造中断门</h2><blockquote>
+<h2 id="实验一：构造中断门"><a href="#实验一：构造中断门" class="headerlink" title="实验一：构造中断门"></a>实验一：构造中断门</h2><blockquote>
 <p>关闭增量链接和随机地址。</p>
 </blockquote>
 <p>首先获取函数地址。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><br><span class="hljs-type">void</span> __declspec(naked) test()<br>&#123;<br>	_asm&#123;<br>        <span class="hljs-type">int</span> <span class="hljs-number">3</span><br>		iretd	<span class="hljs-comment">//中断门使用的是iretd,d代表dword，32位。实模式(16)</span><br>	&#125;<br>&#125;<br><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%p\n&quot;</span>,test);<br>	getchar();<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><br><span class="hljs-type">void</span> __declspec(naked) test()<br>&#123;<br>	_asm&#123;<br>		iretd	<span class="hljs-comment">//中断门使用的是iretd,d代表dword，32位。实模式(16)</span><br>	&#125;<br>&#125;<br><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%p\n&quot;</span>,test);<br>	getchar();<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029161147825.png" srcset="/img/loading.gif" lazyload></p>
 <p>然后构造描述符。</p>
@@ -631,13 +641,25 @@
 <p>运行后，windbg中断。</p>
 <p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029162514739.png" srcset="/img/loading.gif" lazyload></p>
 <p>输入g命令继续执行，此时发现r3层异常中断，原因为int 3造成,去掉int 3即可正常运行。</p>
-<h2 id="实验二：IF"><a href="#实验二：IF" class="headerlink" title="实验二：IF"></a>实验二：IF</h2><p>重新运行实验一的代码，在执行int 0x20前，观察寄存器和段寄存器的值。</p>
+<h2 id="实验二：堆栈影响"><a href="#实验二：堆栈影响" class="headerlink" title="实验二：堆栈影响"></a>实验二：堆栈影响</h2><p>重新运行实验一的代码，在执行int 0x20前，观察寄存器和段寄存器的值。</p>
 <p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029162813573.png" srcset="/img/loading.gif" lazyload></p>
 <p>然后继续执行。</p>
 <p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029162956265.png" srcset="/img/loading.gif" lazyload></p>
-<p>可以看到中断门先后压入了ss、esp、efl、cs、下一条语句的地址。其中efl进行二进制转换如下。</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">0010</span> <span class="hljs-number">0100</span> <span class="hljs-number">0110</span><br><span class="hljs-attribute">IF</span>:<span class="hljs-number">1</span> //表明当前中断可以响应可屏蔽中断。（鼠标、键盘）<br></code></pre></td></tr></table></figure>
+<p>可以看到中断门先后压入了ss、esp、efl、cs、下一条语句的地址。因此进入中断门的堆栈结构如下：</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030123121116.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="实验三：IF"><a href="#实验三：IF" class="headerlink" title="实验三：IF"></a>实验三：IF</h2><p>将代码修改为如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><br><span class="hljs-type">int</span> val = <span class="hljs-number">0</span>;<br><span class="hljs-type">void</span> __declspec(naked) test()<br>&#123;<br>	_asm&#123;<br>		<br>		pushfd<br>		pop eax<br>		mov dword ptr [val],eax  <span class="hljs-comment">//获取efl</span><br>		<span class="hljs-type">int</span> <span class="hljs-number">3</span><br>		iretd<br>	&#125;<br>&#125;<br><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%p\n&quot;</span>,test);<br>	getchar();<br>	_asm&#123;<br>		pushfd   <span class="hljs-comment">//保存环境</span><br>		<span class="hljs-type">int</span> <span class="hljs-number">0x20</span><br>		popfd<br>	&#125;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x\n&quot;</span>,val);<br>	getchar();<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
+<p>运行后windbg断下，输入<code>dds esp</code>查看堆栈</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030122710511.png" srcset="/img/loading.gif" lazyload></p>
+<p>堆栈值未变，那么输入<code>uf 401000</code>查看一下函数的反汇编.</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030122744380.png" srcset="/img/loading.gif" lazyload></p>
+<p>dd一下变量val的值。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030122813632.png" srcset="/img/loading.gif" lazyload></p>
+<p>神奇的发现堆栈中保存的efl与获取到的efl不一样！！！！！！原因是，int 3同时也是进入中断门，因此当前堆栈保存的是int 3的efl。分别将0x46和0x246转换为二进制。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">0x046</span> = <span class="hljs-number">0000</span> <span class="hljs-number">0100</span> <span class="hljs-number">0110</span><br><span class="hljs-attribute">0x246</span> = <span class="hljs-number">0010</span> <span class="hljs-number">0100</span> <span class="hljs-number">0110</span><br></code></pre></td></tr></table></figure>
+
+<p>可以发现第九位有区别，第九位在eflags文档中为IF为，中断启用标志。</p>
 <p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221029164026531.png" srcset="/img/loading.gif" lazyload></p>
 <ul>
 <li><p><strong>可屏蔽中断请求</strong>：如键盘输入，鼠标点击都是一次可屏蔽中断请求。</p>
@@ -645,9 +667,37 @@
 <li><p><strong>不可屏蔽中断请求：</strong>CPU必须立即无条件响应的请求，如电源断电。</p>
 </li>
 </ul>
+<p>大概意思就是我们自己的int 0x20中断后无法对鼠标或者键盘之类的外设输入进行响应，但是int 3可以。</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">cli; <span class="hljs-regexp">//</span>清除Efl的IF位 <br>sti; <span class="hljs-regexp">//</span>设置Efl的IF位<br></code></pre></td></tr></table></figure>
 
+<p>然后火哥说中断门会清空VM、TF、NF、IF位。</p>
+<ul>
+<li><p>VM（Vitual-8086 Mode）：虚拟8086模式，这个是为了16位兼容，在C:\windows下除了有system32还有一个是system(实模式)。当这个为1时表示运行在一个虚拟的16位系统（可分页可分段，访问的不是物理地址）。</p>
+</li>
+<li><p>TF（Trap Flag）：单步位（相当于OD的F7，F8不算单步，因为他跳过了call），如果为1表示下一行代码执行时会发生异常。</p>
+</li>
+<li><p>NT（Nested Task）：任务嵌套位。为1时有上一层要返回。</p>
+</li>
+</ul>
+<p>中断门之所以会清空这三个标志位是因为防止中断嵌套</p>
+<p>可以理解为清空IF是为了防止其他中断打断；清空TF是防止在执行中断门里边的代码时一直异常；清空NF位是为了防止执行完就会返回（<code>有点还不太了解，因为还没学到任务门</code>）；清空VM位不是很理解。</p>
+<blockquote>
 <p>调用门与中断门的区别是，<u>调用门能被可屏蔽中断打断。</u></p>
+</blockquote>
+<h1 id="5、陷阱门"><a href="#5、陷阱门" class="headerlink" title="5、陷阱门"></a>5、陷阱门</h1><p>陷阱门的格式与中断门一致，唯独不同的地方就是Type位。</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030124607785.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="实验一：VM、TF、IF、NT"><a href="#实验一：VM、TF、IF、NT" class="headerlink" title="实验一：VM、TF、IF、NT"></a>实验一：VM、TF、IF、NT</h2><p>将中断门的描述符改为0040EF00&#96;00081000</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030124837901.png" srcset="/img/loading.gif" lazyload></p>
+<p>然后执行代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;stdafx.h&quot;</span></span><br><br><span class="hljs-type">int</span> val = <span class="hljs-number">0</span>;<br><span class="hljs-type">void</span> __declspec(naked) test()<br>&#123;<br>	_asm&#123;<br>		<br>		pushfd<br>		pop eax<br>		mov dword ptr [val],eax<br>		iretd<br>	&#125;<br>&#125;<br><br><span class="hljs-type">int</span> _tmain(<span class="hljs-type">int</span> argc, _TCHAR* argv[])<br>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%p\n&quot;</span>,test);<br>	getchar();<br>	_asm&#123;<br>		pushfd<br>		<span class="hljs-type">int</span> <span class="hljs-number">0x20</span><br>		popfd<br>	&#125;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x\n&quot;</span>,val);<br>	getchar();<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以看到此时EFL为246.</p>
+<p><img src="../%E4%B8%80%E3%80%81%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/image-20221030124917851.png" srcset="/img/loading.gif" lazyload></p>
+<p>说明它禁止响应可屏蔽中断。</p>
+<blockquote>
+<p>IDT中没有用到陷阱门。</p>
+</blockquote>
+<p>然后中断门和陷阱门的区别就是：中断门由于IF为为0，表明不会被其他中断打断，而陷阱门有可能会被打断。</p>
 
                 
               </div>
