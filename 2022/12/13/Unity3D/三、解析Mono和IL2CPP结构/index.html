@@ -1,0 +1,682 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../../../../img/fluid.png">
+  <link rel="icon" href="../../../../../img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="PlaneJun">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="三、解析Mono和IL2CPP结构1、获取源码1.1 CE源码1https:&#x2F;&#x2F;github.com&#x2F;cheat-engine&#x2F;cheat-engine   1.2 Mono源码1https:&#x2F;&#x2F;github.com&#x2F;Unity-Technologies&#x2F;mono&#x2F;   1.3 IL2CPP源码从unity安装目录Editor\Data\il2cpp\libil2cpp找到源码  2、分析CE的M">
+<meta property="og:type" content="article">
+<meta property="og:title" content="三、解析Mono和IL2CPP结构">
+<meta property="og:url" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="PlaneJun&#39; Blog">
+<meta property="og:description" content="三、解析Mono和IL2CPP结构1、获取源码1.1 CE源码1https:&#x2F;&#x2F;github.com&#x2F;cheat-engine&#x2F;cheat-engine   1.2 Mono源码1https:&#x2F;&#x2F;github.com&#x2F;Unity-Technologies&#x2F;mono&#x2F;   1.3 IL2CPP源码从unity安装目录Editor\Data\il2cpp\libil2cpp找到源码  2、分析CE的M">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103095852694.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103102210292.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103102419516.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103102609066.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103102744027.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103238829.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103401367.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103415021.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103452469.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103807609.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103104559478.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103104844242.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103105014416.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103105029506.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103105140291.png">
+<meta property="og:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103105728854.png">
+<meta property="article:published_time" content="2022-12-13T08:27:50.189Z">
+<meta property="article:modified_time" content="2022-11-03T03:03:07.466Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/12/13/Unity3D/%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103095852694.png">
+  
+  
+  
+  <title>三、解析Mono和IL2CPP结构 - PlaneJun&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="../../../../../css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="../../../../../css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="../../../../../css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":99999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="../../../../../js/utils.js" ></script>
+  <script  src="../../../../../js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="../../../../../index.html">
+      <strong>PlaneJun&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../index.html">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" rel="noopener" href="https://github.com/planejun">
+                <i class="iconfont icon-github-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="../../../../../about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('../../../../../img/default.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="三、解析Mono和IL2CPP结构"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-13 16:27" pubdate>
+          2022年12月13日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">三、解析Mono和IL2CPP结构</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="三、解析Mono和IL2CPP结构"><a href="#三、解析Mono和IL2CPP结构" class="headerlink" title="三、解析Mono和IL2CPP结构"></a>三、解析Mono和IL2CPP结构</h1><h2 id="1、获取源码"><a href="#1、获取源码" class="headerlink" title="1、获取源码"></a>1、获取源码</h2><h3 id="1-1-CE源码"><a href="#1-1-CE源码" class="headerlink" title="1.1 CE源码"></a>1.1 CE源码</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/cheat-engine/</span>cheat-engine<br></code></pre></td></tr></table></figure>
+
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103095852694.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="1-2-Mono源码"><a href="#1-2-Mono源码" class="headerlink" title="1.2 Mono源码"></a>1.2 Mono源码</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/Unity-Technologies/m</span>ono/<br></code></pre></td></tr></table></figure>
+
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103102210292.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="1-3-IL2CPP源码"><a href="#1-3-IL2CPP源码" class="headerlink" title="1.3 IL2CPP源码"></a>1.3 IL2CPP源码</h3><p>从unity安装目录Editor\Data\il2cpp\libil2cpp找到源码</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103102419516.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2、分析CE的Mono插件实现"><a href="#2、分析CE的Mono插件实现" class="headerlink" title="2、分析CE的Mono插件实现"></a>2、分析CE的Mono插件实现</h2><p>打开CE源码目录下的<code>MonoDataCollector</code></p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103102609066.png" srcset="/img/loading.gif" lazyload></p>
+<p>找到<code>void CPipeServer::Start(void)</code>函数，可以看到下面存在switch分支。</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103102744027.png" srcset="/img/loading.gif" lazyload></p>
+<p>通过函数名不难看出这些都是在获取Mono&#x2F;il2cpp的不同数据。</p>
+<h4 id="InitMono"><a href="#InitMono" class="headerlink" title="InitMono"></a>InitMono</h4><p>在初始化中会通过获取判断游戏模块是否存在指定函数名来判断为Mono还是il2cpp。</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103238829.png" srcset="/img/loading.gif" lazyload></p>
+<p>然后通过获取dll导出函数来获取一些关键函数。</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103401367.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103415021.png" srcset="/img/loading.gif" lazyload></p>
+<p>最后使用获取到的函数进行游戏附加，之后就可以调用进行其他函数。</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103452469.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="GetImageFromAssembly"><a href="#GetImageFromAssembly" class="headerlink" title="GetImageFromAssembly"></a>GetImageFromAssembly</h4><p>这个函数实际上就是枚举游戏加载的dll，也就是游戏目录下边的这些。</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103103807609.png" srcset="/img/loading.gif" lazyload></p>
+<p>非常简单，仅是调用一个函数即可。</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103104559478.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="3、Mono结构解析"><a href="#3、Mono结构解析" class="headerlink" title="3、Mono结构解析"></a>3、Mono结构解析</h2><h4 id="3-1-初始化"><a href="#3-1-初始化" class="headerlink" title="3.1 初始化"></a>3.1 初始化</h4><p>打开mono源码跳转到<code>mono_image_open_from_data_with_name</code>函数，这个函数是初始化新加载的dll。</p>
+<p>首先创建了一个MonoImage类型，用来存放新的dll数据。</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103104844242.png" srcset="/img/loading.gif" lazyload></p>
+<p>接着将新创建的image加载后注册到一个叫做<code>loaded_images</code>的链表中.</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103105014416.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103105029506.png" srcset="/img/loading.gif" lazyload></p>
+<p>其中MonoImage的结构体可以在源码中查看到。</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103105140291.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="3-2-MonoImage"><a href="#3-2-MonoImage" class="headerlink" title="3.2 MonoImage"></a>3.2 MonoImage</h4><p>所有加载的dll都以这个结构体的形式存放。</p>
+<p>比较重要的结构体为下列几个：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs stata"><span class="hljs-comment">/* Aliases storage-&gt;raw_data when storage is non-NULL. Otherwise NULL. */</span><br>	<span class="hljs-keyword">char</span> *raw_data;<br>	guint32 raw_data_len;<br>		<span class="hljs-comment">/* The path to the file for this image or an arbitrary name for images loaded from data. */</span><br>	<span class="hljs-keyword">char</span> *name;<br><br>	<span class="hljs-comment">/* The path to the file for this image or NULL */</span><br>	<span class="hljs-keyword">char</span> *filename;<br><br>	<span class="hljs-comment">/* The assembly name reported in the file for this image (expected to be NULL for a netmodule) */</span><br>	<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *assembly_name;<br><br>	<span class="hljs-comment">/* The module name reported in the file for this image (could be NULL for a malformed file) */</span><br>	<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *module_name;<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-3-MonoClass"><a href="#3-3-MonoClass" class="headerlink" title="3.3 MonoClass"></a>3.3 MonoClass</h4><p>Image中每一个类都是以这个结构保存，获取一个Image中的所有MonoClass可以通过调用<code>mono_class_get</code>获取。</p>
+<p><img src="../%E4%B8%89%E3%80%81%E8%A7%A3%E6%9E%90Mono%E5%92%8CIL2CPP%E7%BB%93%E6%9E%84/image-20221103105728854.png" srcset="/img/loading.gif" lazyload></p>
+<p>其中MonoClass结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c">MonoClass  *parent;  <span class="hljs-comment">//基类</span><br>MonoImage *image;	<span class="hljs-comment">//所属于哪一个image</span><br><span class="hljs-type">const</span> <span class="hljs-type">char</span> *name;	<span class="hljs-comment">//类名</span><br><span class="hljs-type">const</span> <span class="hljs-type">char</span> *name_space;	<span class="hljs-comment">//命名空间</span><br>MonoClassField *fields;<br><br>MonoMethod **methods; <span class="hljs-comment">//类所拥有的函数</span><br><br><span class="hljs-comment">/* used as the type of the this argument and when passing the arg by value */</span><br>MonoType this_arg;<br>MonoType _byval_arg;<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-4-MonoMethod"><a href="#3-4-MonoMethod" class="headerlink" title="3.4 MonoMethod"></a>3.4 MonoMethod</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c">MonoMethodSignature *signature;    <span class="hljs-comment">//函数的参数在这里获取</span><br><span class="hljs-comment">/* name is useful mostly for debugging */</span><br><span class="hljs-type">const</span> <span class="hljs-type">char</span> *name; <span class="hljs-comment">//函数名</span><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="../../../../../categories/Unity3D/" class="category-chain-item">Unity3D</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>三、解析Mono和IL2CPP结构</div>
+      <div>http://example.com/2022/12/13/Unity3D/三、解析Mono和IL2CPP结构/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>PlaneJun</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="../%E4%BA%8C%E3%80%81%E4%BD%BF%E7%94%A8CE%E7%9A%84Mono%E6%8F%92%E4%BB%B6%E8%BF%9B%E8%A1%8C%E6%89%BE%E6%95%B0%E6%8D%AE%E5%92%8Cdump%E7%AE%80%E5%8D%95%E7%9A%84sdk/" title="二、使用CE的Mono插件进行找数据和dump简单的sdk">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">二、使用CE的Mono插件进行找数据和dump简单的sdk</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="../%E4%B8%80%E3%80%81GameObjectManager/" title="一、GameObjectManager">
+                        <span class="hidden-mobile">一、GameObjectManager</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="../../../../../js/events.js" ></script>
+<script  src="../../../../../js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="../../../../../js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="../../../../../js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="../../../../../js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
