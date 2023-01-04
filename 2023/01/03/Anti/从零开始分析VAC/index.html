@@ -16,14 +16,14 @@
   <meta name="author" content="PlaneJun">
   <meta name="keywords" content="">
   
-    <meta name="description" content="一、资料收集 国内: CSGO辅助制作思路与VAC保护分析 - -Qfrost- Valve 反作弊系统（VAC） - 哔哩哔哩 (bilibili.com) 国外： How To Bypass VAC Valve Anti Cheat Info (guidedhacking.com) 代码: danielkrupinski&#x2F;VAC: Source code of Valve Anti-">
+    <meta name="description" content="一、资料收集 国内: CSGO辅助制作思路与VAC保护分析 - -Qfrost- 【CSGO游戏分析】VAC反作弊系统分析 - 哔哩哔哩 (bilibili.com) 国外： How To Bypass VAC Valve Anti Cheat Info (guidedhacking.com) 代码: danielkrupinski&#x2F;VAC: Source code of Valve A">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从零开始分析VAC">
 <meta property="og:url" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/index.html">
 <meta property="og:site_name" content="PlaneJun&#39; Blog">
-<meta property="og:description" content="一、资料收集 国内: CSGO辅助制作思路与VAC保护分析 - -Qfrost- Valve 反作弊系统（VAC） - 哔哩哔哩 (bilibili.com) 国外： How To Bypass VAC Valve Anti Cheat Info (guidedhacking.com) 代码: danielkrupinski&#x2F;VAC: Source code of Valve Anti-">
+<meta property="og:description" content="一、资料收集 国内: CSGO辅助制作思路与VAC保护分析 - -Qfrost- 【CSGO游戏分析】VAC反作弊系统分析 - 哔哩哔哩 (bilibili.com) 国外： How To Bypass VAC Valve Anti Cheat Info (guidedhacking.com) 代码: danielkrupinski&#x2F;VAC: Source code of Valve A">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103160559792.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104095003980.png">
 <meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103181242412.png">
 <meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103181826494.png">
 <meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182210961.png">
@@ -39,11 +39,37 @@
 <meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183451098.png">
 <meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183511023.png">
 <meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183518345.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112000697.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112122129.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112130903.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112352425.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112252111.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112519644.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112648387.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113203202.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113954875.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113537280.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113308336.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123118650.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123201020.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123258746.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144627714.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144841073.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144857872.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104145405713.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104152201577.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164837789.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164934590.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164943770.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104153441268.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104153534264.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104154110565.png">
+<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104154102544.png">
 <meta property="article:published_time" content="2023-01-03T10:47:14.176Z">
-<meta property="article:modified_time" content="2023-01-03T10:45:52.603Z">
+<meta property="article:modified_time" content="2023-01-04T08:56:52.488Z">
 <meta property="article:author" content="PlaneJun">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103160559792.png">
+<meta name="twitter:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104095003980.png">
   
   
   
@@ -223,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.5k 字
+          6.1k 字
         
       </span>
     
@@ -234,7 +260,7 @@
         
         
         
-          38 分钟
+          52 分钟
         
       </span>
     
@@ -280,7 +306,7 @@
                 <h1 id="一、资料收集"><a href="#一、资料收集" class="headerlink" title="一、资料收集"></a>一、资料收集</h1><blockquote>
 <p>国内:</p>
 <p><a target="_blank" rel="noopener" href="http://www.qfrost.com/undefined/CSGO/">CSGO辅助制作思路与VAC保护分析 - -Qfrost-</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv17076335">Valve 反作弊系统（VAC） - 哔哩哔哩 (bilibili.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv217289/">【CSGO游戏分析】VAC反作弊系统分析 - 哔哩哔哩 (bilibili.com)</a></p>
 <p>国外：</p>
 <p><a target="_blank" rel="noopener" href="https://guidedhacking.com/threads/how-to-bypass-vac-valve-anti-cheat-info.8125/">How To Bypass VAC Valve Anti Cheat Info (guidedhacking.com)</a></p>
 <p>代码:</p>
@@ -288,23 +314,20 @@
 </blockquote>
 <h1 id="二、分析笔记"><a href="#二、分析笔记" class="headerlink" title="二、分析笔记"></a>二、分析笔记</h1><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">实验目标：CSGO<br></code></pre></td></tr></table></figure>
 
-<h2 id="2-1-游戏大厅"><a href="#2-1-游戏大厅" class="headerlink" title="2.1 游戏大厅"></a>2.1 游戏大厅</h2><h3 id="2-1-1-ARK分析"><a href="#2-1-1-ARK分析" class="headerlink" title="2.1.1 ARK分析"></a>2.1.1 ARK分析</h3><p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103160559792.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2-1-ARK分析"><a href="#2-1-ARK分析" class="headerlink" title="2.1 ARK分析"></a>2.1 ARK分析</h2><p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104095003980.png" srcset="/img/loading.gif" lazyload></p>
 <p>根据Inline钩子扫描猜测当前检测功能有：</p>
 <ul>
 <li><p>禁止第三方DLL注入</p>
-<p>LdrLoadDll、LoadLibraryA、LoadLibraryExA、LoadLibraryExW、LoadLibraryW</p>
+<p>LdrLoadDll、LoadLibraryA、LoadLibraryExA、LoadLibraryExW、LoadLibraryW、NtOpenFile</p>
 </li>
 <li><p>申请内存、修改内存属性、写内存</p>
 <p>VirtualAlloc、VirtualProtect、VirtualAllocEx、VirtualProtectEx</p>
 </li>
 </ul>
-<p>经过分析，发现所有的钩子全部跳转到<code>gameoverlayrenderer.dll</code>模块中，将模块dump后，ida分析。</p>
-<h4 id="2-1-1-1-LoadDll检测"><a href="#2-1-1-1-LoadDll检测" class="headerlink" title="2.1.1.1 LoadDll检测"></a>2.1.1.1 LoadDll检测</h4><ul>
-<li>LdrLoadDll</li>
-</ul>
-<p>首先会进行一个判断，猜测可能是反作弊或者是hook初始化之类的。</p>
+<p>经过火绒剑分析，发现除了<code>NtOpenFile</code>和<code>LoadLibraryExW</code>被跳转到<code>csgo.exe</code>外，其他的所有的钩子全部跳转到<code>gameoverlayrenderer.dll</code>模块中，将对应模块dump后，ida分析。</p>
+<h3 id="2-1-1-gameoverlayrenderer-dll分析"><a href="#2-1-1-gameoverlayrenderer-dll分析" class="headerlink" title="2.1.1 gameoverlayrenderer.dll分析"></a>2.1.1 gameoverlayrenderer.dll分析</h3><h4 id="LdrLoadDll"><a href="#LdrLoadDll" class="headerlink" title="LdrLoadDll"></a>LdrLoadDll</h4><p>首先会进行一个判断，猜测可能是反作弊或者是hook初始化之类的。</p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103181242412.png" srcset="/img/loading.gif" lazyload></p>
-<p>其中会执行一个函数sub_7ADBDE50,该函数主要是收集模块信息。</p>
+<p>其中会执行一个函数sub_7ADBDE50,该函数主要是收集模块信息，其中疑似有白名单检测。</p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103181826494.png" srcset="/img/loading.gif" lazyload></p>
 <p>this[0xF126]和this[0xF124]都为byte类型，作用为开启模块收集。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">char</span> __thiscall <span class="hljs-title">RecordModuleInfos_7ADBEE50</span><span class="hljs-params">(<span class="hljs-type">int</span> <span class="hljs-keyword">this</span>, <span class="hljs-type">int</span> moduleName, DWORD arg_4)</span></span><br><span class="hljs-function"></span>&#123;<br>  HANDLE CurrentThread; <span class="hljs-comment">// edi</span><br>  DWORD CurrentThreadId; <span class="hljs-comment">// esi</span><br>  <span class="hljs-built_in">NTSTATUS</span> (__stdcall *NtQueryInformationThread)(HANDLE, THREADINFOCLASS, PVOID, ULONG, PULONG); <span class="hljs-comment">// eax</span><br>  HMODULE ModuleHandleA; <span class="hljs-comment">// eax</span><br>  HANDLE CurrentProcess; <span class="hljs-comment">// eax</span><br>  <span class="hljs-type">int</span> v9; <span class="hljs-comment">// ecx</span><br>  <span class="hljs-keyword">volatile</span> <span class="hljs-type">signed</span> __int32 *v10; <span class="hljs-comment">// edx</span><br>  HMODULE hModule; <span class="hljs-comment">// edi</span><br>  <span class="hljs-type">int</span> v12; <span class="hljs-comment">// ecx</span><br>  <span class="hljs-keyword">volatile</span> <span class="hljs-type">signed</span> __int32 *v13; <span class="hljs-comment">// eax</span><br>  <span class="hljs-type">int</span> v14; <span class="hljs-comment">// eax</span><br>  LPCWSTR threadEntryAddr_1; <span class="hljs-comment">// ecx</span><br>  DWORD *v16; <span class="hljs-comment">// eax</span><br>  HMODULE v18; <span class="hljs-comment">// [esp-Ch] [ebp-12Ch]</span><br>  <span class="hljs-type">char</span> curtModuleName[<span class="hljs-number">264</span>]; <span class="hljs-comment">// [esp+Ch] [ebp-114h] BYREF</span><br>  LPCWSTR v20; <span class="hljs-comment">// [esp+114h] [ebp-Ch] BYREF</span><br>  LPCWSTR threadEntryAddr; <span class="hljs-comment">// [esp+118h] [ebp-8h] BYREF</span><br>  HMODULE phModule; <span class="hljs-comment">// [esp+11Ch] [ebp-4h] BYREF</span><br><br>  CurrentThread = <span class="hljs-built_in">GetCurrentThread</span>();<br>  CurrentThreadId = <span class="hljs-built_in">GetCurrentThreadId</span>();<br>  NtQueryInformationThread = (<span class="hljs-built_in">NTSTATUS</span> (__stdcall *)(HANDLE, THREADINFOCLASS, PVOID, ULONG, PULONG))NtQueryInformationThread_7AE57AE4;<br>  <span class="hljs-keyword">if</span> ( !NtQueryInformationThread_7AE57AE4 )<br>  &#123;<br>    ModuleHandleA = <span class="hljs-built_in">GetModuleHandleA</span>(<span class="hljs-string">&quot;ntdll.dll&quot;</span>);<br>    <span class="hljs-keyword">if</span> ( ModuleHandleA )<br>    &#123;<br>      NtQueryInformationThread = (<span class="hljs-built_in">NTSTATUS</span> (__stdcall *)(HANDLE, THREADINFOCLASS, PVOID, ULONG, PULONG))<span class="hljs-built_in">GetProcAddress</span>(ModuleHandleA, <span class="hljs-string">&quot;NtQueryInformationThread&quot;</span>);<br>      NtQueryInformationThread_7AE57AE4 = (<span class="hljs-type">int</span>)NtQueryInformationThread;<br>    &#125;<br>    <span class="hljs-keyword">else</span><br>    &#123;<br>      NtQueryInformationThread = (<span class="hljs-built_in">NTSTATUS</span> (__stdcall *)(HANDLE, THREADINFOCLASS, PVOID, ULONG, PULONG))NtQueryInformationThread_7AE57AE4;<br>    &#125;<br>  &#125;<br>  phModule = <span class="hljs-number">0</span>;<br>  threadEntryAddr = <span class="hljs-number">0</span>;<br>  curtModuleName[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;<br>  <span class="hljs-keyword">if</span> ( NtQueryInformationThread )<br>  &#123;<br>    v20 = <span class="hljs-number">0</span>;<br>    <span class="hljs-built_in">NtQueryInformationThread</span>(CurrentThread, (THREADINFOCLASS)<span class="hljs-number">9</span>, &amp;threadEntryAddr, <span class="hljs-number">4</span>, (PULONG)&amp;v20);<span class="hljs-comment">// ThreadQuerySetWin32StartAddress</span><br>                                                <span class="hljs-comment">// 获取当前线程的入口地址</span><br>    <span class="hljs-keyword">if</span> ( <span class="hljs-built_in">GetModuleHandleExW</span>(<span class="hljs-number">6u</span>, threadEntryAddr, &amp;phModule) )<span class="hljs-comment">// GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS(0x4) | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT(0x2)</span><br>                                                <span class="hljs-comment">// 通过入口地址获取所在的模块句柄</span><br>    &#123;<br>      v18 = phModule;<br>      CurrentProcess = <span class="hljs-built_in">GetCurrentProcess</span>();<br>      <span class="hljs-built_in">GetModuleBaseNameA</span>((<span class="hljs-type">int</span>)CurrentProcess, (<span class="hljs-type">int</span>)v18, (<span class="hljs-type">int</span>)curtModuleName, <span class="hljs-number">260</span>);<span class="hljs-comment">// 通过模块句柄获取模块名</span><br>    &#125;<br>  &#125;<br>  v9 = *(_DWORD *)(<span class="hljs-keyword">this</span> + <span class="hljs-number">0xEAD4</span>);              <span class="hljs-comment">// 获取ModuleInfos</span><br>  v10 = (<span class="hljs-keyword">volatile</span> <span class="hljs-type">signed</span> __int32 *)(<span class="hljs-keyword">this</span> + <span class="hljs-number">0xEAD4</span>);<br>  hModule = phModule;<br>  v20 = threadEntryAddr;<br>  <span class="hljs-keyword">if</span> ( v9 &lt; <span class="hljs-number">100</span> )                               <span class="hljs-comment">// 结构头部为Module数量</span><br>  &#123;<br>    v12 = v9 - <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">if</span> ( v12 &lt; <span class="hljs-number">0</span> )                              <span class="hljs-comment">// 如果当前Infos为空</span><br>    &#123;<br>insert_new_node:<br>      v14 = _InterlockedIncrement(v10);<br>      <span class="hljs-keyword">if</span> ( v14 &lt;= <span class="hljs-number">100</span> )<br>      &#123;<br>        threadEntryAddr_1 = v20;<br>        v16 = (DWORD *)&amp;v10[<span class="hljs-number">4</span> * v14];           <span class="hljs-comment">// 插入一个模块信息</span><br>        *v16 = CurrentThreadId;<br>        v16[<span class="hljs-number">1</span>] = (DWORD)hModule;<br>        v16[<span class="hljs-number">2</span>] = (DWORD)threadEntryAddr_1;<br>        v16[<span class="hljs-number">3</span>] = arg_4;<br>      &#125;<br>      _InterlockedIncrement((<span class="hljs-keyword">volatile</span> <span class="hljs-type">signed</span> __int32 *)(<span class="hljs-keyword">this</span> + <span class="hljs-number">60120</span>));<br>    &#125;<br>    <span class="hljs-keyword">else</span><br>    &#123;<br>      v13 = &amp;v10[<span class="hljs-number">4</span> * v12 + <span class="hljs-number">4</span>];<br>      <span class="hljs-keyword">while</span> ( *v13 != CurrentThreadId )         <span class="hljs-comment">// 数组中的ThreadId与curtThreadId不相同</span><br>      &#123;<br>        v13 -= <span class="hljs-number">4</span>;                               <span class="hljs-comment">// ModuleInfon-4,实际上是回到上一个指针</span><br>        <span class="hljs-keyword">if</span> ( --v12 &lt; <span class="hljs-number">0</span> )<br>          <span class="hljs-keyword">goto</span> insert_new_node;                 <span class="hljs-comment">// 然后将当前模块信息重新插入infos</span><br>      &#125;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
@@ -317,15 +340,12 @@
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182412330.png" srcset="/img/loading.gif" lazyload></p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182522049.png" srcset="/img/loading.gif" lazyload></p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182506075.png" srcset="/img/loading.gif" lazyload></p>
-<ul>
-<li>LoadLibrary系列</li>
-</ul>
-<p>挂钩代码基本上与LdrLoadDll相同，但是LoadLibrayA中，存在对<code>d3d9.dll</code>和<code>OPENGL32</code>的判断，用来进行对应hook来实现steam面板的绘制。</p>
+<h4 id="LoadLibrary系列"><a href="#LoadLibrary系列" class="headerlink" title="LoadLibrary系列"></a>LoadLibrary系列</h4><p>挂钩代码基本上与LdrLoadDll相同，但是LoadLibrayA中，存在对<code>d3d9.dll</code>和<code>OPENGL32</code>的判断，用来进行对应hook来实现steam面板的绘制。</p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182812719.png" srcset="/img/loading.gif" lazyload></p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182821484.png" srcset="/img/loading.gif" lazyload></p>
 <p>另外还会判断下图中的模块是否加载完毕，然后给全局变量赋值1，可能为反作弊的核心模块。</p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182844729.png" srcset="/img/loading.gif" lazyload></p>
-<h4 id="2-1-1-2-VirtualAlloc检测"><a href="#2-1-1-2-VirtualAlloc检测" class="headerlink" title="2.1.1.2 VirtualAlloc检测"></a>2.1.1.2 VirtualAlloc检测</h4><p>首先会判断申请的内存类型是否为PAGE_EXECUTE_READWRITE。</p>
+<h4 id="VirtualAlloc检测"><a href="#VirtualAlloc检测" class="headerlink" title="VirtualAlloc检测"></a>VirtualAlloc检测</h4><p>首先会判断申请的内存类型是否为PAGE_EXECUTE_READWRITE。</p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183019935.png" srcset="/img/loading.gif" lazyload></p>
 <p>然后进行记录到AllocMemInfos中。</p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183052568.png" srcset="/img/loading.gif" lazyload></p>
@@ -333,7 +353,7 @@
 <p>记录的内存块有如下结构：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">AllocMemInfo</span><br>&#123;<br>	DWORD lpNewMem;		<span class="hljs-comment">//申请的内存地址</span><br>    DWORD dwLastError;	<span class="hljs-comment">//调用Alloc函数的错误码</span><br>    DWORD dwRetAddr;	<span class="hljs-comment">//调用Alloc函数的返回到地址</span><br>    DWORD pad_0;<br>    DWORD pad_1;<br>    DWORD lpAddress;	<span class="hljs-comment">//以下都为调用参数的记录</span><br>    DWORD dwSize;<br>    DWORD flProtect;<br>    DWORD flAllocationType;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h4 id="2-1-1-3-VirtualProtect检测"><a href="#2-1-1-3-VirtualProtect检测" class="headerlink" title="2.1.1.3 VirtualProtect检测"></a>2.1.1.3 VirtualProtect检测</h4><p>首先会判断欲修改内存类型是否为PAGE_EXECUTE_READWRITE。</p>
+<h4 id="VirtualProtect检测"><a href="#VirtualProtect检测" class="headerlink" title="VirtualProtect检测"></a>VirtualProtect检测</h4><p>首先会判断欲修改内存类型是否为PAGE_EXECUTE_READWRITE。</p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183451098.png" srcset="/img/loading.gif" lazyload></p>
 <p>然后进行记录到ProtectInfos中。</p>
 <p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183511023.png" srcset="/img/loading.gif" lazyload></p>
@@ -341,10 +361,69 @@
 <p>记录的内存块有如下结构：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">ProtectInfo</span><br>&#123;<br>	DWORD FunRet;		<span class="hljs-comment">//Protect函数执行的返回值</span><br>    DWORD dwLastError;	<span class="hljs-comment">//调用Protect函数的错误码</span><br>    DWORD dwRetAddr;	<span class="hljs-comment">//调用Protect函数的返回到地址</span><br>    DWORD pad_0;<br>    DWORD pad_1;<br>    DWORD lpAddress;	<span class="hljs-comment">//以下都为调用参数的记录</span><br>    DWORD dwSize;<br>    DWORD flProtect;<br>    DWORD flAllocationType;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>游戏会进行如下记录：</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>游戏会进行如下记录：</p>
 <p>1、记录游戏加载的模块(模块入口、模块所属的线程ID、模块句柄、加载时返回到的地址)。</p>
 <p>2、记录申请内存类型为PAGE_EXECUTE_READWRITE的内存。</p>
 <p>3、记录修改内存类型为PAGE_EXECUTE_READWRITE的内存。</p>
+<p>4、记录后作用未知，猜测在某些地方会进行扫描这些表来寻找游戏作弊。</p>
+<h2 id="2-1-2-csgo-exe分析"><a href="#2-1-2-csgo-exe分析" class="headerlink" title="2.1.2 csgo.exe分析"></a>2.1.2 csgo.exe分析</h2><h4 id="NtOpenFile"><a href="#NtOpenFile" class="headerlink" title="NtOpenFile"></a>NtOpenFile</h4><p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112000697.png" srcset="/img/loading.gif" lazyload></p>
+<p>从ObjAttr拿到文件名后判断文件名是否存在白名单，如果不存在白名单则返回错误码0xC0000034，存在则正常打开文件。</p>
+<h4 id="LoadLibraryExW"><a href="#LoadLibraryExW" class="headerlink" title="LoadLibraryExW"></a>LoadLibraryExW</h4><p>同样会首先判读是否存在白名单。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112122129.png" srcset="/img/loading.gif" lazyload></p>
+<p>存在则正常加载DLL。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112130903.png" srcset="/img/loading.gif" lazyload></p>
+<p>如果Load的DLL不在白名单内，则进行记录到表中，但记录的方式有坑。记录前会去查找一个句柄表，表中存放着一些dll的句柄、dll名、dll文件大小。游戏通过判断文件大小和文件名来查找句柄表是否存放对应的dll句柄，如果存在则返回该句柄。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112352425.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112252111.png" srcset="/img/loading.gif" lazyload></p>
+<p>不存在则进行记录。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112519644.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="PeekMessage"><a href="#PeekMessage" class="headerlink" title="PeekMessage"></a>PeekMessage</h4><p>根据CE查看得知该函数是跳转到模块<code>GameOverlayrenderer.dll</code>中，猜测可能是与steam面板有关，故不分析。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112648387.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="initHook"><a href="#initHook" class="headerlink" title="initHook"></a>initHook</h4><p>对<code>hkNtOpenFile</code>函数继续交叉引用，可找到初始化HOOK的位置。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113203202.png" srcset="/img/loading.gif" lazyload></p>
+<p>可以看到分别对三个函数进行了HOOK，其中Hook NtOpenFile中有一个中转函数<code>sub_4E5980</code>.</p>
+<p>函数首先是判断当前的获取到的NtOpenFile函数地址是否合法。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113954875.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113537280.png" srcset="/img/loading.gif" lazyload></p>
+<p>hookTable为一个map表，里边存放着NtOpenFile、LoadLibraryExW、PeekMessageA的原始地址，该表在较早时期进行初始化，每次HOOK都会判断GetProcAddress得到的地址与表中是否一致，防止一些IAT类型的HOOK。之后检查函数头是否存在int3、int2、nop等指令覆盖，如果没覆盖则进行Hook。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113308336.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h4><p>1、hook了NtOpenFile和LoadLibraryExW进行白名单判断，并且在LoadLirary中，如果dll不为白名单中则尝试查找句柄表中是否有该dll句柄，然后返回；否则就插入一个记录节点，记录该dll的信息。</p>
+<p>2、其中游戏初期会初始化一个hookTable表，里边存放着三个函数的地址；在HOOK时会重新判断地址是否一致，然后进行HOOK，防止一些IAT HOOK。</p>
+<p>3、对于记录了白名单外的dll，猜测可能是会有遍历文件，然后后台上传。</p>
+<h2 id="2-2-API分析"><a href="#2-2-API分析" class="headerlink" title="2.2 API分析"></a>2.2 API分析</h2><h3 id="2-2-1-tier0-dll分析"><a href="#2-2-1-tier0-dll分析" class="headerlink" title="2.2.1 tier0.dll分析"></a>2.2.1 tier0.dll分析</h3><h4 id="IsDebuggerPresent"><a href="#IsDebuggerPresent" class="headerlink" title="IsDebuggerPresent"></a>IsDebuggerPresent</h4><p>将CE调成VEH调试器后再<code>IsDebuggerPresent</code>函数下断.</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123118650.png" srcset="/img/loading.gif" lazyload></p>
+<p>断下后F8单步走出。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123201020.png" srcset="/img/loading.gif" lazyload></p>
+<p>发现模块返回到了<code>tier0.dll</code>。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123258746.png" srcset="/img/loading.gif" lazyload></p>
+<p>通过火绒剑查看进程模块发现有两个，由于是返回到tier0.dll中，所有这里先dump下该模块后进行分析下。</p>
+<p>对<code>IsDebuggerPresent</code>交叉引用后得到的结果基本都是判断在调试，如果调试就抛出一个<code>int3</code>。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144627714.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="Dr寄存器清空"><a href="#Dr寄存器清空" class="headerlink" title="Dr寄存器清空"></a>Dr寄存器清空</h4><p>通过导入表发现该模块还调用了<code>GetThreadContext</code>和<code>SetThreadContext</code>，疑似为清空Dr寄存器。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144841073.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144857872.png" srcset="/img/loading.gif" lazyload></p>
+<p>但在游戏中对这两个函数下断并为断下。</p>
+<h3 id="2-2-2-steamclient-dll分析"><a href="#2-2-2-steamclient-dll分析" class="headerlink" title="2.2.2 steamclient.dll分析"></a>2.2.2 steamclient.dll分析</h3><h4 id="检测顶层窗口"><a href="#检测顶层窗口" class="headerlink" title="检测顶层窗口"></a>检测顶层窗口</h4><p>在对<code>CreateToolhelp32Snapshot</code>下断点时游戏断下，查看堆栈信息来自<code>steamclient.dll</code>。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104145405713.png" srcset="/img/loading.gif" lazyload></p>
+<p>将该模块dump后，跳到返回到地址进行分析。</p>
+<p>模块首先会枚举每一个进程的PID。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104152201577.png" srcset="/img/loading.gif" lazyload></p>
+<p>然后会遍历枚举到的进程ID，获取他们的文件信息保存到数组中。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164837789.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164934590.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164943770.png" srcset="/img/loading.gif" lazyload></p>
+<p>接着通过遍历进程，其中会寻找csgo.exe的PID。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104153441268.png" srcset="/img/loading.gif" lazyload></p>
+<p>通过对遍历进程的函数进行交叉引用后，发现会获取最顶层窗口并且检查是否为csgo的窗口。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104153534264.png" srcset="/img/loading.gif" lazyload></p>
+<p>并且会根据顶层窗口是否为csgo.exe来对时间数据赋值。</p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104154110565.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="../%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104154102544.png" srcset="/img/loading.gif" lazyload></p>
+<p>猜测是检测是否有窗口一直覆盖再游戏上。</p>
+<h3 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h3><p>1、会通过IsDebuggerPresent检测是否在调试，如果调试则抛出int3异常。</p>
+<p>2、可能会清空Dr寄存器。</p>
+<p>3、会检测顶层窗口</p>
+<p>4、会枚举电脑上所有的进程，并收集进程文件的信息。</p>
 
                 
               </div>
