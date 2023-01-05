@@ -211,6 +211,114 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="2023/01/05/Window-Kernel/%E9%9B%B6%E3%80%81%E5%8F%8C%E6%9C%BA%E8%B0%83%E8%AF%95/" target="_self">
+          一、保护模式
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2023/01/05/Window-Kernel/%E9%9B%B6%E3%80%81%E5%8F%8C%E6%9C%BA%E8%B0%83%E8%AF%95/" target="_self">
+        <div>
+          1、双机调试系统设置打开CMD，输入下列指令后回车，会得到一个 &#123;ID&#125;。 1bcdedit /copy &#123;current&#125; /d DebugEntry   将&#123;ID&#125;代入下列两个指令中运行。 12bcdedit /displayorder &#123;current&#125; &#123;ID&#125;  bcdedit /debu
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-05 17:42" pubdate>
+              2023-01-05
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="categories/Windows-Kernel/" class="category-chain-item">Windows-Kernel</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/" target="_self">
+          VMProtect分析-虚拟化流程
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/" target="_self">
+        <div>
+          一、没有大炮我们自己造首先编写一个简单的程序。 1234567int main()&#123;	int a = 1;	a = a + 1;	printf(&quot;%d\n&quot;,a);	return 0;&#125;  编译后给程序添加vmp保护壳，这里选择的VMP版本为v3.5.0。  保护的函数为main函数，编译类型修改为虚拟。  并且关闭一系列保护。  编译完成后，可看到程序体积
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-05 15:28" pubdate>
+              2023-01-05
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="categories/Anti/" class="category-chain-item">Anti</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/" target="_self">
           从零开始分析VAC
         </a>
@@ -227,7 +335,7 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-03 18:47" pubdate>
+            <time datetime="2023-01-03 20:40" pubdate>
               2023-01-03
             </time>
           </div>
@@ -637,119 +745,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="2022/12/30/Vulhub/CVE-2013-2251(Apache%20Struts%202%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0)/" target="_self">
-          CVE-2013-2251(Apache Struts 2远程代码执行漏洞复现)
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="2022/12/30/Vulhub/CVE-2013-2251(Apache%20Struts%202%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0)/" target="_self">
-        <div>
-          一、漏洞标签   漏洞详情 CVE-2013-2251    严重级别 严重   危害 在Struts 2框架中，DefaultActionMapper类支持以“action:”、“redirect:”、“redirectAction:”作为导航或重定向前缀，这些导航或者前缀后面可以写OGNL表达式。Struts 2并没有对这些前缀进行过滤，所以可以任意执行恶意OGNL表达式以执行系统命令。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-12-30 17:49" pubdate>
-              2022-12-30
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="categories/Vulhub/" class="category-chain-item">Vulhub</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="2022/12/19/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E5%8F%8D%E8%B0%83%E8%AF%95/" target="_self">
-          从零开始学习反调试
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="2022/12/19/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E5%8F%8D%E8%B0%83%E8%AF%95/" target="_self">
-        <div>
-          一、PEB系列12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394kd&gt; dt _PEB
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-12-19 18:09" pubdate>
-              2022-12-19
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="categories/Anti/" class="category-chain-item">Anti</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <span class="page-number current">1</span><a class="page-number" href="page/2/#board">2</a><a class="page-number" href="page/3/#board">3</a><span class="space">&hellip;</span><a class="page-number" href="page/7/#board">7</a><a class="extend next" rel="next" href="page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+      <span class="page-number current">1</span><a class="page-number" href="page/2/#board">2</a><a class="page-number" href="page/3/#board">3</a><span class="space">&hellip;</span><a class="page-number" href="page/8/#board">8</a><a class="extend next" rel="next" href="page/2/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
