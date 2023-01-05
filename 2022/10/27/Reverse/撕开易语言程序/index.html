@@ -19,70 +19,70 @@
     <meta name="description" content="PlaneJun ・2021-11-28 20:45   要点 易语言的入口函数特征 各种函数的调用特征以及识别 针对易语言程序的分析插件  1、如何识别易语言程序一、查看文件信息右键-属性-详细信息 二、查看资源文件Resource Hacker或其他可查看资源文件的工具  三、库文件易语言程序依赖于自实现的库(.fnr)执行，针对易语言的编译模式有静态编译、非静态编译和独立编译，如下图：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="撕开易语言程序">
-<meta property="og:url" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/index.html">
+<meta property="og:url" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/index.html">
 <meta property="og:site_name" content="PlaneJun&#39; Blog">
 <meta property="og:description" content="PlaneJun ・2021-11-28 20:45   要点 易语言的入口函数特征 各种函数的调用特征以及识别 针对易语言程序的分析插件  1、如何识别易语言程序一、查看文件信息右键-属性-详细信息 二、查看资源文件Resource Hacker或其他可查看资源文件的工具  三、库文件易语言程序依赖于自实现的库(.fnr)执行，针对易语言的编译模式有静态编译、非静态编译和独立编译，如下图：">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId5.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId6.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId7.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId8.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId9.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId10.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId11.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId12.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId13.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId14.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId15.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId16.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId17.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId18.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId19.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId20.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId21.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId22.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId23.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId24.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId25.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId26.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId27.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId28.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId29.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId30.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId31.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId32.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId33.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId34.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId35.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId36.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId37.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId38.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId39.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId40.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId41.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId42.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId43.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId44.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId45.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId46.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId48.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId49.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId50.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId51.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId52.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId53.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId54.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId55.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId56.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId57.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId58.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId59.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId60.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId5.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId6.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId7.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId8.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId9.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId10.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId11.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId12.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId13.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId14.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId15.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId16.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId17.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId18.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId19.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId20.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId21.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId22.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId23.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId24.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId25.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId26.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId27.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId28.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId29.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId30.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId31.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId32.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId33.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId34.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId35.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId36.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId37.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId38.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId39.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId40.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId41.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId42.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId43.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId44.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId45.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId46.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId48.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId49.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId50.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId51.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId52.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId53.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId54.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId55.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId56.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId57.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId58.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId59.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId60.png#center">
 <meta property="article:published_time" content="2022-10-27T05:20:55.622Z">
 <meta property="article:modified_time" content="2022-10-21T05:12:12.243Z">
 <meta property="article:author" content="PlaneJun">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId5.png#center">
+<meta name="twitter:image" content="https://blog.planejun.cn/2022/10/27/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId5.png#center">
   
   
   
@@ -124,7 +124,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"blog.planejun.cn","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -553,7 +553,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>撕开易语言程序</div>
-      <div>http://example.com/2022/10/27/Reverse/撕开易语言程序/</div>
+      <div>https://blog.planejun.cn/2022/10/27/Reverse/撕开易语言程序/</div>
     </div>
     <div class="license-meta">
       

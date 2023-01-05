@@ -19,28 +19,28 @@
     <meta name="description" content="记录自己调试windows服务的操作 PlaneJun ・2022-1-9 23:25  如题，近日分析了一个样本，发现需要调试服务，然后自己也没调试过服务，就在国内查了一些资料，基本能用的也就看雪一个大哥发的教程。[原创]使用Windbg&amp;OllyDbg从头调试windows服务-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com 但是跟着操作弄了一遍，虽然是弄好了，但是">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记录自己调试windows服务的操作">
-<meta property="og:url" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:url" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/index.html">
 <meta property="og:site_name" content="PlaneJun&#39; Blog">
 <meta property="og:description" content="记录自己调试windows服务的操作 PlaneJun ・2022-1-9 23:25  如题，近日分析了一个样本，发现需要调试服务，然后自己也没调试过服务，就在国内查了一些资料，基本能用的也就看雪一个大哥发的教程。[原创]使用Windbg&amp;OllyDbg从头调试windows服务-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com 但是跟着操作弄了一遍，虽然是弄好了，但是">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId6.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId7.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId8.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId9.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId10.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId11.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId12.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId13.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId14.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId15.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId16.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId17.png#center">
-<meta property="og:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId18.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId6.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId7.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId8.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId9.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId10.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId11.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId12.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId13.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId14.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId15.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId16.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId17.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId18.png#center">
 <meta property="article:published_time" content="2022-10-27T05:20:55.901Z">
 <meta property="article:modified_time" content="2022-10-21T05:12:12.241Z">
 <meta property="article:author" content="PlaneJun">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId6.png#center">
+<meta name="twitter:image" content="https://blog.planejun.cn/2022/10/27/Virus/%E8%AE%B0%E5%BD%95%E8%87%AA%E5%B7%B1%E8%B0%83%E8%AF%95windows%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%93%8D%E4%BD%9C/document_image_rId6.png#center">
   
   
   
@@ -82,7 +82,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"blog.planejun.cn","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -352,7 +352,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>记录自己调试windows服务的操作</div>
-      <div>http://example.com/2022/10/27/Virus/记录自己调试windows服务的操作/</div>
+      <div>https://blog.planejun.cn/2022/10/27/Virus/记录自己调试windows服务的操作/</div>
     </div>
     <div class="license-meta">
       

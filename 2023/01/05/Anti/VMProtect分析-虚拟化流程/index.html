@@ -19,23 +19,23 @@
     <meta name="description" content="一、没有大炮我们自己造首先编写一个简单的程序。 1234567int main()&amp;#123;	int a &#x3D; 1;	a &#x3D; a + 1;	printf(&quot;%d\n&quot;,a);	return 0;&amp;#125;  编译后给程序添加vmp保护壳，这里选择的VMP版本为v3.5.0。  保护的函数为main函数，编译类型修改为虚拟。  并且关闭一系列保护。  编译完成后，可看到程序体积">
 <meta property="og:type" content="article">
 <meta property="og:title" content="VMProtect分析-虚拟化流程">
-<meta property="og:url" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:url" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/index.html">
 <meta property="og:site_name" content="PlaneJun&#39; Blog">
 <meta property="og:description" content="一、没有大炮我们自己造首先编写一个简单的程序。 1234567int main()&amp;#123;	int a &#x3D; 1;	a &#x3D; a + 1;	printf(&quot;%d\n&quot;,a);	return 0;&amp;#125;  编译后给程序添加vmp保护壳，这里选择的VMP版本为v3.5.0。  保护的函数为main函数，编译类型修改为虚拟。  并且关闭一系列保护。  编译完成后，可看到程序体积">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160101521.png">
-<meta property="og:image" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160113820.png">
-<meta property="og:image" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160125791.png">
-<meta property="og:image" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160139363.png">
-<meta property="og:image" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160153886.png">
-<meta property="og:image" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160206575.png">
-<meta property="og:image" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160031408.png">
-<meta property="og:image" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105162339766.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160101521.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160113820.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160125791.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160139363.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160153886.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160206575.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160031408.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105162339766.png">
 <meta property="article:published_time" content="2023-01-05T07:28:00.000Z">
 <meta property="article:modified_time" content="2023-01-05T09:30:22.944Z">
 <meta property="article:author" content="PlaneJun">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160101521.png">
+<meta name="twitter:image" content="https://blog.planejun.cn/2023/01/05/Anti/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/image-20230105160101521.png">
   
   
   
@@ -77,7 +77,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"blog.planejun.cn","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -554,7 +554,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>VMProtect分析-虚拟化流程</div>
-      <div>http://example.com/2023/01/05/Anti/VMProtect分析-虚拟化流程/</div>
+      <div>https://blog.planejun.cn/2023/01/05/Anti/VMProtect分析-虚拟化流程/</div>
     </div>
     <div class="license-meta">
       
@@ -598,9 +598,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="../../Window-Kernel/%E9%9B%B6%E3%80%81%E5%8F%8C%E6%9C%BA%E8%B0%83%E8%AF%95/" title="一、保护模式">
+                      <a href="../../Window-Kernel/%E9%9B%B6%E3%80%81%E5%8F%8C%E6%9C%BA%E8%B0%83%E8%AF%95/" title="零、双机调试">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">一、保护模式</span>
+                        <span class="hidden-mobile">零、双机调试</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

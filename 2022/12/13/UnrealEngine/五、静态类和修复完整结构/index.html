@@ -19,31 +19,31 @@
     <meta name="description" content="一、认识静态类 静态类   每一个对象都是从某一个静态类继承而来的，基类存在UObject的Class成员中。那么通过这个字段我们就可以判断当前对象是什么类。  知道什么什么类之后，我们就可以对应处理。 1234567891011121314auto obj &#x3D; GetStaticClass();switch(obj)&amp;#123;    case CLASS:      &#x2F;&#x2F;处理类      br">
 <meta property="og:type" content="article">
 <meta property="og:title" content="五、静态类和修复完整结构">
-<meta property="og:url" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:url" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/index.html">
 <meta property="og:site_name" content="PlaneJun&#39; Blog">
 <meta property="og:description" content="一、认识静态类 静态类   每一个对象都是从某一个静态类继承而来的，基类存在UObject的Class成员中。那么通过这个字段我们就可以判断当前对象是什么类。  知道什么什么类之后，我们就可以对应处理。 1234567891011121314auto obj &#x3D; GetStaticClass();switch(obj)&amp;#123;    case CLASS:      &#x2F;&#x2F;处理类      br">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId4.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId5.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId6.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId7.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId8.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId9.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId10.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId11.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId12.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId13.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId14.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId15.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId16.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId17.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId18.png#center">
-<meta property="og:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId19.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId4.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId5.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId6.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId7.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId8.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId9.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId10.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId11.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId12.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId13.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId14.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId15.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId16.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId17.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId18.png#center">
+<meta property="og:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId19.png#center">
 <meta property="article:published_time" content="2022-12-13T08:27:50.283Z">
 <meta property="article:modified_time" content="2022-10-21T05:16:50.480Z">
 <meta property="article:author" content="PlaneJun">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId4.png#center">
+<meta name="twitter:image" content="https://blog.planejun.cn/2022/12/13/UnrealEngine/%E4%BA%94%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%92%8C%E4%BF%AE%E5%A4%8D%E5%AE%8C%E6%95%B4%E7%BB%93%E6%9E%84/document_image_rId4.png#center">
   
   
   
@@ -85,7 +85,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"blog.planejun.cn","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -371,7 +371,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>五、静态类和修复完整结构</div>
-      <div>http://example.com/2022/12/13/UnrealEngine/五、静态类和修复完整结构/</div>
+      <div>https://blog.planejun.cn/2022/12/13/UnrealEngine/五、静态类和修复完整结构/</div>
     </div>
     <div class="license-meta">
       

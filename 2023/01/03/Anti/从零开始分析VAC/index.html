@@ -19,57 +19,57 @@
     <meta name="description" content="一、资料收集 国内: CSGO辅助制作思路与VAC保护分析 - -Qfrost- 【CSGO游戏分析】VAC反作弊系统分析 - 哔哩哔哩 (bilibili.com) 国外： How To Bypass VAC Valve Anti Cheat Info (guidedhacking.com) 代码: danielkrupinski&#x2F;VAC: Source code of Valve A">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从零开始分析VAC">
-<meta property="og:url" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/index.html">
+<meta property="og:url" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/index.html">
 <meta property="og:site_name" content="PlaneJun&#39; Blog">
 <meta property="og:description" content="一、资料收集 国内: CSGO辅助制作思路与VAC保护分析 - -Qfrost- 【CSGO游戏分析】VAC反作弊系统分析 - 哔哩哔哩 (bilibili.com) 国外： How To Bypass VAC Valve Anti Cheat Info (guidedhacking.com) 代码: danielkrupinski&#x2F;VAC: Source code of Valve A">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104095003980.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103181242412.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103181826494.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182210961.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182412330.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182522049.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182506075.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182812719.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182821484.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182844729.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183019935.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183052568.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183118283.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183451098.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183511023.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183518345.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112000697.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112122129.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112130903.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112352425.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112252111.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112519644.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112648387.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113203202.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113954875.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113537280.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113308336.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123118650.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123201020.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123258746.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144627714.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144841073.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144857872.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104145405713.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104152201577.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164837789.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164934590.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164943770.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104153441268.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104153534264.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104154110565.png">
-<meta property="og:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104154102544.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104095003980.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103181242412.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103181826494.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182210961.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182412330.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182522049.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182506075.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182812719.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182821484.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103182844729.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183019935.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183052568.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183118283.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183451098.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183511023.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230103183518345.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112000697.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112122129.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112130903.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112352425.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112252111.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112519644.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104112648387.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113203202.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113954875.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113537280.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104113308336.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123118650.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123201020.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104123258746.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144627714.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144841073.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104144857872.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104145405713.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104152201577.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164837789.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164934590.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104164943770.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104153441268.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104153534264.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104154110565.png">
+<meta property="og:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104154102544.png">
 <meta property="article:published_time" content="2023-01-03T12:40:00.000Z">
 <meta property="article:modified_time" content="2023-01-05T09:31:05.901Z">
 <meta property="article:author" content="PlaneJun">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104095003980.png">
+<meta name="twitter:image" content="https://blog.planejun.cn/2023/01/03/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90VAC/image-20230104095003980.png">
   
   
   
@@ -111,7 +111,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"blog.planejun.cn","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":9999},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -463,7 +463,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>从零开始分析VAC</div>
-      <div>http://example.com/2023/01/03/Anti/从零开始分析VAC/</div>
+      <div>https://blog.planejun.cn/2023/01/03/Anti/从零开始分析VAC/</div>
     </div>
     <div class="license-meta">
       
