@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="hack.exe反调试​		对hack.exe脱外壳+IAT修复后，进行简单分析，可知存在三种检测反调试（不完全），后边调试dll_shellcode是还发现了有扫字符串。 ​		1、调用NtQueryInformationProcess 扫描进程的DebugPort。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2024鹅厂安全竞赛题解-初赛">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98%E8%A7%A3-%E5%88%9D%E8%B5%9B/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="hack.exe反调试​		对hack.exe脱外壳+IAT修复后，进行简单分析，可知存在三种检测反调试（不完全），后边调试dll_shellcode是还发现了有扫字符串。 ​		1、调用NtQueryInformationProcess 扫描进程的DebugPort。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240421214715351.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317173702735.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317173717384.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317173736127.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317170300603.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/439a9a0b23f027889ec8f272740bb995-1710667944747-4.jpg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317171003438-1710667944749-7.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317171113180-1710667944749-10.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317171450397-1710667944749-11.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317172046646-1710667944749-8.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317172453057-1710667944749-9.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317172240158-1710667944749-12.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/QQ%E5%9B%BE%E7%89%8720240317173146-1710667944748-6.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317235824134.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318000953267.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001112456.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001254749.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318004204559.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001442111.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001500150.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001728574.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001740675.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318002011345.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318002032835.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317235649316.png">
+<meta property="article:published_time" content="2024-04-21T13:48:11.806Z">
+<meta property="article:modified_time" content="2024-04-21T13:51:54.189Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/images/Reverse/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240421214715351.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98%E8%A7%A3-%E5%88%9D%E8%B5%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98%E8%A7%A3-%E5%88%9D%E8%B5%9B/","path":"2024/04/21/2024鹅厂安全竞赛题解-初赛/","title":"2024鹅厂安全竞赛题解-初赛"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>2024鹅厂安全竞赛题解-初赛 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#hack-exe"><span class="nav-number">1.</span> <span class="nav-text">hack.exe</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-number">1.1.</span> <span class="nav-text">反调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#token1"><span class="nav-number">1.2.</span> <span class="nav-text">token1</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ace-sys"><span class="nav-number">2.</span> <span class="nav-text">ace.sys</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98%E8%A7%A3-%E5%88%9D%E8%B5%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="2024鹅厂安全竞赛题解-初赛 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2024鹅厂安全竞赛题解-初赛
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 21:48:11 / 修改时间：21:51:54" itemprop="dateCreated datePublished" datetime="2024-04-21T21:48:11+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Reverse/" itemprop="url" rel="index"><span itemprop="name">Reverse</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240421214715351.png" alt="image-20240421214715351"></p>
+<h1 id="hack-exe"><a href="#hack-exe" class="headerlink" title="hack.exe"></a>hack.exe</h1><h2 id="反调试"><a href="#反调试" class="headerlink" title="反调试"></a>反调试</h2><p>​		对hack.exe脱外壳+IAT修复后，进行简单分析，可知存在三种检测反调试（不完全），后边调试dll_shellcode是还发现了有扫字符串。</p>
+<p>​		1、调用NtQueryInformation<em>Process</em> 扫描进程的DebugPort。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317173702735.png" alt="image-20240317173702735"></p>
+<p>​		2、清空dr寄存器。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317173717384.png" alt="image-20240317173717384"></p>
+<p>​		3、隐藏线程</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317173736127.png" alt="image-20240317173736127"></p>
+<h2 id="token1"><a href="#token1" class="headerlink" title="token1"></a>token1</h2><p>​		运行<code>hack.exe</code>后，运行调试器附加后发现提示非法，且下次重新打开<code>hack.exe</code>时仍然提示。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317170300603.png" alt="image-20240317170300603"></p>
+<p>​		偶然发现重启后，非法失效（不弹框），因此猜测存在写文件 or 傀儡进程检测。使用<code>WinAPIOverride</code>进行api监视（API Monotor被加黑），发现进程存在频繁读内存，且意外发现存在写内存（4D5A），因此考虑到<code>dll-MapInject</code>。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/439a9a0b23f027889ec8f272740bb995-1710667944747-4.jpg" alt="439a9a0b23f027889ec8f272740bb995"></p>
+<p>​		自行编写工具，hook <code>WriteProcessMemory</code>和<code>ReadProcessMemory</code></p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317171003438-1710667944749-7.png" alt="image-20240317171003438"></p>
+<p>​		得到shellcode文件。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317171113180-1710667944749-10.png" alt="image-20240317171113180"></p>
+<p>​		并且通过日志文件发现在最后一次弹窗的时候，有访问<code>winlogon.exe</code>内存1字节。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317171450397-1710667944749-11.png" alt="image-20240317171450397"></p>
+<p>​		使用CE查看可知该内存的值为<code>0xF</code>，大胆修改为<code>0</code>后，第二次启动发现不弹窗，猜测已经过了检测，但原理没仔细分析，至少避免每次都要重启。</p>
+<p>​		对工具保存到的bin文件分析发现每个bin作用如下：</p>
+<table>
+<thead>
+<tr>
+<th>filename</th>
+<th>todo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>9_10316_Taskmgr.exe_390_000002060B510000_58c.bin</td>
+<td>map_loader</td>
+</tr>
+<tr>
+<td>10_10316_Taskmgr.exe_390_000002060B51058C_3f7e00.bin</td>
+<td>dll数据</td>
+</tr>
+<tr>
+<td>11_10316_Taskmgr.exe_390_000002060B90838C_228.bin</td>
+<td>调用map_loader的参数指针</td>
+</tr>
+</tbody></table>
+<p>​	直接对dll进行分析，代码vm不多，对iat进行查看，发现可疑的API<code>WriteProcessMemory</code>，交叉引用后得到相关位置，该处未vm，直接F5分析。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317172046646-1710667944749-8.png" alt="image-20240317172046646"></p>
+<p>​		首先发现存在写<code>addr+0xACE</code>地址，并且是跨进程，与上边工具记录到的最后一条内容<code>0x327eb92ace</code>符合，并且写入的值（0xF），与实际内存查看一致。往下分析发现存在写文件。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317172453057-1710667944749-9.png" alt="image-20240317172453057"></p>
+<p>​		记得题目条件有说写出token1，因此直接进行调试该处。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317172240158-1710667944749-12.png" alt="image-20240317172240158"></p>
+<p>​		对<code>CreateFileA</code>打断点断下后，查看rcx值。</p>
+<p>![$CRE%4CR$}CNQ8%MHT7&#96;EFC](..&#x2F;images&#x2F;Reverse&#x2F;.&#x2F;2024鹅厂安全竞赛题-初赛&#x2F;$CRE%254CR$%7DCNQ8%25MHT7%60EFC-1710667944748-5.png)</p>
+<p>​		发现为<code>C:\2024GameSafeRace.token1</code>，接着继续往下F8，发现<code>CreateFileA</code>执行返回<code>-1</code>，呃，，OPEN_EXISTING，第二次重新操作，先手动在C盘创建该文件，然后再F8执行，一直执行到<code>CloseHandle</code>结束，对文件进行打开查看，得到token1。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/QQ%E5%9B%BE%E7%89%8720240317173146-1710667944748-6.png" alt="QQ图片20240317173146"></p>
+<h1 id="ace-sys"><a href="#ace-sys" class="headerlink" title="ace.sys"></a>ace.sys</h1><p>​		<code>ace.sys</code>需要在<code>hack.exe</code>启动后加载才行，不然驱动加载失败（非31返回值）。</p>
+<p>​	<img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317235824134.png" alt="image-20240317235824134"></p>
+<p>​		首先是返回值<code>31</code>，第一个想法就是估计是个Loader，想双机，但是有题目调试，用之前写的反反调试工具尝试绕过，失败。驱动加载后尝试用一些ark（pchunter、ydark，noone，winark），但发现打开立马蓝屏，蓝屏代码为<code>0xACE</code>。</p>
+<p>​		重新思考了一下，内核线程是跑在<code>system</code>进程里的，而且看题目描述<code>运行时修改尽量少的内存，让两段token输出成功</code>，那应该是挂了一个线程的用来输出flag的（r3层也是一个while在跑）。因此得出两点：</p>
+<p>​		1、<code>system</code>线程列表里挂着一个线程在等待flag输出。</p>
+<p>​		2、因为猜测<code>ace.sys</code>是作用是个Loader，因此线程所属模块极大可能是无模块。</p>
+<p>​		根据第一点，首先猜到是会不会有dbg输出，因此打开<code>dbgview</code>、<code>dbgview++</code>分别测试，发现无输出；因此疯狂尝试切换各种冷门ark，测试后发现WKE（<a target="_blank" rel="noopener" href="https://github.com/AxtMueller/Windows-Kernel-Explorer%EF%BC%89%E3%80%81OpenArk%EF%BC%88https://github.com/BlackINT3/OpenArk%EF%BC%89%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8%E3%80%82">https://github.com/AxtMueller/Windows-Kernel-Explorer）、OpenArk（https://github.com/BlackINT3/OpenArk）可以使用。</a></p>
+<p>​		打开<code>WKE</code>对<code>system</code>进程的线程扫描，发现存在一个无模块线程。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318000953267.png" alt="image-20240318000953267"></p>
+<p>​		因此下一步想法是dump，由于检测双机，因此使用了livekd（<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/sysinternals/downloads/livekd%EF%BC%89%E8%BF%9B%E8%A1%8Cdump%E3%80%82">https://learn.microsoft.com/zh-cn/sysinternals/downloads/livekd）进行dump。</a></p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001112456.png" alt="image-20240318001112456"></p>
+<p>​		使用<code>!address</code>命令进行内存区域扫描，发现RegionSize相当大，全部dump显然不合理，因此只对部分内存dump（保证dump的内存中包含了完整的线程代码）。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001254749.png" alt="image-20240318001254749"></p>
+<p>​		使用ida加载后发现，代码段和r3的很类似。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318004204559.png" alt="image-20240318004204559"></p>
+<p>​		对照反汇编进行分析，实际上<code>rax_FFFF848C4C016018</code>对应的函数是<code>DbgPrintEx</code>。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001442111.png" alt="image-20240318001442111"></p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001500150.png" alt="image-20240318001500150"></p>
+<p>​		那就有点奇怪了，，，，明明有调用，但是没输出，那么考虑到Log是不是被过滤了。对注册表操作一段，发现还是没用，于是对调用参数进行分析。MSDN（<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/reading-and-filtering-debugging-messages%EF%BC%89">https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/reading-and-filtering-debugging-messages）</a></p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001728574.png" alt="image-20240318001728574"></p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318001740675.png" alt="image-20240318001740675"></p>
+<p>​		以往驱动开发中<code>DbgPrintEx</code>的参数二没印象可以传这个值，想到可能是需要修改参数？因此打开<code>OpenArk</code>直接修改对参数修改.</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318002011345.png" alt="image-20240318002011345"></p>
+<p>​		读一下，确保修改生效。</p>
+<p>​	<img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240318002032835.png" alt="image-20240318002032835"></p>
+<p>​		然后重新打开dbgview，发现token已经输出了。</p>
+<p><img src="/../images/Reverse/./2024%E9%B9%85%E5%8E%82%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B%E9%A2%98-%E5%88%9D%E8%B5%9B/image-20240317235649316.png" alt="image-20240317235649316"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>flag{ 757f4749aebb1891ef5ac2a9b5439cea-8b3f14a24d64f3e697957c252e3a5686}</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/x86%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" rel="prev" title="x86驱动开发">
+                  <i class="fa fa-chevron-left"></i> x86驱动开发
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>
