@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一、样本标签   标签名 描述    原始⽂件名 ISBEW64.exe   MD5 41d5fda21cf991734793df190ff078ba   ⽂件⼤⼩ 296.50 KB (303616 bytes)   ⽂件格式 PE64   加壳类型 无   编译语⾔ .NET   SHA-1 b50a8e2a7998e17286d2e18d1cf3f7e4e84482c6   SHA-256">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZarazaBot窃取浏览器密码样本分析">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="一、样本标签   标签名 描述    原始⽂件名 ISBEW64.exe   MD5 41d5fda21cf991734793df190ff078ba   ⽂件⼤⼩ 296.50 KB (303616 bytes)   ⽂件格式 PE64   加壳类型 无   编译语⾔ .NET   SHA-1 b50a8e2a7998e17286d2e18d1cf3f7e4e84482c6   SHA-256">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428104447758.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110324073.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110345719.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428104359866.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428105452368.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428105616849.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428105701159.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110036360.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428105920551.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110112857.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110055541.png">
+<meta property="og:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110126486.png">
+<meta property="article:published_time" content="2024-04-21T12:32:43.168Z">
+<meta property="article:modified_time" content="2024-04-21T12:21:16.026Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428104447758.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/","path":"2024/04/21/ZarazaBot窃取浏览器密码样本分析/","title":"ZarazaBot窃取浏览器密码样本分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ZarazaBot窃取浏览器密码样本分析 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%A0%B7%E6%9C%AC%E6%A0%87%E7%AD%BE"><span class="nav-number">1.</span> <span class="nav-text">一、样本标签</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">二、详细分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81IOC"><span class="nav-number">3.</span> <span class="nav-text">三、IOC</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ZarazaBot窃取浏览器密码样本分析 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ZarazaBot窃取浏览器密码样本分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:43 / 修改时间：20:21:16" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:43+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Virus/" itemprop="url" rel="index"><span itemprop="name">Virus</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="一、样本标签"><a href="#一、样本标签" class="headerlink" title="一、样本标签"></a>一、样本标签</h1><table>
+<thead>
+<tr>
+<th>标签名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原始⽂件名</td>
+<td>ISBEW64.exe</td>
+</tr>
+<tr>
+<td>MD5</td>
+<td>41d5fda21cf991734793df190ff078ba</td>
+</tr>
+<tr>
+<td>⽂件⼤⼩</td>
+<td>296.50 KB (303616 bytes)</td>
+</tr>
+<tr>
+<td>⽂件格式</td>
+<td>PE64</td>
+</tr>
+<tr>
+<td>加壳类型</td>
+<td>无</td>
+</tr>
+<tr>
+<td>编译语⾔</td>
+<td>.NET</td>
+</tr>
+<tr>
+<td>SHA-1</td>
+<td>b50a8e2a7998e17286d2e18d1cf3f7e4e84482c6</td>
+</tr>
+<tr>
+<td>SHA-256</td>
+<td>2cb42e07dbdfb0227213c50af87b2594ce96889fe623dbd73d228e46572f0125</td>
+</tr>
+<tr>
+<td>开源报告</td>
+<td><a target="_blank" rel="noopener" href="https://www.uptycs.com/blog/zaraza-bot-credential-password-stealer">https://www.uptycs.com/blog/zaraza-bot-credential-password-stealer</a></td>
+</tr>
+</tbody></table>
+<h1 id="二、详细分析"><a href="#二、详细分析" class="headerlink" title="二、详细分析"></a>二、详细分析</h1><p>样本(41d5fda21cf991734793df190ff078ba)运行时获取受害者计算机的用户名，然后在<code>%TEMP%</code>目录中使用该名称创建一个新的子文件夹。</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428104447758.png" alt="image-20230428104447758"></p>
+<p>通过telegramBot的api将计算机用户名上传。</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110324073.png" alt="image-20230428110324073"></p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110345719.png" alt="image-20230428110345719"></p>
+<p>然后尝试枚举计算机中存在的浏览器目录。从网络浏览器中提取登录凭据并将其保存在名为<code>%TEMP%\output.txt</code>的文件中。</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428104359866.png" alt="image-20230428104359866"></p>
+<table>
+<thead>
+<tr>
+<th>360 Browser</th>
+<th>Chromium | SRWare</th>
+<th>Iridium Browser</th>
+<th>Sleipnir 6</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7Star</td>
+<td>Iron Browser</td>
+<td>Kinza</td>
+<td>Slimjet</td>
+</tr>
+<tr>
+<td>Amigo</td>
+<td>Citrio</td>
+<td>Kometa</td>
+<td>Sputnik</td>
+</tr>
+<tr>
+<td>AVAST Software</td>
+<td>CocCoc</td>
+<td>Liebao Browser</td>
+<td>Torch Browser</td>
+</tr>
+<tr>
+<td>AVG Browser</td>
+<td>Comodo Dragon</td>
+<td><strong>Opera</strong></td>
+<td>uCozMedia</td>
+</tr>
+<tr>
+<td><strong>Brave Browser</strong></td>
+<td>CoolNovo</td>
+<td><strong>Opera GX</strong></td>
+<td>URBrowser</td>
+</tr>
+<tr>
+<td>CCleaner</td>
+<td>Coowon</td>
+<td><strong>Opera Neon</strong></td>
+<td>Vivaldi</td>
+</tr>
+<tr>
+<td>CentBrowser</td>
+<td><strong>Edge Chromium (Microsoft Edge)</strong></td>
+<td>Orbitum</td>
+<td><strong>Yandex</strong></td>
+</tr>
+<tr>
+<td>Chedot</td>
+<td>Elements Browser</td>
+<td>QIP Surf</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Chrome</strong></td>
+<td>Epic Privacy Browser</td>
+<td>SalamWeb</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>览器使用的 SQLite 数据库格式包含一个名为“Login Data”；它包括一个“logins”数据库表。该表存储各种网站的登录详细信息，并包含如下字段：</p>
+<table>
+<thead>
+<tr>
+<th>文件夹</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>origin_url</td>
+<td>网站的主要链接</td>
+</tr>
+<tr>
+<td>action_url</td>
+<td>站点的登录链接</td>
+</tr>
+<tr>
+<td>username_element</td>
+<td>网站上的用户名字段</td>
+</tr>
+<tr>
+<td>username_value</td>
+<td>用于登录的用户名</td>
+</tr>
+<tr>
+<td>password_element</td>
+<td>网站上的密码字段</td>
+</tr>
+<tr>
+<td>password_value</td>
+<td>用于登录的加密密码</td>
+</tr>
+<tr>
+<td>date_created</td>
+<td>数据存储的日期</td>
+</tr>
+<tr>
+<td>times_used</td>
+<td>密码被使用了多少次</td>
+</tr>
+<tr>
+<td>blacklisted_by_user</td>
+<td>如果永远不应存储密码，则标志设置为 1</td>
+</tr>
+</tbody></table>
+<p>但样本仅检索到三个关键数据库详细信息：<code>origin_url</code>、<code>username_value</code>和<code>password_value</code>。鉴于密码字段以加密格式存储，攻击者必须检查两个特定的内容才能检索密码。</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428105452368.png" alt="image-20230428105452368"></p>
+<p>较新的浏览器版本使用 v80 密码签名。从 v10 或 v11 开始，它使用基于主密钥的加密来安全地存储用户的 Web 登录密码。使用WinApi(“CryptProtectData”)进一步保护加密密码。 为了识别加密密钥，在字符串的开头插入签名 DPAPI。然后使用 Base64 对加密密钥进行编码，并保存在位于用户数据文件夹中的本地状态文件中。</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428105616849.png" alt="image-20230428105616849"></p>
+<p>然后把窃取到的密码保存到<code>%TEMP%\output.txt</code>的文件中。</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428105701159.png" alt="image-20230428105701159"></p>
+<p>再调用telegramBot的api将<code>ouput.txt</code>文件上传，并以<code>Passwords.txt</code>保存到服务器上。</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110036360.png" alt="image-20230428110036360"></p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428105920551.png" alt="image-20230428105920551"></p>
+<p>最后将当前屏幕进行截取后保存到<code>%TEMP%\Screen.jpg</code>中。</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110112857.png" alt="image-20230428110112857"></p>
+<p>同样也上传到到服务器中，保存名为<code>Screen.jpg</code>.</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110055541.png" alt="image-20230428110055541"></p>
+<p>最后删除窃取到的文件。</p>
+<p><img src="/./ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230428110126486.png" alt="image-20230428110126486"></p>
+<h1 id="三、IOC"><a href="#三、IOC" class="headerlink" title="三、IOC"></a>三、IOC</h1><p>MD5：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">41d5fda21cf991734793df190ff078ba</span><br></pre></td></tr></table></figure>
+
+<p>URL:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hxxps://api.telegram.org/bot6007402729:AAEPb0k0ec_Eid2gxzweSWuNju-dWhHicS0/sendDocument?chat_id=5881556974</span><br><span class="line">hxxps://api.telegram.org/bot6007402729:AAEPb0k0ec_Eid2gxzweSWuNju-dWhHicS0/sendMessage?chat_id=5881556974</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/QBot-Outlook%E7%AA%83%E5%AF%86/" rel="prev" title="QBot-Outlook窃密">
+                  <i class="fa fa-chevron-left"></i> QBot-Outlook窃密
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/" rel="next" title="一个数据加密恶意样本分析">
+                  一个数据加密恶意样本分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

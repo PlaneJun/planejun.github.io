@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一、样本标签   标签名 描述    原始⽂件名 Andoryu.x86   MD5 00a8b3eed7356153ab93d2fd3366a60e   ⽂件⼤⼩ 41.22 KB (42208 bytes)   ⽂件格式 ELF 64-bit   加壳类型 无   编译语⾔ C&#x2F;C++   SHA1 c948b7115ddb0f44a196f11be08c025ca2379194">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Andoryu Botnet僵尸网络样本分析">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/Andoryu%20Botnet%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="一、样本标签   标签名 描述    原始⽂件名 Andoryu.x86   MD5 00a8b3eed7356153ab93d2fd3366a60e   ⽂件⼤⼩ 41.22 KB (42208 bytes)   ⽂件格式 ELF 64-bit   加壳类型 无   编译语⾔ C&#x2F;C++   SHA1 c948b7115ddb0f44a196f11be08c025ca2379194">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-21T12:32:43.165Z">
+<meta property="article:modified_time" content="2024-04-21T13:22:14.561Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/Andoryu%20Botnet%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/Andoryu%20Botnet%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/","path":"2024/04/21/Andoryu Botnet僵尸网络样本分析/","title":"Andoryu Botnet僵尸网络样本分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Andoryu Botnet僵尸网络样本分析 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%A0%B7%E6%9C%AC%E6%A0%87%E7%AD%BE"><span class="nav-number">1.</span> <span class="nav-text">一、样本标签</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">二、详细分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%A0%B7%E6%9C%AC%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">1、样本初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E6%8E%A5%E6%94%B6%E6%B6%88%E6%81%AF%E8%A7%A3%E6%9E%90"><span class="nav-number">2.2.</span> <span class="nav-text">2、接收消息解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81DDOS%E6%94%BB%E5%87%BB"><span class="nav-number">2.3.</span> <span class="nav-text">3、DDOS攻击</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/Andoryu%20Botnet%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Andoryu Botnet僵尸网络样本分析 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Andoryu Botnet僵尸网络样本分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:43 / 修改时间：21:22:14" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:43+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Virus/" itemprop="url" rel="index"><span itemprop="name">Virus</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="一、样本标签"><a href="#一、样本标签" class="headerlink" title="一、样本标签"></a>一、样本标签</h1><table>
+<thead>
+<tr>
+<th>标签名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原始⽂件名</td>
+<td>Andoryu.x86</td>
+</tr>
+<tr>
+<td>MD5</td>
+<td>00a8b3eed7356153ab93d2fd3366a60e</td>
+</tr>
+<tr>
+<td>⽂件⼤⼩</td>
+<td>41.22 KB (42208 bytes)</td>
+</tr>
+<tr>
+<td>⽂件格式</td>
+<td>ELF 64-bit</td>
+</tr>
+<tr>
+<td>加壳类型</td>
+<td>无</td>
+</tr>
+<tr>
+<td>编译语⾔</td>
+<td>C&#x2F;C++</td>
+</tr>
+<tr>
+<td>SHA1</td>
+<td>c948b7115ddb0f44a196f11be08c025ca2379194</td>
+</tr>
+<tr>
+<td>CRC32</td>
+<td>D0419ABA</td>
+</tr>
+<tr>
+<td>开源报告</td>
+<td><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/YVwNHW3sGW8dpTymkp5Ivg">https://mp.weixin.qq.com/s/YVwNHW3sGW8dpTymkp5Ivg</a></td>
+</tr>
+</tbody></table>
+<h1 id="二、详细分析"><a href="#二、详细分析" class="headerlink" title="二、详细分析"></a>二、详细分析</h1><h2 id="1、样本初始化"><a href="#1、样本初始化" class="headerlink" title="1、样本初始化"></a>1、样本初始化</h2><p>样本(00a8b3eed7356153ab93d2fd3366a60e)首先将自己的运行程序名伪装为<code>/bin/bash</code>,然后判断运行参数是否为2.</p>
+<p>![image-20230303174211936](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303174211936.png)</p>
+<p>然后初始化C2和通讯端口。</p>
+<p>![image-20230303174249169](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303174249169.png)</p>
+<p>运行初期将加密的字符串资源进行解密。</p>
+<p>![image-20230303174327423](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303174327423.png)</p>
+<p>该僵尸网络存在关键字符串为Andoryu Botnet，并且可以了解到编写者测试样本的时间为2022年12月30日。</p>
+<p>![QQ图片20230303174349](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;QQ图片20230303174349.png)</p>
+<p>接着创建无用户密码认证的socks5代理，代理服务器地址为之前解密出的152.67.66.37:1080。</p>
+<p>![image-20230303175334022](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303175334022.png)</p>
+<p>并告知代理服务器需要访问哪个远程服务器，远程服务器地址批量解密时获取。</p>
+<p>![image-20230303175549406](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303175549406.png)</p>
+<p>![image-20230303175616687](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303175616687.png)</p>
+<p>设置接收数据监听。</p>
+<p>![image-20230303180045707](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303180045707.png)</p>
+<p>所有操作继续完毕后发送带有<code>本机IP+sha256(运行参数)</code>的上线包。</p>
+<p>![image-20230303175913680](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303175913680.png)</p>
+<p>![image-20230303175918676](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303175918676.png)</p>
+<p>其中本地IP通过DNS绑定查询。</p>
+<p>![image-20230303175937920](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303175937920.png)</p>
+<h2 id="2、接收消息解析"><a href="#2、接收消息解析" class="headerlink" title="2、接收消息解析"></a>2、接收消息解析</h2><p>样本接收到消息后开始继续解析指令后执行对应分支。其中数据有如下格式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">recev_data</span>&#123;</span></span><br><span class="line">	<span class="type">char</span>  sign[<span class="number">7</span>];</span><br><span class="line">    <span class="type">char</span>  type;		</span><br><span class="line">    <span class="type">char</span>  cmd;</span><br><span class="line">    <span class="type">char</span>* data;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>经过详细分析可知cmd存在以下分支命令：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x20</td>
+<td>结束自身.</td>
+</tr>
+<tr>
+<td>0x11</td>
+<td>ddos攻击.</td>
+</tr>
+<tr>
+<td>0x15、0x16</td>
+<td>重新设置dest_c2,数据由接收原服务器发来指定.</td>
+</tr>
+<tr>
+<td>0x23</td>
+<td>仅当type&#x3D;&#x3D;0x20时,回传本地IP至远程服务器.</td>
+</tr>
+<tr>
+<td>0x22</td>
+<td>仅当type&#x3D;&#x3D;0x20时,关闭socket代理.</td>
+</tr>
+</tbody></table>
+<h2 id="3、DDOS攻击"><a href="#3、DDOS攻击" class="headerlink" title="3、DDOS攻击"></a>3、DDOS攻击</h2><p>样本支持多种DDoS方法，具体如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Name</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>icmp-echo</td>
+<td>ICMP Flood</td>
+</tr>
+<tr>
+<td>udp-ovh</td>
+<td>UDP Flood for OVH</td>
+</tr>
+<tr>
+<td>udp-game</td>
+<td>UDP Game Flood</td>
+</tr>
+<tr>
+<td>udp-plain</td>
+<td>UDP Plain Flood</td>
+</tr>
+<tr>
+<td>tcp-raw</td>
+<td>TCP Flood</td>
+</tr>
+<tr>
+<td>tcp-socket</td>
+<td>TCP Syn Flood</td>
+</tr>
+<tr>
+<td>tcp-handshake</td>
+<td>TCP Flood</td>
+</tr>
+</tbody></table>
+<p>![image-20230303181055153](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230303181055153.png)</p>
+<p>样本根据攻击者服务器回传的数据进行选择DDOS类型，其中数据中指定了该DDOS类型所需要的参数。</p>
+<p>![image-20230306101153341](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230306101153341.png)</p>
+<p>然后发送数据包进行ddos攻击。</p>
+<p>![image-20230306100930569](..&#x2F;images&#x2F;Virus&#x2F;Andoryu Botnet僵尸网络样本分析&#x2F;image-20230306100930569.png)</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/GoBruteforcer%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/" rel="prev" title="GoBruteforcer僵尸网络样本分析">
+                  <i class="fa fa-chevron-left"></i> GoBruteforcer僵尸网络样本分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/Mydoom%E9%82%AE%E4%BB%B6%E4%BC%A0%E6%92%AD%E8%A0%95%E8%99%AB%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/" rel="next" title="Mydoom邮件传播蠕虫样本分析">
+                  Mydoom邮件传播蠕虫样本分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

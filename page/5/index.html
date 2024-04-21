@@ -184,7 +184,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bgetit%7D/">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Blogmein%7D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -202,7 +202,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bgetit%7D/" class="post-title-link" itemprop="url">攻防世界-逆向题笔记{getit}</a>
+          <a href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Blogmein%7D/" class="post-title-link" itemprop="url">攻防世界-逆向题笔记{logmein}</a>
         </h2>
 
         <div class="post-meta-container">
@@ -214,7 +214,277 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：20:17:41" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：21:20:01" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>分析对象：simple-unpack</p>
+<p>工具：Kali-Linux、Ida、Python</p>
+<p>步骤：1）、运行查看效果</p>
+<p>2）、PE工具查壳</p>
+<p>3）、查看文件平台</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Blogmein%7D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Binsanity%7D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Binsanity%7D/" class="post-title-link" itemprop="url">攻防世界-逆向题笔记{insanity}</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：21:19:59" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>分析对象：insanity</p>
+<p>工具：Kali-Linux、Ida</p>
+<p>步骤：1）、运行查看效果</p>
+<p>2）、PE工具查壳</p>
+<p>3）、查看文件平台</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Binsanity%7D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHelloCTF%7D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHelloCTF%7D/" class="post-title-link" itemprop="url">攻防世界-逆向题笔记{HelloCTF}</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：21:19:58" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>分析对象：Hello,CTF</p>
+<p>工具：ida、exeinfope</p>
+<p>步骤：1）、运行查看效果</p>
+<p>2）、PE工具查壳</p>
+<p>3）、查看文件平台</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7BHelloCTF%7D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bgetit%7D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bgetit%7D/" class="post-title-link" itemprop="url">攻防世界-逆向题笔记{getit}</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：21:19:56" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -243,7 +513,7 @@
 <p>3）、查看文件平台</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2024/04/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bgetit%7D/#more" rel="contents">
+              <a class="btn" href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bgetit%7D/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -274,7 +544,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bcsaw2013reversing2%7D/">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bcsaw2013reversing2%7D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -292,7 +562,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bcsaw2013reversing2%7D/" class="post-title-link" itemprop="url">攻防世界-逆向题笔记{csaw2013reversing2}</a>
+          <a href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bcsaw2013reversing2%7D/" class="post-title-link" itemprop="url">攻防世界-逆向题笔记{csaw2013reversing2}</a>
         </h2>
 
         <div class="post-meta-container">
@@ -304,7 +574,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：20:17:35" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：21:19:53" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -333,7 +603,7 @@
 <p>3）、查看文件平台</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2024/04/21/CTF/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bcsaw2013reversing2%7D/#more" rel="contents">
+              <a class="btn" href="/2024/04/21/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-%E9%80%86%E5%90%91%E9%A2%98%E7%AC%94%E8%AE%B0%7Bcsaw2013reversing2%7D/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -364,7 +634,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E5%8F%8D%E8%B0%83%E8%AF%95/">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E5%8F%8D%E8%B0%83%E8%AF%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -382,7 +652,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/21/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E5%8F%8D%E8%B0%83%E8%AF%95/" class="post-title-link" itemprop="url">从零开始学习反调试</a>
+          <a href="/2024/04/21/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E5%8F%8D%E8%B0%83%E8%AF%95/" class="post-title-link" itemprop="url">从零开始学习反调试</a>
         </h2>
 
         <div class="post-meta-container">
@@ -394,7 +664,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：20:16:10" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：21:19:24" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -422,7 +692,7 @@
 <h2 id="NtGlobalFlag"><a href="#NtGlobalFlag" class="headerlink" title="NtGlobalFlag"></a>NtGlobalFlag</h2>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2024/04/21/Anti/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E5%8F%8D%E8%B0%83%E8%AF%95/#more" rel="contents">
+              <a class="btn" href="/2024/04/21/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E5%8F%8D%E8%B0%83%E8%AF%95/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -453,7 +723,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/Anti/VMProtect%E5%88%86%E6%9E%90-IAT%E4%BF%AE%E5%A4%8D/">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/VMProtect%E5%88%86%E6%9E%90-IAT%E4%BF%AE%E5%A4%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -471,7 +741,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/21/Anti/VMProtect%E5%88%86%E6%9E%90-IAT%E4%BF%AE%E5%A4%8D/" class="post-title-link" itemprop="url">VMProtect分析-IAT修复</a>
+          <a href="/2024/04/21/VMProtect%E5%88%86%E6%9E%90-IAT%E4%BF%AE%E5%A4%8D/" class="post-title-link" itemprop="url">VMProtect分析-IAT修复</a>
         </h2>
 
         <div class="post-meta-container">
@@ -483,7 +753,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：20:17:12" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：21:23:09" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -512,7 +782,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">00D118FD | 52           	| push edx                           	|</span><br><span class="line">00D118FE | E8 66A33000  	| call vmpfuck.vmp.101BC69           	|</span><br><span class="line">00D11903 | 3145 FC          | xor dword ptr ss:[ebp-4],eax          |</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2024/04/21/Anti/VMProtect%E5%88%86%E6%9E%90-IAT%E4%BF%AE%E5%A4%8D/#more" rel="contents">
+              <a class="btn" href="/2024/04/21/VMProtect%E5%88%86%E6%9E%90-IAT%E4%BF%AE%E5%A4%8D/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -543,7 +813,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/14/Anti/VMProtect%E5%88%86%E6%9E%90-%E5%8A%A0%E8%BD%BD%E5%99%A8/">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/14/VMProtect%E5%88%86%E6%9E%90-%E5%8A%A0%E8%BD%BD%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -561,7 +831,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/14/Anti/VMProtect%E5%88%86%E6%9E%90-%E5%8A%A0%E8%BD%BD%E5%99%A8/" class="post-title-link" itemprop="url">VMProtect分析-加载器</a>
+          <a href="/2023/06/14/VMProtect%E5%88%86%E6%9E%90-%E5%8A%A0%E8%BD%BD%E5%99%A8/" class="post-title-link" itemprop="url">VMProtect分析-加载器</a>
         </h2>
 
         <div class="post-meta-container">
@@ -579,7 +849,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-21 20:16:34" itemprop="dateModified" datetime="2024-04-21T20:16:34+08:00">2024-04-21</time>
+      <time title="修改时间：2024-04-21 21:23:01" itemprop="dateModified" datetime="2024-04-21T21:23:01+08:00">2024-04-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -621,7 +891,7 @@
 <h1 id="1、反调试"><a href="#1、反调试" class="headerlink" title="1、反调试"></a>1、反调试</h1><h2 id="1-1-用户模式"><a href="#1-1-用户模式" class="headerlink" title="1.1 用户模式"></a>1.1 用户模式</h2><p><code>line:17492</code>通过检测PEB-&gt;BeingDebugged,常规手段了，没什么好说。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/06/14/Anti/VMProtect%E5%88%86%E6%9E%90-%E5%8A%A0%E8%BD%BD%E5%99%A8/#more" rel="contents">
+              <a class="btn" href="/2023/06/14/VMProtect%E5%88%86%E6%9E%90-%E5%8A%A0%E8%BD%BD%E5%99%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -652,7 +922,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/13/Window-Kernel/x86%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/13/x86%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -670,7 +940,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/13/Window-Kernel/x86%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/" class="post-title-link" itemprop="url">x86进程线程</a>
+          <a href="/2023/06/13/x86%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/" class="post-title-link" itemprop="url">x86进程线程</a>
         </h2>
 
         <div class="post-meta-container">
@@ -688,7 +958,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-21 20:21:41" itemprop="dateModified" datetime="2024-04-21T20:21:41+08:00">2024-04-21</time>
+      <time title="修改时间：2024-04-21 21:24:02" itemprop="dateModified" datetime="2024-04-21T21:24:02+08:00">2024-04-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -725,10 +995,10 @@
 <li><p>RundownProtect：进程锁。该字段置值后，进程无法被访问、打开、结束，相当于保护。但是会容易卡死。</p>
 </li>
 </ul>
-<p><img src="/./x86%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/image-20230613124753624.png" alt="image-20230613124753624"></p>
+<p><img src="/../images/Window-Kernel/x86%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/image-20230613124753624.png" alt="image-20230613124753624"></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/06/13/Window-Kernel/x86%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/#more" rel="contents">
+              <a class="btn" href="/2023/06/13/x86%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -759,7 +1029,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/13/Usual/Linux%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/06/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -777,327 +1047,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/13/Usual/Linux%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">Linux环境搭建常用命令</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-06-13 00:56:19" itemprop="dateCreated datePublished" datetime="2023-06-13T00:56:19+08:00">2023-06-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-26 15:49:55" itemprop="dateModified" datetime="2023-05-26T15:49:55+08:00">2023-05-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Usual/" itemprop="url" rel="index"><span itemprop="name">Usual</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="一、Nginx安装"><a href="#一、Nginx安装" class="headerlink" title="一、Nginx安装"></a>一、Nginx安装</h1><ol>
-<li><p>下载nginx</p>
-<ol>
-<li>官网：<a target="_blank" rel="noopener" href="http://nginx.org/">http://nginx.org/</a></li>
-<li>创建文件夹 <code>mkdir nginx &amp;&amp; cd nginx</code></li>
-<li>复制压缩包地址</li>
-<li><code>wget http://nginx.org/download/nginx-1.17.6.tar.gz</code>下载文件</li>
-<li>wget不存在 yum安装wget <code>yum -y install wget</code></li>
-</ol>
-</li>
-<li><p>安装必要插件</p>
-<ol>
-<li><code>yum -y install automake autoconf libtool make</code></li>
-<li><code>yum -y install gcc pcre pcre-devel zlib zlib-devel openssl openssl-devel</code></li>
-</ol>
-</li>
-<li><p>压缩下载好的文件</p>
-<ol>
-<li><code>tar -zxvf nginx-1.17.6.tar.gz</code></li>
-<li><code>cd nginx-1.17.6</code></li>
-<li>指定安装路径 <code>./configure --prefix=/software/nginx --with-http_stub_status_module --with-http_ssl_module</code></li>
-<li><code>make</code>编译</li>
-<li><code>make install</code>安装</li>
-<li>进入到安装nginx目录下面的sbin <code>cd /software/nginx/sbin</code></li>
-<li>启动命令 <code>./nginx</code></li>
-</ol>
-</li>
-</ol>
-<blockquote>
-<p>常用命令</p>
-</blockquote>
-<ol>
-<li>从容停止服务器 <code>nginx -s quit</code> </li>
-<li>立即停止服务器 <code>nginx -s stop</code></li>
-<li>查询nginx主进程号 <code>ps -ef | grep nginx</code><ol>
-<li>从容停止 <code>kill -QUIT 主进程号</code></li>
-<li>快速停止 <code>kill -TERM 主进程号</code></li>
-<li>强制停止 <code>kill -9 nginx</code></li>
-</ol>
-</li>
-<li>启动 <code>./nginx</code></li>
-<li>重启 <code>./nginx -s reload</code></li>
-<li>停止 <code>./nginx -s stop</code></li>
-</ol>
-<h1 id="二、Nginx"><a href="#二、Nginx" class="headerlink" title="二、Nginx"></a>二、Nginx</h1>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/13/Usual/Linux%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/13/Usual/MYSQL%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="PlaneJun">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PlaneJun'Blog">
-      <meta itemprop="description" content="This is PlaneJun‘s Blog">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | PlaneJun'Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/13/Usual/MYSQL%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5/" class="post-title-link" itemprop="url">MYSQL远程连接</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-06-13 00:56:19" itemprop="dateCreated datePublished" datetime="2023-06-13T00:56:19+08:00">2023-06-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-26 15:50:01" itemprop="dateModified" datetime="2023-05-26T15:50:01+08:00">2023-05-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Usual/" itemprop="url" rel="index"><span itemprop="name">Usual</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="一、连接远程数据库："><a href="#一、连接远程数据库：" class="headerlink" title="一、连接远程数据库："></a>一、连接远程<a target="_blank" rel="noopener" href="https://cloud.tencent.com/solution/database?from=10680">数据库</a>：</h1><h1 id="1、显示密码"><a href="#1、显示密码" class="headerlink" title="1、显示密码"></a>1、显示密码</h1><p>如：<a target="_blank" rel="noopener" href="http://lib.csdn.net/base/14">MySQL</a> 连接远程<a target="_blank" rel="noopener" href="http://lib.csdn.net/base/14">数据库</a>（192.168.5.116），端口“3306”，用户名为“root”，密码“123456”</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:/&gt;mysql -h 192.168.5.116 -P 3306 -u root -p123456</span><br></pre></td></tr></table></figure>
-
-<h1 id="2、隐藏密码"><a href="#2、隐藏密码" class="headerlink" title="2、隐藏密码"></a>2、隐藏密码</h1>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/13/Usual/MYSQL%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/13/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="PlaneJun">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PlaneJun'Blog">
-      <meta itemprop="description" content="This is PlaneJun‘s Blog">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | PlaneJun'Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/13/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">关于LOL动态皮肤修改的逆向与实现</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-06-13 00:56:19 / 修改时间：01:07:01" itemprop="dateCreated datePublished" datetime="2023-06-13T00:56:19+08:00">2023-06-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/GameHacker/" itemprop="url" rel="index"><span itemprop="name">GameHacker</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="关于LOL动态皮肤修改的逆向与实现"><a href="#关于LOL动态皮肤修改的逆向与实现" class="headerlink" title="关于LOL动态皮肤修改的逆向与实现"></a>关于LOL动态皮肤修改的逆向与实现</h1><p>• <a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2018-12-3 09:18</p>
-<p>第一次在看雪这种地方发这种帖子，心里很动荡不安。因为我本身很菜，所以有哪里不足的请大佬多多包涵并指出。</p>
-<p>最近莫名其妙又染上LOL这个游戏了，然后突然想到之前网上的动态换肤辅助，所以就打算下载一个然后搞搞事，最后虽然是弄出来了，但是因为技术比较差。在实现方面会因为和游戏主线程冲突，导致游戏崩掉（原因看文章结尾）。下面我开始上分析。<strong>Ps：本人技术以及表达能力都很差，请大家见谅。(因为在写这篇文章的时候，我是一边分析一边写这篇文章所以游戏可能是已经结束的状态。但是如果有需要调试游戏的话，我会重新打开游戏进行调试，所以会发现有一些图片和数据是不一样的，重要的是分析)</strong></p>
-<p>在开始分析的时候，因为我以前搞过这游戏，所以我知道这个实现动态换皮肤是需要一个皮肤ID的。所以我就直接打开下载好的辅助，来进行找这个ID。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/13/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/06/Window-Kernel/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="PlaneJun">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="PlaneJun'Blog">
-      <meta itemprop="description" content="This is PlaneJun‘s Blog">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | PlaneJun'Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/06/Window-Kernel/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" class="post-title-link" itemprop="url">x86系统调用</a>
+          <a href="/2023/06/06/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" class="post-title-link" itemprop="url">x86系统调用</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1115,7 +1065,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-04-21 20:21:45" itemprop="dateModified" datetime="2024-04-21T20:21:45+08:00">2024-04-21</time>
+      <time title="修改时间：2024-04-21 21:24:48" itemprop="dateModified" datetime="2024-04-21T21:24:48+08:00">2024-04-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1138,12 +1088,12 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="1、R3进入R0"><a href="#1、R3进入R0" class="headerlink" title="1、R3进入R0"></a>1、R3进入R0</h1><p><code>WindowsXp</code>前R3进入R0都是依靠中断门<code>(0x2E)</code>进行提权，这种提权方式较为复杂，需要压入SS、CS、EIP、ESP等等一系列复杂操作。因此Xp后引入快速调用<code>(FastCall)</code>。</p>
-<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174405820.png" alt="image-20230606174405820"></p>
-<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174544302.png" alt="image-20230606174544302"></p>
+<p><img src="/../images/Window-Kernel/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174405820.png" alt="image-20230606174405820"></p>
+<p><img src="/../images/Window-Kernel/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174544302.png" alt="image-20230606174544302"></p>
 <p>x86使用的是sysenter&#x2F;sysreturn,x64是syscall&#x2F;sysexit。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/06/06/Window-Kernel/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/#more" rel="contents">
+              <a class="btn" href="/2023/06/06/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

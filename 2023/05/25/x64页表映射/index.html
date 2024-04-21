@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="x64页表映射微软设计了一种页表自映射的方式，提高了cpu工作的效率。正常情况下一个线性地址需要进行4次拆分.  而在表映射的作用下，可实现3次拆分即可。 原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x64页表映射">
+<meta property="og:url" content="https://blog.planejun.cn/2023/05/25/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="x64页表映射微软设计了一种页表自映射的方式，提高了cpu工作的效率。正常情况下一个线性地址需要进行4次拆分.  而在表映射的作用下，可实现3次拆分即可。 原理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525191034126.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525190600016.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525191009000.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525185152023.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525191636201.png">
+<meta property="article:published_time" content="2023-05-25T03:25:00.000Z">
+<meta property="article:modified_time" content="2024-04-21T13:23:44.495Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525191034126.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2023/05/25/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2023/05/25/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/","path":"2023/05/25/x64页表映射/","title":"x64页表映射"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>x64页表映射 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84"><span class="nav-number">1.</span> <span class="nav-text">x64页表映射</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E5%AF%BCPML4%E5%9F%BA%E5%9C%B0%E5%9D%80"><span class="nav-number">1.2.</span> <span class="nav-text">推导PML4基地址</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/05/25/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="x64页表映射 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          x64页表映射
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-25 11:25:00" itemprop="dateCreated datePublished" datetime="2023-05-25T11:25:00+08:00">2023-05-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-21 21:23:44" itemprop="dateModified" datetime="2024-04-21T21:23:44+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Windows-Kernel/" itemprop="url" rel="index"><span itemprop="name">Windows-Kernel</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="x64页表映射"><a href="#x64页表映射" class="headerlink" title="x64页表映射"></a>x64页表映射</h1><p>微软设计了一种页表自映射的方式，提高了cpu工作的效率。正常情况下一个线性地址需要进行4次拆分.</p>
+<p><img src="/../images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525191034126.png" alt="image-20230525191034126"></p>
+<p>而在表映射的作用下，可实现3次拆分即可。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>微软在PML4表中的某一项保存着表地址(实际上也是CR3)，假设这个地址在PML4+0x100的位置，那么根据下图所示：</p>
+<p><img src="/../images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525190600016.png" alt="image-20230525190600016"></p>
+<p>有这么一个关系：<code>![cr3+i*8]=cr3</code>。由于<code>一个PML4E可以管理的内存大小为512G</code>，因此0x100位置的PML4E可以管理的内存范围如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0xFFFF8000`00000000 ~ 0xFFFF807F`FFFFF000</span><br></pre></td></tr></table></figure>
+
+<p>按照 9-9-9-9-12 分页方式去拆分上述边界物理地址:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// 起始地址</span><br><span class="line">0x8000`00000000       </span><br><span class="line">1 0000 0000                0x100</span><br><span class="line">0 0000 0000                0x0</span><br><span class="line">0 0000 0000                0x0</span><br><span class="line">0 0000 0000                0x0</span><br><span class="line">0000 0000 0000             0x0</span><br><span class="line"> </span><br><span class="line">// 结束地址</span><br><span class="line">0x807F`FFFFF000</span><br><span class="line">1 0000 0000                0x100</span><br><span class="line">1 1111 1111                0x1FF</span><br><span class="line">1 1111 1111                0x1FF</span><br><span class="line">1 1111 1111                0x1FF</span><br><span class="line">0000 0000 0000             0x0</span><br></pre></td></tr></table></figure>
+
+<p>常规查询流程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 起始地址</span><br><span class="line">![Cr3 + 0x100 * 8] = PDPTE</span><br><span class="line">![PDPTE + 0x0 * 8] = PDE</span><br><span class="line">![PDE + 0x0 * 8] = PTE</span><br><span class="line">![PTE + 0x0 * 8] = 物理页面</span><br><span class="line"> </span><br><span class="line">// 结束地址</span><br><span class="line">![Cr3 + 0x100 * 8] = PDPTE</span><br><span class="line">![PDPTE + 0x1FF * 8] = PDE</span><br><span class="line">![PDE + 0x1FF * 8] = PTE</span><br><span class="line">![PTE + 0x0 * 8] = 物理页面</span><br></pre></td></tr></table></figure>
+
+<p>根据上述等式，![Cr3 + 0x100 * 8] &#x3D; Cr3，所以查询流程变为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 起始地址</span><br><span class="line">![Cr3 + 0x0 * 8] = PDE</span><br><span class="line">![PDE + 0x0 * 8] = PTE</span><br><span class="line">![PTE + 0x0 * 8] = 物理页面</span><br><span class="line"> </span><br><span class="line">// 结束地址</span><br><span class="line">![Cr3 + 0x1FF * 8] = PDE</span><br><span class="line">![PDE + 0x1FF * 8] = PTE</span><br><span class="line">![PTE + 0x0 * 8] = 物理页面</span><br></pre></td></tr></table></figure>
+
+<p>很神奇，<strong>查询页表操作由四次变成了三次</strong>，效率大大提升。而且只是使用了8字节的物理地址空间来保存 Cr3 。下图展示了优化后的查询过程：</p>
+<p><img src="/../images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525191009000.png" alt="image-20230525191009000"></p>
+<h2 id="推导PML4基地址"><a href="#推导PML4基地址" class="headerlink" title="推导PML4基地址"></a>推导PML4基地址</h2><p>PML4 页表基址有两个特点：</p>
+<ul>
+<li>属于虚拟地址</li>
+<li>虚拟地址的内容是Cr3</li>
+</ul>
+<p><code>cr3=[pml4_base]</code></p>
+<p>物理寻址如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//!为读物理地址</span><br><span class="line">cr3	=![x + pte]</span><br><span class="line">	=![x + ![y + pde]]</span><br><span class="line">	=![x + ![y + ![z + pdpte]]]</span><br><span class="line">	=![x + ![y + ![z + ![r + pml4]]]]</span><br><span class="line">	=![x + ![y + ![z + ![r + ![n + cr3]]]]]</span><br></pre></td></tr></table></figure>
+
+<p>其中cr3&#x3D;pml4_base</p>
+<ul>
+<li>x:page_offset,页内偏移</li>
+<li>y:pti</li>
+<li>z:pdi</li>
+<li>r:pdti</li>
+<li>n:自映射的索引。</li>
+</ul>
+<p>当x&#x3D;y&#x3D;z&#x3D;r&#x3D;0时,可得:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cr3 = ![![![n + cr3]]]</span><br></pre></td></tr></table></figure>
+<p>由此可知在cr3中的<code>某项保存的物理地址指向了自身</code>,因此可以将cr3映射到虚拟地址后，通过遍历来获取自身。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;ntifs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;intrin.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">VOID <span class="title function_">UnloadDrv</span><span class="params">(PDRIVER_OBJECT pDrv)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">NTSTATUS <span class="title function_">DriverEntry</span><span class="params">(PDRIVER_OBJECT pDrv, PUNICODE_STRING pReg)</span></span><br><span class="line">&#123;</span><br><span class="line">	NTSTATUS status = STATUS_SUCCESS;</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		pDrv-&gt;DriverUnload = UnloadDrv;</span><br><span class="line">		<span class="comment">//获取CR3的虚地址</span></span><br><span class="line">		PHYSICAL_ADDRESS pCr3 = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">		pCr3.QuadPart = __readcr3();</span><br><span class="line">		PULONG64 tmp = MmGetVirtualForPhysical(pCr3);</span><br><span class="line">		<span class="keyword">if</span> (tmp == <span class="literal">NULL</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, <span class="string">&quot;get cr3 virtual address failed!\r\n&quot;</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, <span class="string">&quot;cr3 virtual address = %p\r\n&quot;</span>, tmp);</span><br><span class="line"></span><br><span class="line">		<span class="comment">//遍历</span></span><br><span class="line">		ULONG_PTR pml4_base = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">512</span>; i++) <span class="comment">//512是因为pml4表项有512个,cr3=pml4表头</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (pCr3.QuadPart == (tmp[i] &amp; <span class="number">0xFFFFFFFFF000</span>)) <span class="comment">//去除属性</span></span><br><span class="line">			&#123;</span><br><span class="line">				pml4_base = tmp[i] &amp; <span class="number">0xFFFFFFFFF000</span>;</span><br><span class="line">				DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, <span class="string">&quot;&amp;tmp[i] = %p\rpml4_base = %p\r\n&quot;</span>,&amp;tmp[i], pml4_base);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125; <span class="keyword">while</span> (FALSE);</span><br><span class="line">	<span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525185152023.png" alt="image-20230525185152023"></p>
+<p>有了PML4基址，其他基址就可以推出了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ULONG64 <span class="title function_">GetPdptBase</span><span class="params">(ULONG64 ulPml4Base)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> (ulPml4Base &gt;&gt; <span class="number">21</span>) &lt;&lt; <span class="number">21</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">ULONG64 <span class="title function_">GetPdBase</span><span class="params">(ULONG64 ulPml4Base)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> (ulPml4Base &gt;&gt; <span class="number">30</span>) &lt;&lt; <span class="number">30</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">ULONG64 <span class="title function_">GetPtBase</span><span class="params">(ULONG64 ulPml4Base)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> (ulPml4Base &gt;&gt; <span class="number">39</span>) &lt;&lt; <span class="number">39</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/image-20230525191636201.png" alt="image-20230525191636201"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>[原创]四级分页下的页表自映射与基址随机化原理介绍<a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-274152.htm">https://bbs.kanxue.com/thread-274152.htm</a></p>
+<p>[关于WIndows内核自映射方案的通俗解释]]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SivilTaram/p/WindowsKernelMapping.html">https://www.cnblogs.com/SivilTaram/p/WindowsKernelMapping.html</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/05/VMProtect%E5%88%86%E6%9E%90-%E8%99%9A%E6%8B%9F%E5%8C%96%E6%B5%81%E7%A8%8B/" rel="prev" title="VMProtect分析-虚拟化流程">
+                  <i class="fa fa-chevron-left"></i> VMProtect分析-虚拟化流程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/06/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" rel="next" title="x86系统调用">
+                  x86系统调用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

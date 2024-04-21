@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="利用U3D引擎特性快递定位数组 PlaneJun ・2021-8-18 15:11  作为当代不争气的青年代表，在放弃挣扎前奋笔写下最后一篇文章，之后不问江湖事。  IL2CPP我就不介绍了，显得水文字。搞过U3D的男人都懂，IL2CPP模式打包的游戏，游戏下面会存在一个名为global-metadata.dat的文件，这个东西解包之后会得到一个dump.cs和Mono模式下的所有DLL。那么综合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用U3D引擎特性快递定位数组">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="利用U3D引擎特性快递定位数组 PlaneJun ・2021-8-18 15:11  作为当代不争气的青年代表，在放弃挣扎前奋笔写下最后一篇文章，之后不问江湖事。  IL2CPP我就不介绍了，显得水文字。搞过U3D的男人都懂，IL2CPP模式打包的游戏，游戏下面会存在一个名为global-metadata.dat的文件，这个东西解包之后会得到一个dump.cs和Mono模式下的所有DLL。那么综合">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId5.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId6.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId7.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId8.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId9.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId10.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId11.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId12.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId13.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId14.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId15.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId16.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId17.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId18.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId19.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId20.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId21.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId22.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId23.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId24.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId25.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId26.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId27.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId28.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId29.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId30.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId31.png">
+<meta property="article:published_time" content="2024-04-21T12:32:42.647Z">
+<meta property="article:modified_time" content="2024-04-21T13:21:07.388Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId5.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/","path":"2024/04/21/利用U3D引擎特性快递定位数组/","title":"利用U3D引擎特性快递定位数组"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>利用U3D引擎特性快递定位数组 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">利用U3D引擎特性快递定位数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E4%B8%80%E4%B8%8B"><span class="nav-number">1.0.1.</span> <span class="nav-text">补充一下</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="利用U3D引擎特性快递定位数组 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          利用U3D引擎特性快递定位数组
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：21:21:07" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GameHacker/" itemprop="url" rel="index"><span itemprop="name">GameHacker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="利用U3D引擎特性快递定位数组"><a href="#利用U3D引擎特性快递定位数组" class="headerlink" title="利用U3D引擎特性快递定位数组"></a>利用U3D引擎特性快递定位数组</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2021-8-18 15:11</li>
+</ul>
+<p>作为当代不争气的青年代表，在放弃挣扎前奋笔写下最后一篇文章，之后不问江湖事。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId5.png" alt="document_image_rId5"></p>
+<p>IL2CPP我就不介绍了，显得水文字。搞过U3D的男人都懂，IL2CPP模式打包的游戏，游戏下面会存在一个名为<strong>global-metadata.dat</strong>的文件，这个东西解包之后会得到一个dump.cs和Mono模式下的所有DLL。那么综合网上大部分的教程来说，他们只会用dump.cs来看偏移，虽然直接用dnspy打开dll看也是可以的，但是dump.cs更偏向于sdk文件，可以直接把它的内容当作头文件来用，更加方便。接下来我将给大家带来一套组合拳，教大家如何正确的使用这个玩意来快速找到一个游戏的数组。这里插个题外话，标题虽然这次讲解的是针对IL2CPP,但是相对来说，Mono也是可以的，只不过在偏移和一些结构上面略显差异。</p>
+<p>老早时期，精力旺盛，在一次乱翻内存之中发现了u3d的一个惊天大秘密，然后经过一系列的操作和研究后就总结出了一套自己独有的使用方式。是这样的，u3d里的对象，假设对象地址是0x1000000000,那么在这个对象的某一个地方是会存着这个对象的类名，并且寻址的偏移还是固定的，之前查了一会，这玩意好像叫做反射。那么，这个有什么用捏？我这里先模拟一下传统的找数组方法：<strong>首先CE搜索人物的某项数据，比如坐标，然后一层一层往上跟到本人地址，然后通过访问本人地址或者扫指针，最后找出数组。</strong>这些看起来都是非常常规的方法，但是如果放到u3d游戏上来说是非常恶心的。众所周知，u3d有用的偏移大部分都是10层起步，像这种偏移量，先不说你有没有那个耐心用CE跟出来，就算你扫指针，那也是吃不消的，况且你还要去做数据对比。所以说整个流程下来，即使你找到数组，那也是累得半死的。这个时候，类名就派上用场了。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId6.png" alt="document_image_rId6"></p>
+<p>我们知道凡是U3D打包的游戏，源代码基本都在<strong>Assembly-CSharp.dll</strong>这个DLL里，那么我们可不可以大胆猜测一下，<strong>游戏有一个主管理器类，里面存放着很多数据，其中就包括玩家数组，模型数组之类的，然后我们通过用DnSpy这个工具来找到这个类在游戏的实际名字，最后通过搜索类名的方法，反推到对象名</strong>。上面我提到过了，对象到类名的偏移是固定的，那么找到类的实例对象就相当于做小学加减法。存在既合理，下面开干。这里用的是<strong>枪火重生</strong>这个游戏，我们用il2cppDumper把GM文件解包之后用DnSpy打开DLL。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId7.png" alt="document_image_rId7"></p>
+<p>既然是找有玩家数组的类，我们第一步就是去找玩家类，玩家类可以通过玩家的属性去找，常见的是血量，对应的关键词大部分是<strong>HP,Health</strong>，这个游戏用的是HP。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId8.png" alt="document_image_rId8"></p>
+<p><strong>左边表示成员，右边表示所在的类</strong>。放眼看去，只有<strong>PlayerProp</strong>符合我们的要求，我们双击后，左边的列表将会定位到该类，我们点击展开按钮查看内部的内容。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId9.png" alt="document_image_rId9"></p>
+<p>发现里面都是一些属性，从类名也可以判断出这个是存放玩家属性的类而不是玩家类，并且应该是属于玩家类的一个成员，所以我们只需要查找那个类引用了<strong>PlayerProp</strong>这个类。对这个类右键点分析，在右下角点开被使用。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId10.png" alt="document_image_rId10"></p>
+<p>根据类名可以发现有两个可能是玩家类，经过两者内容对比，最终确认<strong>NewPlayerObject</strong>为玩家类。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId11.png" alt="document_image_rId11"></p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId12.png" alt="document_image_rId12"></p>
+<p>既然已经找到了玩家类，那么数找组就很容易了。同样的操作，对玩家类右键点分析，然后点击被使用，通过根据类名进行了一系列筛选后，判定<strong>NewPlayerManager</strong>为<strong>主管理类，而且为静态类。</strong></p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId13.png" alt="document_image_rId13"></p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId14.png" alt="document_image_rId14"></p>
+<p>并且在该类下面也发现了很多数组。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId15.png" alt="document_image_rId15"></p>
+<p>到这里，我们基本工作就已经完成了。到时候我们直接到游戏找到这个类然后通过DnSpy显示的偏移或Dump.cs显示的偏移拿到对应数组即可。</p>
+<p>上面我提到过，U3D的对象都会在自身下的某的地方存着该对象的类型，而且该偏移是固定的。那么这个偏移怎么找？我也不知道。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId16.png" alt="document_image_rId16"></p>
+<p>因为是当时偶然间在CE内存翻到的，然后去对比了其他游戏，发现偏移是固定的。目前只知道这个玩意叫做<strong>runtimeType.</strong></p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId17.png" alt="document_image_rId17"></p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId18.png" alt="document_image_rId18"></p>
+<p>由于万物继承object，所以直接在头部翻就能找到了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Il2cpp：</span><br><span class="line">        obj+<span class="number">0x10</span>]=className</span><br><span class="line">        obj+<span class="number">0x18</span>]=spaceName</span><br><span class="line">  Mono：</span><br><span class="line">        obj+<span class="number">0x0</span>]+<span class="number">0x48</span>]=className</span><br><span class="line">        obj+<span class="number">0x0</span>]+<span class="number">0x50</span>]=spaceName</span><br></pre></td></tr></table></figure>
+
+<p>这里说一个细节，在il2cpp中，className的内存属性是只读，Mono中是可读可写，然后就是className的后面紧接的字符串是该类的成员函数名和成员变量名，可以通过这个细节来筛选其他数据。</p>
+<p>进入游戏**(这里建议一定要进入游戏，因为进入游戏后才会有对象，有了对象才能方便我们查看数组对象)**，打开CE搜索我们找到的类NewPlayerManager。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId19.png" alt="document_image_rId19"></p>
+<p>这里只有一个结果，那么通过查看内存数据再对比DnSpy,发现该地址是正确的，然后开始做加减法。将该地址放到CE搜索<strong>（记得恢复查找的内存属性）。</strong></p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId20.png" alt="document_image_rId20"></p>
+<p>发现这里有两个，这个时候不要慌，都拿下来减0x10.</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId21.png" alt="document_image_rId21"></p>
+<p>第二个为0，u3d的对象头部不可能为0，这是经验之谈。这个时候0x 2E99B5E6060，实际上已经是NewPlayerManager的实例了，现在可以通过跟地址或者扫指针去找基地址，但是因为这个类是静态类所以这里直接搜索一下看看有没有基地址存着这个地址。有一个，那么这个就可以用了。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId22.png" alt="document_image_rId22"></p>
+<p>数据都找好了，现在就来看看数组吧，我们打开dump.cs，然后讲这个地址添加到ce的数据结构工具。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId23.png" alt="document_image_rId23"></p>
+<p>此时会存在一个问题，dump中显示0x10是一个字典，但是当先的0x10却是类名，那这就很尴尬。。这里在说一个点，也算是经验之谈。当前我们这个地址<strong>0x 2E99B5E6060，</strong>只能算是一个假体，真正实体在<strong>0xB8</strong>的位置，至于为什么，我也不懂，分析多了，见多了就默认了。我们进入<strong>0xB8</strong>的位置.</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId24.png" alt="document_image_rId24"></p>
+<p>发现现在数据相似度已经很高了。我们直接去看看怪物的数组<strong>（0x48）</strong></p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId25.png" alt="document_image_rId25"></p>
+<p><strong>进去后0x10是数组指针，0x18为数量，这是List固定的，然后进入0x10。</strong></p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId26.png" alt="document_image_rId26"></p>
+<p>同样数组是从0x20开始的，也是固定的。这些其实不是说我在瞎说，因为U3D的List他内存结构就是这样的。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId27.png" alt="document_image_rId27"></p>
+<p>当前敌人也只有一个，然后0x20的指针，类名也是NewPlayerObject。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId28.png" alt="document_image_rId28"></p>
+<p>然后剩下的，就是查看dump.cs去拿到对应偏移即可。</p>
+<h3 id="补充一下"><a href="#补充一下" class="headerlink" title="补充一下"></a>补充一下</h3><p>在NewPlayerManager类中由于该类直接是继承object，所以该类的0x10直接是类名。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId29.png" alt="document_image_rId29"></p>
+<p>但是像NewPlayerObject类基类并不是object，所以需要在0x0的地方读一层之后0x10的位置才是类名。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId30.png" alt="document_image_rId30"></p>
+<p>因为是文字叙述，无法将所有细节给描述出来。所以大部分东西直接一笔带过，至于为什么，多去实践就知道了。这次针对的是il2cpp，所以在其他也是il2cpp的游戏中可能操作起来的相似度较高，Mono上可能有一些差异，但并不碍事，我只是想说有那么个方法可以快速拿到数据而已，至于能不能做到看自己的造化。文章中难免出现先一些错误，各位就留点情面吧。</p>
+<p>这大概也是我最后一次写这种类型的技术文了。。留个纪念吧。</p>
+<p><img src="/../images/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/document_image_rId31.png" alt="document_image_rId31"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/" rel="prev" title="关于LOL动态皮肤修改的逆向与实现">
+                  <i class="fa fa-chevron-left"></i> 关于LOL动态皮肤修改的逆向与实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" rel="next" title="反截图技术的原理及简单实现">
+                  反截图技术的原理及简单实现 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

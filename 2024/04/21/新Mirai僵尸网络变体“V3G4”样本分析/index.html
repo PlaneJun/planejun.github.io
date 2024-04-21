@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一、样本标签   标签名 描述    原始⽂件名 deathtrump.x86   MD5 cb0f5b97853a825df1f6155355eb0592   ⽂件⼤⼩ 49.08 KB (50256 bytes)   ⽂件格式 ELF 86-bit   加壳类型 无   编译语⾔ C&#x2F;C++   SHA-1 7b57e42bbcde2080a3f340b2ff1853c0d45a85">
+<meta property="og:type" content="article">
+<meta property="og:title" content="新Mirai僵尸网络变体“V3G4”样本分析">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="一、样本标签   标签名 描述    原始⽂件名 deathtrump.x86   MD5 cb0f5b97853a825df1f6155355eb0592   ⽂件⼤⼩ 49.08 KB (50256 bytes)   ⽂件格式 ELF 86-bit   加壳类型 无   编译语⾔ C&#x2F;C++   SHA-1 7b57e42bbcde2080a3f340b2ff1853c0d45a85">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164205962.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164344206.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164410197.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164448056.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164607132.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164645981.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164700339.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164945617.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164911352.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/word-image-126924-3.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165239384.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165243957.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165341459.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165834157.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165953443.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310174731278.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310182024213.png">
+<meta property="article:published_time" content="2024-04-21T12:32:43.171Z">
+<meta property="article:modified_time" content="2024-04-21T13:21:50.979Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164205962.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/","path":"2024/04/21/新Mirai僵尸网络变体“V3G4”样本分析/","title":"新Mirai僵尸网络变体“V3G4”样本分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>新Mirai僵尸网络变体“V3G4”样本分析 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%A0%B7%E6%9C%AC%E6%A0%87%E7%AD%BE"><span class="nav-number">1.</span> <span class="nav-text">一、样本标签</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">二、详细分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%A0%B7%E6%9C%AC%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">1、样本初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81DDOS"><span class="nav-number">2.2.</span> <span class="nav-text">2、DDOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E4%BC%A0%E6%92%AD"><span class="nav-number">2.3.</span> <span class="nav-text">3、传播</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="新Mirai僵尸网络变体“V3G4”样本分析 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          新Mirai僵尸网络变体“V3G4”样本分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:43 / 修改时间：21:21:50" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:43+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Virus/" itemprop="url" rel="index"><span itemprop="name">Virus</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="一、样本标签"><a href="#一、样本标签" class="headerlink" title="一、样本标签"></a>一、样本标签</h1><table>
+<thead>
+<tr>
+<th>标签名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原始⽂件名</td>
+<td>deathtrump.x86</td>
+</tr>
+<tr>
+<td>MD5</td>
+<td>cb0f5b97853a825df1f6155355eb0592</td>
+</tr>
+<tr>
+<td>⽂件⼤⼩</td>
+<td>49.08 KB (50256 bytes)</td>
+</tr>
+<tr>
+<td>⽂件格式</td>
+<td>ELF 86-bit</td>
+</tr>
+<tr>
+<td>加壳类型</td>
+<td>无</td>
+</tr>
+<tr>
+<td>编译语⾔</td>
+<td>C&#x2F;C++</td>
+</tr>
+<tr>
+<td>SHA-1</td>
+<td>7b57e42bbcde2080a3f340b2ff1853c0d45a853a</td>
+</tr>
+<tr>
+<td>SHA-256</td>
+<td>6f654198e8efd5aff1c7a903353967d0e96aeff0402cb0a79fabbc10d18c63d2</td>
+</tr>
+<tr>
+<td>开源报告</td>
+<td><a target="_blank" rel="noopener" href="https://unit42.paloaltonetworks.com/mirai-variant-v3g4/">https://unit42.paloaltonetworks.com/mirai-variant-v3g4/</a></td>
+</tr>
+</tbody></table>
+<h1 id="二、详细分析"><a href="#二、详细分析" class="headerlink" title="二、详细分析"></a>二、详细分析</h1><h2 id="1、样本初始化"><a href="#1、样本初始化" class="headerlink" title="1、样本初始化"></a>1、样本初始化</h2><p>样本(cb0f5b97853a825df1f6155355eb0592)运行后首先调用<code>sigprocmask</code>使模块无法被正常结束。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164205962.png" alt="image-20230310164205962"></p>
+<p>然后通过连接DNS<code>8.8.8.8:13568</code>进行获取本地IP地址。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164344206.png" alt="image-20230310164344206"></p>
+<p>接着初始化加密字符串的数据。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164410197.png" alt="image-20230310164410197"></p>
+<p>所有字符串都使用四轮 XOR 解密进行解密。使用的解密密钥如下：</p>
+<ul>
+<li>第一轮：0xbc</li>
+<li>第二轮：0x69</li>
+<li>第三轮：0x3a</li>
+<li>第四轮：0xe6</li>
+</ul>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164448056.png" alt="image-20230310164448056"></p>
+<p>在本地进行搭建服务器,并在控制台输出字符串<code>We got this shit already.</code>。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164607132.png" alt="image-20230310164607132"></p>
+<p>通过生成随机字符串来进行模块名伪装。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164645981.png" alt="image-20230310164645981"></p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164700339.png" alt="image-20230310164700339"></p>
+<p>关闭看门狗，防止系统干扰运行。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164945617.png" alt="image-20230310164945617"></p>
+<p>在与C2建立连接之前，样本会先初始化所有的DDoS攻击函数。用来后续接收C2回传的消息后进行DDoS攻击方式选择。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310164911352.png" alt="image-20230310164911352"></p>
+<p>其中样本检查受感染主机上正在运行的进程名称。如果进程名称属于其他僵尸网络恶意软件家族和其他 Mirai 变体则结束被检查的进程。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/word-image-126924-3.png" alt="word-image-126924-3"></p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165239384.png" alt="image-20230310165239384"></p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165243957.png" alt="image-20230310165243957"></p>
+<p>初始化完毕后，开始与C2进行连接。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165341459.png" alt="image-20230310165341459"></p>
+<p>连接成功后，等待C2下发DDOS指令。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165834157.png" alt="image-20230310165834157"></p>
+<h2 id="2、DDOS"><a href="#2、DDOS" class="headerlink" title="2、DDOS"></a>2、DDOS</h2><p>样本通过C2下发的指令继续DDOS类型选择，根据具体分析可知部分类型如下：</p>
+<table>
+<thead>
+<tr>
+<th>cmd</th>
+<th>ddos_type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>tcp_plain</td>
+</tr>
+<tr>
+<td>1</td>
+<td>tcp_stomp</td>
+</tr>
+<tr>
+<td>2</td>
+<td>gre_ip</td>
+</tr>
+<tr>
+<td>3</td>
+<td>udp_stdhex</td>
+</tr>
+<tr>
+<td>4</td>
+<td>udp_ves</td>
+</tr>
+<tr>
+<td>5</td>
+<td>tcp_syn</td>
+</tr>
+<tr>
+<td>6</td>
+<td>tcp_ack</td>
+</tr>
+<tr>
+<td>7</td>
+<td>http</td>
+</tr>
+</tbody></table>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310165953443.png" alt="image-20230310165953443"></p>
+<h2 id="3、传播"><a href="#3、传播" class="headerlink" title="3、传播"></a>3、传播</h2><p>样本在2022年7月、2022年9月、2022年12月被进行三次传播，传播方式为漏洞利用，被利用的漏洞如下：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2012-4869">CVE-2012-4869</a>：FreePBX Elastix 远程命令执行漏洞</li>
+<li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/18393">Gitorious 远程命令执行漏洞</a></li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2014-9727">CVE-2014-9727</a>：FRITZ!Box 网络摄像头远程命令执行漏洞</li>
+<li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/15807">Mitel AWC 远程命令执行漏洞</a></li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2017-5173">CVE-2017-5173</a>：Geutebruck IP 摄像机远程命令执行漏洞</li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/cve-2019-15107">CVE-2019-15107</a>：Webmin 命令注入漏洞</li>
+<li><a target="_blank" rel="noopener" href="https://web.archive.org/web/20110726024546/http://www.spreecommerce.com/blog/2011/04/19/security-fixes/">Spree Commerce任意命令执行漏洞</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/42788">FLIR 热像仪远程命令执行漏洞</a></li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2020-8515">CVE-2020-8515：</a> DrayTek Vigor 远程命令执行漏洞</li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2020-15415">CVE-2020-15415</a>：DrayTek Vigor 远程命令注入漏洞</li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2022-36267">CVE-2022-36267</a>：Airspan AirSpot 远程命令执行漏洞</li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2022-26134">CVE-2022-26134</a>：Atlassian Confluence 远程代码执行漏洞</li>
+<li><a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2022-4257">CVE-2022-4257</a>：C-Data Web 管理系统命令注入漏洞</li>
+</ul>
+<p>最初7月份的传播中，样本(bbe9c4f1bad3f8f280e600e10f8f7ed1)自身在启动初期会初始化 telnet&#x2F;SSH 登录凭据表。然后，它通过暴力破解网络设备的弱用户名&#x2F;密码组合来传播自己。</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310174731278.png" alt="image-20230310174731278"></p>
+<p>所有的字符串使用 XOR 密钥0x37加密</p>
+<p><img src="/../images/Virus/%E6%96%B0Mirai%E5%83%B5%E5%B0%B8%E7%BD%91%E7%BB%9C%E5%8F%98%E4%BD%93%E2%80%9CV3G4%E2%80%9D%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/image-20230310182024213.png" alt="image-20230310182024213"></p>
+<p>解密后结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">admin,admin</span><br><span class="line">root,admin</span><br><span class="line">ubnt,ubnt</span><br><span class="line">root,icatch99</span><br><span class="line">root,xc3511</span><br><span class="line">service,ipdongle</span><br><span class="line">default,lJwpbo6</span><br><span class="line">default,S2fGqNFs</span><br><span class="line">default,OxhlwSG8</span><br><span class="line">default,default</span><br><span class="line">admin,password</span><br><span class="line">root,5up</span><br><span class="line">root,zsun1188</span><br><span class="line">root,hi3518</span><br><span class="line">root,zlxx.</span><br><span class="line">root,vizxv</span><br><span class="line">root,Zte521</span><br><span class="line">root,anko</span><br><span class="line">root,klv123</span><br><span class="line">root,ivdev</span><br><span class="line">root,jvbzd</span><br><span class="line">root,cat1029</span><br><span class="line">vstarcam2015,20150602</span><br><span class="line">support,support</span><br><span class="line">root,20080826</span><br><span class="line">root,svgodie</span><br><span class="line">user,user</span><br><span class="line">user,password</span><br><span class="line">guest,guest</span><br><span class="line">guest,12345</span><br><span class="line">guest,password</span><br><span class="line">root,root</span><br><span class="line">root,123456</span><br><span class="line">root,88888888</span><br><span class="line">root,password</span><br><span class="line">root,pass</span><br><span class="line">root,abc123</span><br><span class="line">admin,1234</span><br><span class="line">daemon,daemon</span><br><span class="line">adm,</span><br><span class="line">bin,</span><br><span class="line">daemon,</span><br><span class="line">root,</span><br><span class="line">admin,</span><br><span class="line">default,</span><br><span class="line">7,smc</span><br><span class="line">guest,</span><br><span class="line">guest,1111</span><br><span class="line">root,1111</span><br><span class="line">root,12345678777</span><br><span class="line">admin,1111</span><br><span class="line">admin,pass</span><br><span class="line">admin,root</span><br><span class="line">admin,cat1029</span><br><span class="line">admin,ho4uku6at</span><br><span class="line">admin,dvr2580222</span><br><span class="line">admin,meinsm</span><br><span class="line">root,blender</span><br><span class="line">root,LZE326business</span><br><span class="line">www2,9311</span><br><span class="line">www,9311</span><br><span class="line">admin,smc</span><br><span class="line">admin,conexant</span><br><span class="line">admin,2601hx</span><br><span class="line">admin,extendnet</span><br><span class="line">root,inflection</span><br><span class="line">root,t0talc0ntr0l4!</span><br><span class="line">admin,ironport</span><br><span class="line">root,1001chin</span><br><span class="line">admin,zhongxing</span><br><span class="line">root,zhongxing</span><br><span class="line">root,ROOT500</span><br><span class="line">admin,nCwMnJVGag</span><br></pre></td></tr></table></figure>
+
+<p>9 月和 12 月的活动样本不包含漏洞利用和凭证暴力破解功能。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/%E4%B8%80%E4%B8%AA%E6%98%93%E8%AF%AD%E8%A8%80SouGou%E8%A0%95%E8%99%AB%E6%A0%B7%E6%9C%AC/" rel="prev" title="一个易语言SouGou蠕虫样本">
+                  <i class="fa fa-chevron-left"></i> 一个易语言SouGou蠕虫样本
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B4%E9%93%81%E7%9A%84%E7%97%85%E6%AF%92%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B/" rel="next" title="记一次头铁的病毒样本分析过程">
+                  记一次头铁的病毒样本分析过程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

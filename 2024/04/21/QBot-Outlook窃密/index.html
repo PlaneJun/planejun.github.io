@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="QBot-Outlook窃密⼀、加载器分析1、样本标签   病毒名称 c8810d5eaaea95b36bbb529a2b9be5c5e6dda10f95992e7c35ac8bbf9f3a8f71    原始⽂件名 ⽆   MD5 93d6d599c37d1858cc86c0d8fe8fb8d4   ⽂件⼤⼩ 222.50 KB (227840 bytes)   ⽂件格式 Win32 DLL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QBot-Outlook窃密">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/QBot-Outlook%E7%AA%83%E5%AF%86/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="QBot-Outlook窃密⼀、加载器分析1、样本标签   病毒名称 c8810d5eaaea95b36bbb529a2b9be5c5e6dda10f95992e7c35ac8bbf9f3a8f71    原始⽂件名 ⽆   MD5 93d6d599c37d1858cc86c0d8fe8fb8d4   ⽂件⼤⼩ 222.50 KB (227840 bytes)   ⽂件格式 Win32 DLL">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image1.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image2.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image3.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image4.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image5.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image6.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image7.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image8.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image9.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image10.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image12.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image13.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image14.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image15.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image16.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image17.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image18.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image19.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image20.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image22.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image23.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image24.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image25.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image26.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image27.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image28.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image29.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image30.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image31.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image33.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image34.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image35.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image37.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image38.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image40.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image41.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image42.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image43.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image44.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image45.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image46.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image47.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image48.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image49.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image50.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image51.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image52.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image53.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image54.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image55.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image56.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image57.jpeg">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image58.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image59.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image60.jpeg">
+<meta property="article:published_time" content="2024-04-21T12:32:43.167Z">
+<meta property="article:modified_time" content="2024-04-21T13:22:49.658Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image1.jpeg">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/QBot-Outlook%E7%AA%83%E5%AF%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/QBot-Outlook%E7%AA%83%E5%AF%86/","path":"2024/04/21/QBot-Outlook窃密/","title":"QBot-Outlook窃密"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>QBot-Outlook窃密 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#QBot-Outlook%E7%AA%83%E5%AF%86"><span class="nav-number">1.</span> <span class="nav-text">QBot-Outlook窃密</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E2%BC%80%E3%80%81%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">⼀、加载器分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%A0%B7%E6%9C%AC%E6%A0%87%E7%AD%BE"><span class="nav-number">2.1.</span> <span class="nav-text">1、样本标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90"><span class="nav-number">2.2.</span> <span class="nav-text">2、详细分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E2%BC%86%E3%80%81%E9%82%AE%E7%AE%B1%E7%AA%83%E5%AF%86%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">⼆、邮箱窃密模块分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%A0%B7%E6%9C%AC%E6%A0%87%E7%AD%BE-1"><span class="nav-number">3.1.</span> <span class="nav-text">1、样本标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90-1"><span class="nav-number">3.2.</span> <span class="nav-text">2、详细分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1%E3%80%81%E7%AA%83%E5%AF%86%E9%82%AE%E7%AE%B1%E6%95%B0%E6%8D%AE"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.1、窃密邮箱数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2%E3%80%81%E6%95%B0%E6%8D%AE%E5%9B%9E%E4%BC%A0"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.2、数据回传</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%A0%B7%E6%9C%AC%E8%BF%90%E2%BE%8F%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">4.</span> <span class="nav-text">三、样本运⾏环境搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81IoC"><span class="nav-number">5.</span> <span class="nav-text">四、IoC</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/QBot-Outlook%E7%AA%83%E5%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="QBot-Outlook窃密 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          QBot-Outlook窃密
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:43 / 修改时间：21:22:49" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:43+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Virus/" itemprop="url" rel="index"><span itemprop="name">Virus</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="QBot-Outlook窃密"><a href="#QBot-Outlook窃密" class="headerlink" title="QBot-Outlook窃密"></a>QBot-Outlook窃密</h1><h1 id="⼀、加载器分析"><a href="#⼀、加载器分析" class="headerlink" title="⼀、加载器分析"></a>⼀、加载器分析</h1><h2 id="1、样本标签"><a href="#1、样本标签" class="headerlink" title="1、样本标签"></a><strong>1</strong>、样本标签</h2><table>
+<thead>
+<tr>
+<th>病毒名称</th>
+<th>c8810d5eaaea95b36bbb529a2b9be5c5e6dda10f95992e7c35ac8bbf9f3a8f71</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原始⽂件名</td>
+<td>⽆</td>
+</tr>
+<tr>
+<td>MD5</td>
+<td>93d6d599c37d1858cc86c0d8fe8fb8d4</td>
+</tr>
+<tr>
+<td>⽂件⼤⼩</td>
+<td>222.50 KB (227840 bytes)</td>
+</tr>
+<tr>
+<td>⽂件格式</td>
+<td>Win32 DLL</td>
+</tr>
+<tr>
+<td>时间戳</td>
+<td>2020-04-20 23:33:29</td>
+</tr>
+<tr>
+<td>加壳类型</td>
+<td>⽆</td>
+</tr>
+<tr>
+<td>编译语⾔</td>
+<td>C&#x2F;C++</td>
+</tr>
+<tr>
+<td>SHA1</td>
+<td>f85a63cb462b8fd60da35807c63cd13226907901</td>
+</tr>
+<tr>
+<td>CRC32</td>
+<td>F0A18B09</td>
+</tr>
+</tbody></table>
+<h2 id="2、详细分析"><a href="#2、详细分析" class="headerlink" title="2、详细分析"></a>2、详细分析</h2><p>样本(93D6D599C37D1858CC86C0D8FE8FB8D4)⾃⾝为DLL⽂件,同时也是⼀个加载器。样本⼀旦被加载⾸先获取远线程注⼊所需要的API函数地址。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image1.jpeg" alt="image1"></p>
+<p>其中样本中的所有字符串都是加密的，通过传⼊字符串对应的id解密出字符串。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image2.png" alt="image2.png"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image3.jpeg" alt="image3"></p>
+<p>获取函数之后会通过token设置sid的⽅式进⾏提权。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image4.png" alt="image4.png"></p>
+<p>根据当前运⾏的环境是否为64位来获取Windows⽬录。接着在⽂件夹<strong>ProgramW6432ProgramFiles(x86)<strong>、</strong>ProgramFiles</strong>中搜索<strong>outlook.exe</strong>⽂件。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image5.jpeg" alt="image5"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image6.jpeg" alt="image6"></p>
+<p>如果存在outlook.exe⽂件后会根据⾃⾝进程位数来选择32位还是64位模式注⼊。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image7.png" alt="image7.png"></p>
+<p>注⼊⾸先会创建⼀个<strong>ping.exe</strong>进程作为傀儡，并且运⾏参数为**-t 127.0.0.1**，保证傀儡程序能持续运⾏。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image8.png" alt="image8.png"></p>
+<p>然后加载名为RES_DATA_1(如果是64位注⼊则为RES_DATA_2)的资源⽂件。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image9.png" alt="image9.png"></p>
+<h1 id="⼆、邮箱窃密模块分析"><a href="#⼆、邮箱窃密模块分析" class="headerlink" title="⼆、邮箱窃密模块分析"></a>⼆、邮箱窃密模块分析</h1><p>由于32位和64位功能相同，这⾥只分析32位。</p>
+<h2 id="1、样本标签-1"><a href="#1、样本标签-1" class="headerlink" title="1、样本标签"></a><strong>1</strong>、样本标签</h2><table>
+<thead>
+<tr>
+<th>病毒名称</th>
+<th>RES_DATA_1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原始⽂件名</td>
+<td>emailcollector.dll</td>
+</tr>
+<tr>
+<td>MD5</td>
+<td>9B0A4E5E5227B766EDE92340D7064545</td>
+</tr>
+<tr>
+<td>⽂件⼤⼩</td>
+<td>84.00 KB (86016 bytes)</td>
+</tr>
+<tr>
+<td>⽂件格式</td>
+<td>Win32 DLL</td>
+</tr>
+<tr>
+<td>时间戳</td>
+<td>2020-04-20 23:33:01</td>
+</tr>
+<tr>
+<td>加壳类型</td>
+<td>⽆</td>
+</tr>
+<tr>
+<td>编译语⾔</td>
+<td>C&#x2F;C++</td>
+</tr>
+<tr>
+<td>SHA1</td>
+<td>369EE5FF9960BB9E73503E0B0A4B3A57A96EC549</td>
+</tr>
+<tr>
+<td>CRC32</td>
+<td>1654A136</td>
+</tr>
+</tbody></table>
+<h2 id="2、详细分析-1"><a href="#2、详细分析-1" class="headerlink" title="2、详细分析"></a>2、详细分析</h2><p>样本(9B0A4E5E5227B766EDE92340D7064545)为核⼼模块，负责窃取outlook的邮箱数据。当样本⾃⾝被成功加载时，与加载器相同。通过GetProAddress获取⼀些API函 数，其中字符串也是被加密状态，使⽤的算法也与加载器相同。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image10.jpeg" alt="image10"></p>
+<p>初始化完毕后会通过<strong>CreateThread</strong>函数创建⼀个线程，开始进⾏窃密。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image12.png" alt="image12.png"></p>
+<h3 id="2-1、窃密邮箱数据"><a href="#2-1、窃密邮箱数据" class="headerlink" title="2.1、窃密邮箱数据"></a>2.1、窃密邮箱数据</h3><p>样本⾸先会将当前⼯作⽬录设置为“C:\User\USERNAME\”（该字符串在初始化时获取）</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image13.jpeg" alt="image13"></p>
+<p>然后在当前⽬录下创建⼀个⽂件夹，格式为“<strong>EmailStorage_计算机名_当前时间戳</strong>”。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image14.jpeg" alt="image14"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image15.png" alt="image15.png"></p>
+<p>接着拼接⼀个名为collector_log.txt的⽂件名，⽤于输出执⾏的⽇志。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image16.jpeg" alt="image16"></p>
+<p>样本通过MAPIXXXXXXX函数访问outlook的数据，获取当前outlook所存在的邮箱账号。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image17.png" alt="image17.png"></p>
+<p>然后开始遍历每⼀个邮箱账号，获取详细信息。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image18.png" alt="image18.png"></p>
+<p>为每个邮箱账号创建名为<strong>”当前索引”</strong>的⽂件夹⽤来保存数据，接着创建线程sub_10002af8执⾏。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image19.jpeg" alt="image19"></p>
+<p>获取当前邮箱账号所存在的⽂件夹，⽂件夹的名字从数字0开始递增。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image20.png" alt="image20.png"></p>
+<p>然后获取⽂件夹中的所有邮件，每个邮件的命名从数字<strong>0</strong>开始递增。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image22.png" alt="image22.png"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image23.png" alt="image23.png"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image24.png" alt="image24.png"></p>
+<p>每获取完⼀个⽂件夹中的邮件时，会⽣成⼀个名为”folder.txt”的⽂件⽤来存储当前⽂件夹的名字。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image25.png" alt="image25.png"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image26.png" alt="image26.png"></p>
+<p>当邮箱中所有⽂件夹都获取完毕后，⽣成⼀个名为“email.txt”的⽂件⽤来存储当前邮箱账号。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image27.png" alt="image27.png"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image28.png" alt="image28.png"></p>
+<h3 id="2-2、数据回传"><a href="#2-2、数据回传" class="headerlink" title="2.2、数据回传"></a>2.2、数据回传</h3><p>如果能窃取到outlook邮箱数据，则进⾏数据回传。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image29.png" alt="image29.png"></p>
+<ul>
+<li>上传Log</li>
+</ul>
+<p>样本将log⽂件读取到内存后，以zip压缩、base64编码的⽅式对内容进⾏加密。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image30.png" alt="image30.png"></p>
+<p>然后⽣成⼀个json⽂件。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image31.png" alt="image31.png"></p>
+<p>然后⽤<strong>https+post</strong>的⽅式回传⾄攻击者的服务器<strong>hxxps:&#x2F;&#x2F;82.118.22.125&#x2F;bgate</strong></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image33.png" alt="image33.png"></p>
+<ul>
+<li>上传邮箱内容</li>
+</ul>
+<p>遍历获取窃取到的邮件⽂件。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image34.png" alt="image34.png"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image35.png" alt="image35.png"></p>
+<p>将遍历到的邮件⽂件读取到内存。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image37.jpeg" alt="image37"></p>
+<p>同样先将读取到的数据进⾏zip压缩，然后使⽤base64编码加密。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image38.png" alt="image38.png"></p>
+<p>然后将数据以json格式进⾏打包。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image40.png" alt="image40.png"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image41.jpeg" alt="image41"></p>
+<p>最后回传到攻击者服务器。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image42.png" alt="image42.png"></p>
+<h1 id="三、样本运⾏环境搭建"><a href="#三、样本运⾏环境搭建" class="headerlink" title="三、样本运⾏环境搭建"></a>三、样本运⾏环境搭建</h1><p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image43.png" alt="image43.png"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image44.png" alt="image44.png"></p>
+<blockquote>
+<p>添加测试的QQ邮箱，添加途中需要到QQ邮箱开通IMAP权限，获取应⽤密码。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image45.png" alt="image45.png"></p>
+</blockquote>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image46.jpeg" alt="image46"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image47.jpeg" alt="image47"></p>
+<p>然后设置Outlook为默认使⽤的邮件软件。Win+i打开设置→应⽤→默认设置。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image48.jpeg" alt="image48"></p>
+<p>使⽤编写代码⽤来加载样本(93d6d599c37d1858cc86c0d8fe8fb8d4)</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image49.png" alt="image49.png"></p>
+<p>打开fakenet和⽕绒剑后将编写好的程序拖⼊⽕绒剑进⾏监控。（因为样本使⽤的是HTTPS加密协议，需要过滤⽹络数据才能看到明⽂数据，所以使⽤fakenet）。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image50.jpeg" alt="image50"></p>
+<p>可以看到样本执⾏过程中在遍历⽬录寻找Outlook.exe。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image51.jpeg" alt="image51"></p>
+<p>且傀儡程序被加载。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image52.jpeg" alt="image52"></p>
+<p>可以看到⽂件已经被窃取到指定⽬录下</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image53.png" alt="image53.png"></p>
+<p>fakenet也能捕获到回传的数据。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image54.jpeg" alt="image54"></p>
+<p>由于样本发送后会将⽂件删除，所以重复上⾯的操作，利⽤⽕绒剑⾃定义防护，禁⽌⽂件删除。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image55.png" alt="image55.png"></p>
+<p>拿到窃取的⽂件</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image56.png" alt="image56.png"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image57.jpeg" alt="image57"></p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image58.png" alt="image58.png"></p>
+<p>Outlook的⽂件夹数为14，刚好对应上窃取到的⽂件夹编号。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image59.png" alt="image59.png"></p>
+<p>且每个⽂件夹下都保存着实际⽂件夹名。</p>
+<p><img src="/../images/Virus/QBot-Outlook%E7%AA%83%E5%AF%86/image60.jpeg" alt="image60"></p>
+<h1 id="四、IoC"><a href="#四、IoC" class="headerlink" title="四、IoC"></a>四、IoC</h1><p><strong>URL</strong>：</p>
+<p>hxxps:&#x2F;&#x2F;82.118.22.125&#x2F;bgate</p>
+<p><strong>MD5</strong>：</p>
+<p>93D6D599C37D1858CC86C0D8FE8FB8D4</p>
+<p>9B0A4E5E5227B766EDE92340D7064545</p>
+<p>18152190D3637C3A24BA40046324B79C</p>
+<p><strong>开源报告：</strong></p>
+<p>(An Old Bot’s Nasty New Tricks: Exploring Qbot’s Latest Attack Methods)<a target="_blank" rel="noopener" href="https://research.checkpoint.com/2020/exploring-qbots-latest-attack-methods/">https://research.checkpoint.com/2020/exploring-qbots-latest-attack-methods/</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/Mydoom%E9%82%AE%E4%BB%B6%E4%BC%A0%E6%92%AD%E8%A0%95%E8%99%AB%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/" rel="prev" title="Mydoom邮件传播蠕虫样本分析">
+                  <i class="fa fa-chevron-left"></i> Mydoom邮件传播蠕虫样本分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/" rel="next" title="ZarazaBot窃取浏览器密码样本分析">
+                  ZarazaBot窃取浏览器密码样本分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

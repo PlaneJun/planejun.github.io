@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="U3D逆向-Mono另类解密 PlaneJun ・2021-5-26 17:24 2021-06-04 14:11 登上看雪公众号头条 https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s&#x2F;nXZ2qfD4Qmt65aq0_0F6ag   很久不来看雪了，这段时间过得真的是一言难尽。许久的发呆后决定干点有意义的事，于是乎就顺手来写一篇技术文章，算是本年的打卡。 如题所示，U3D的Mono解密，这个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="U3D逆向-Mono另类解密">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="U3D逆向-Mono另类解密 PlaneJun ・2021-5-26 17:24 2021-06-04 14:11 登上看雪公众号头条 https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s&#x2F;nXZ2qfD4Qmt65aq0_0F6ag   很久不来看雪了，这段时间过得真的是一言难尽。许久的发呆后决定干点有意义的事，于是乎就顺手来写一篇技术文章，算是本年的打卡。 如题所示，U3D的Mono解密，这个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId6.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId7.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId8.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId9.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId10.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId11.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId13.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId14.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId15.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId16.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId17.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId18.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId19.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId20.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId21.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId22.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId23.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId24.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId25.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId26.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId27.png">
+<meta property="og:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId28.png">
+<meta property="article:published_time" content="2024-04-21T12:32:42.642Z">
+<meta property="article:modified_time" content="2024-04-21T13:22:53.557Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId6.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/","path":"2024/04/21/U3D逆向-Mono另类解密/","title":"U3D逆向-Mono另类解密"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>U3D逆向-Mono另类解密 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86"><span class="nav-number">1.</span> <span class="nav-text">U3D逆向-Mono另类解密</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="U3D逆向-Mono另类解密 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          U3D逆向-Mono另类解密
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：21:22:53" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GameHacker/" itemprop="url" rel="index"><span itemprop="name">GameHacker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="U3D逆向-Mono另类解密"><a href="#U3D逆向-Mono另类解密" class="headerlink" title="U3D逆向-Mono另类解密"></a>U3D逆向-Mono另类解密</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2021-5-26 17:24</li>
+<li>2021-06-04 14:11 登上看雪公众号头条</li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/nXZ2qfD4Qmt65aq0_0F6ag">https://mp.weixin.qq.com/s/nXZ2qfD4Qmt65aq0_0F6ag</a></li>
+</ul>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId6.png" alt="document_image_rId6"></p>
+<p>很久不来看雪了，这段时间过得真的是一言难尽。许久的发呆后决定干点有意义的事，于是乎就顺手来写一篇技术文章，算是本年的打卡。</p>
+<p>如题所示，U3D的Mono解密，这个玩意我昨晚在我的技术群里貌似看到说U3D是要弃用了Mono这个机制，也不知道是真是假，趁着还没弃用，我也就来说说这个机制的一个另类解密。</p>
+<p>关于Mono这东西我就不啰嗦了，我就直接进入正题。众所周知，Mono的加密主要是针对 <strong>Assembly-CSharp.dll</strong>，此DLL包含了游戏的所有功能性函数，并且可以通过工具dnSpy.exe加载后进行查看。</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId7.png" alt="document_image_rId7"></p>
+<p>此DLL公开等于说源码公开，可以通过C#工程引入该DLL自写一个GameObject注入到游戏里调用游戏自带函数实现作弊。</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId8.png" alt="document_image_rId8"></p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId9.png" alt="document_image_rId9"></p>
+<p>大多的加密手段就是对这DLL进行二进制处理，也就是把文件字节给进行处理。对于这种加密的处理方式很简单，Mono.dll是U3D用来初始化并加载dll的一个模块，他里面有一个函数<code>mono_image_open_from_data_with_name</code>，这里放一下他的函数代码。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MonoImage *</span></span><br><span class="line"><span class="function"><span class="title">mono_image_open_from_data_with_name</span> <span class="params">(<span class="type">char</span> *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, <span class="type">const</span> <span class="type">char</span> *name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">mono_image_open_from_data_internal</span> (data, data_len, need_copy, status, refonly, FALSE, name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MonoImage *</span></span><br><span class="line"><span class="function"><span class="title">mono_image_open_from_data_internal</span> <span class="params">(<span class="type">char</span> *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, gboolean metadata_only, </span></span></span><br><span class="line"><span class="params"><span class="function">                <span class="type">const</span> <span class="type">char</span> *name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    MonoCLIImageInfo *iinfo;</span><br><span class="line">    MonoImage *image;</span><br><span class="line">    <span class="type">char</span> *datac;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (!data || !data_len) &#123;</span><br><span class="line">        <span class="keyword">if</span> (status)</span><br><span class="line">            *status = MONO_IMAGE_IMAGE_INVALID;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    datac = data;</span><br><span class="line">    <span class="keyword">if</span> (need_copy) &#123;</span><br><span class="line">        datac = (<span class="type">char</span> *)<span class="built_in">g_try_malloc</span> (data_len);</span><br><span class="line">        <span class="keyword">if</span> (!datac) &#123;</span><br><span class="line">            <span class="keyword">if</span> (status)</span><br><span class="line">                *status = MONO_IMAGE_ERROR_ERRNO;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">memcpy</span> (datac, data, data_len);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    image = <span class="built_in">g_new0</span> (MonoImage, <span class="number">1</span>);</span><br><span class="line">    image-&gt;raw_data = datac;</span><br><span class="line">    image-&gt;raw_data_len = data_len;</span><br><span class="line">    image-&gt;raw_data_allocated = need_copy;</span><br><span class="line">    image-&gt;name = (name == <span class="literal">NULL</span>) ? <span class="built_in">g_strdup_printf</span> (<span class="string">&quot;data-%p&quot;</span>, datac) : <span class="built_in">g_strdup</span>(name);</span><br><span class="line">    iinfo = <span class="built_in">g_new0</span> (MonoCLIImageInfo, <span class="number">1</span>);</span><br><span class="line">    image-&gt;image_info = iinfo;</span><br><span class="line">    image-&gt;ref_only = refonly;</span><br><span class="line">    image-&gt;metadata_only = metadata_only;</span><br><span class="line">    image-&gt;ref_count = <span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line">    image = <span class="built_in">do_mono_image_load</span> (image, status, TRUE, TRUE);</span><br><span class="line">    <span class="keyword">if</span> (image == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">register_image</span> (image);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看不懂没关系，我们只需要关注他的<strong>data,data_len,name</strong>这三个参数，这三个分别表示当前被加载模块的二进制内容，二进制长度，模块名。大部分游戏厂商都会在这里判断模块名是否为Assembly-CSharp，然后进行二进制内容解密。那么只需要用调试工具在这个函数下段，然后在这里分析结束的位置，然后直接dump即可。这里放一下大概代码</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId10.png" alt="document_image_rId10"></p>
+<p>直接在解密完毕的位置下断，然后把rdi给dump出来就行，得到的就是解密后的dll。也可以自写脚本。</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId11.png" alt="document_image_rId11"></p>
+<p>上面介绍了Assembly-CSharp的一种加密和解密方式，虽说是加密，但是非常下饭，基本有手就行。今天就来说说另一种加密方式。小白鼠是国内某款游戏，现在应该应该不开放了，但是游戏依旧躺在我硬盘里。该游戏同样是加密Assembly-CSharp，但是有个不同点就是该文件只有1kb，这个就很可疑，因为这等于说这文件是空的，用十六进制打开文件也能看出里面无内容，那么游戏很可能是联网获取新的，或者是内存释放。那么除了去分析后解密，就没有办法拿到解密后的文件吗，答案是否定的。这个时候就需要上点硬技术了。</p>
+<p>回到Mono的源码，我们需要去分析一下他的一个流程。这里我就不去分析了，有一个帖子已经说得很详细。<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-264444.htm">[原创]关于Unity游戏Mono注入型外挂的一个检测思路-编程技术-看雪论坛-安全社区|安全招聘|bbs.pediy.com</a></p>
+<p>大家可以看看这个帖子，主要是去熟悉一下mono的一个流程。我也直接请出主角。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> MonoImage *</span></span><br><span class="line"><span class="function"><span class="title">register_image</span> <span class="params">(MonoImage *image)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    MonoImage *image2;</span><br><span class="line">    GHashTable *loaded_images = <span class="built_in">get_loaded_images_hash</span> (image-&gt;ref_only);           <span class="comment">//       重点关注对象</span></span><br><span class="line"> </span><br><span class="line">    <span class="built_in">mono_images_lock</span> ();</span><br><span class="line">    image2 = (MonoImage *)<span class="built_in">g_hash_table_lookup</span> (loaded_images, image-&gt;name);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (image2) &#123;</span><br><span class="line">        <span class="comment">/* Somebody else beat us to it */</span></span><br><span class="line">        <span class="built_in">mono_image_addref</span> (image2);</span><br><span class="line">        <span class="built_in">mono_images_unlock</span> ();</span><br><span class="line">        <span class="built_in">mono_image_close</span> (image);</span><br><span class="line">        <span class="keyword">return</span> image2;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    GHashTable *loaded_images_by_name = <span class="built_in">get_loaded_images_by_name_hash</span> (image-&gt;ref_only);</span><br><span class="line">    <span class="built_in">g_hash_table_insert</span> (loaded_images, image-&gt;name, image);                       <span class="comment">//       重点关注对象</span></span><br><span class="line">    <span class="keyword">if</span> (image-&gt;assembly_name &amp;&amp; (<span class="built_in">g_hash_table_lookup</span> (loaded_images_by_name, image-&gt;assembly_name) == <span class="literal">NULL</span>))</span><br><span class="line">        <span class="built_in">g_hash_table_insert</span> (loaded_images_by_name, (<span class="type">char</span> *) image-&gt;assembly_name, image);</span><br><span class="line">    <span class="built_in">mono_images_unlock</span> ();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> image;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里可以清楚的看到，U3D直接把需要的加载的模块插入了一个<strong>HashTable</strong>，然后完成模块的一个装载。这里我们先不管这个模块进行了如何加密和解密，既然你要扔给U3D托管，那么你不可能扔了一个加密模块的给U3D托管，除非你的U3D引擎进行了一个大规模的魔改。所以说，我们只需要找到这个HashTable，然后去遍历一下里面的模块，我们是不是就能拿到解密后的Assembly-CSharp，答案是肯定的。那么现在重点对象从 如何解密Assembly-CSharp变成了 如何使用<strong>loaded_images</strong>。</p>
+<p>我们应该如何去找到这个loaded_images？没办法，上分析。调试器打开游戏跳到<strong>mono_image_open_from_data_with_name</strong>这个函数然后对照源码进行分析。</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId13.png" alt="document_image_rId13"></p>
+<p>从源码得知，register_image是最后一个调用的函数，我们直接找到最后一个函数，进去后分析得知。</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId14.png" alt="document_image_rId14"></p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId15.png" alt="document_image_rId15"></p>
+<p>拿到loaded_images后，我们下一步就是要去遍历这个HashTabel,两个办法，一个是自己去搭建<strong>GHashTable</strong>库，然后自己去跑一遍。第二个办法，自己去分析g_hash_table_insert函数的流程。我选择后者 &#x3D;。&#x3D;</p>
+<p>Ida打开mono.dll后搜索<strong>g_hash_table_insert</strong>，有一个</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId16.png" alt="document_image_rId16"></p>
+<p>进去F5后无脑暴力分析。</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId17.png" alt="document_image_rId17"></p>
+<p>分析了一个大概流程后，打开CE，用数据结构工具分析验证看看</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId18.png" alt="document_image_rId18"></p>
+<p>很明显，这里应该就是模块列表，我们再随便进去一个去看看。<strong>通过刚刚IDA的分析，0x0是模块名，0x8是image。</strong></p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId19.png" alt="document_image_rId19"></p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId20.png" alt="document_image_rId20"></p>
+<p>和我们刚刚分析的一致，现在我们还差一个东西，那就是image的结构，我们在源码查找一下。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">_MonoImage</span> &#123;</span><br><span class="line">           ………</span><br><span class="line">           guint32 raw_data_len;</span><br><span class="line">           <span class="type">char</span> *raw_data;                   <span class="comment">//模块二进制</span></span><br><span class="line">           <span class="type">char</span> *name;              <span class="comment">//模块名</span></span><br><span class="line">           …………</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里就贴出重要的。问题来了，我们怎么知道他的偏移。别忘了，这里有</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MonoImage *</span></span><br><span class="line"><span class="function"><span class="title">mono_image_open_from_data_internal</span> <span class="params">(<span class="type">char</span> *data, guint32 data_len, gboolean need_copy, MonoImageOpenStatus *status, gboolean refonly, gboolean metadata_only, </span></span></span><br><span class="line"><span class="params"><span class="function">                <span class="type">const</span> <span class="type">char</span> *name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    MonoCLIImageInfo *iinfo;</span><br><span class="line">    MonoImage *image;</span><br><span class="line">    <span class="type">char</span> *datac;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (!data || !data_len) &#123;</span><br><span class="line">        <span class="keyword">if</span> (status)</span><br><span class="line">            *status = MONO_IMAGE_IMAGE_INVALID;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    datac = data;</span><br><span class="line">    <span class="keyword">if</span> (need_copy) &#123;</span><br><span class="line">        datac = (<span class="type">char</span> *)<span class="built_in">g_try_malloc</span> (data_len);</span><br><span class="line">        <span class="keyword">if</span> (!datac) &#123;</span><br><span class="line">            <span class="keyword">if</span> (status)</span><br><span class="line">                *status = MONO_IMAGE_ERROR_ERRNO;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">memcpy</span> (datac, data, data_len);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    image = <span class="built_in">g_new0</span> (MonoImage, <span class="number">1</span>);</span><br><span class="line">    image-&gt;raw_data = datac;                                                                       &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><br><span class="line">    image-&gt;raw_data_len = data_len;                                                                &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><br><span class="line">    image-&gt;raw_data_allocated = need_copy;</span><br><span class="line">    image-&gt;name = (name == <span class="literal">NULL</span>) ? <span class="built_in">g_strdup_printf</span> (<span class="string">&quot;data-%p&quot;</span>, datac) : <span class="built_in">g_strdup</span>(name);            &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><br><span class="line">    iinfo = <span class="built_in">g_new0</span> (MonoCLIImageInfo, <span class="number">1</span>);</span><br><span class="line">    image-&gt;image_info = iinfo;</span><br><span class="line">    image-&gt;ref_only = refonly;</span><br><span class="line">    image-&gt;metadata_only = metadata_only;</span><br><span class="line">    image-&gt;ref_count = <span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line">    image = <span class="built_in">do_mono_image_load</span> (image, status, TRUE, TRUE);</span><br><span class="line">    <span class="keyword">if</span> (image == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">register_image</span> (image);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们ida返回去分析</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">sub_18006CA20</span><span class="params">(__int64 data, <span class="type">unsigned</span> <span class="type">int</span> data_len, <span class="type">int</span> need_cpy, _DWORD *status, __int64 refonly, <span class="type">char</span> metadata_only, __int64 name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  __int64 len; <span class="comment">// r14</span></span><br><span class="line">  _DWORD *v8; <span class="comment">// rdi</span></span><br><span class="line">  <span class="type">char</span> v9; <span class="comment">// si</span></span><br><span class="line">  __int64 data_; <span class="comment">// rbx</span></span><br><span class="line">  __int64 data__; <span class="comment">// rbp</span></span><br><span class="line">  __int64 v12; <span class="comment">// rax</span></span><br><span class="line">  __int64 result; <span class="comment">// rax</span></span><br><span class="line">  __int64 v14; <span class="comment">// rbx</span></span><br><span class="line">  __int64 m_name; <span class="comment">// rax</span></span><br><span class="line">  <span class="type">signed</span> __int64 v16; <span class="comment">// rax</span></span><br><span class="line">  __int64 v18; <span class="comment">// rax</span></span><br><span class="line">  __int64 v19; <span class="comment">// rax</span></span><br><span class="line"> </span><br><span class="line">  len = data_len;</span><br><span class="line">  v8 = status;</span><br><span class="line">  v9 = need_cpy;</span><br><span class="line">  data_ = data;</span><br><span class="line">  <span class="keyword">if</span> ( data &amp;&amp; data_len )</span><br><span class="line">  &#123;</span><br><span class="line">    data__ = data;</span><br><span class="line">    <span class="keyword">if</span> ( need_cpy )</span><br><span class="line">    &#123;</span><br><span class="line">      v12 = <span class="built_in">sub_180004B80</span>(data_len);</span><br><span class="line">      data__ = v12;</span><br><span class="line">      <span class="keyword">if</span> ( !v12 )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">if</span> ( v8 )</span><br><span class="line">          *v8 = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>i64;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">sub_180314D40</span>(v12, data_, len);</span><br><span class="line">    &#125;</span><br><span class="line">    v14 = <span class="built_in">sub_180004AE0</span>(<span class="number">1856</span>i64);</span><br><span class="line">    *(_BYTE *)(v14 + <span class="number">0x1C</span>) &amp;= <span class="number">0xFD</span>u;</span><br><span class="line">    *(_BYTE *)(v14 + <span class="number">0x1C</span>) |= <span class="number">2</span> * (v9 &amp; <span class="number">1</span>);</span><br><span class="line">    *(_QWORD *)(v14 + <span class="number">0x10</span>) = data__;   <span class="comment">//data</span></span><br><span class="line">    *(_DWORD *)(v14 + <span class="number">0x18</span>) = len;      <span class="comment">//data_len</span></span><br><span class="line">    <span class="keyword">if</span> ( name )</span><br><span class="line">    &#123;</span><br><span class="line">      v16 = <span class="number">-1</span>i64;</span><br><span class="line">      <span class="keyword">while</span> ( *(_BYTE *)(name + v16++ + <span class="number">1</span>) != <span class="number">0</span> )</span><br><span class="line">        ;</span><br><span class="line">      m_name = <span class="built_in">sub_180004A10</span>(name, (<span class="type">unsigned</span> <span class="type">int</span>)(v16 + <span class="number">1</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      m_name = <span class="built_in">sub_180006230</span>(<span class="string">&quot;data-%p&quot;</span>, data__);</span><br><span class="line">    &#125;</span><br><span class="line">    *(_QWORD *)(v14 + <span class="number">0x20</span>) = m_name;    <span class="comment">//name</span></span><br><span class="line">    v18 = <span class="built_in">sub_180004AE0</span>(<span class="number">408</span>i64);</span><br><span class="line">    *(_BYTE *)(v14 + <span class="number">0x1C</span>) &amp;= <span class="number">0xBF</span>u;</span><br><span class="line">    *(_BYTE *)(v14 + <span class="number">0x1D</span>) &amp;= <span class="number">0xFE</span>u;</span><br><span class="line">    *(_QWORD *)(v14 + <span class="number">0x50</span>) = v18;</span><br><span class="line">    *(_DWORD *)v14 = <span class="number">1</span>;</span><br><span class="line">    *(_BYTE *)(v14 + <span class="number">0x1C</span>) |= (refonly &amp; <span class="number">1</span>) &lt;&lt; <span class="number">6</span>;</span><br><span class="line">    *(_BYTE *)(v14 + <span class="number">0x1D</span>) |= metadata_only &amp; <span class="number">1</span>;</span><br><span class="line">    v19 = <span class="built_in">sub_1800699B0</span>(v14, v8, <span class="number">1</span>i64);</span><br><span class="line">    <span class="keyword">if</span> ( !v19 )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>i64;</span><br><span class="line">    result = <span class="built_in">sub_18006D6D0</span>(v19);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( status )</span><br><span class="line">      *status = <span class="number">3</span>;</span><br><span class="line">    result = <span class="number">0</span>i64;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可知</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x10</span> raw_data</span><br><span class="line"><span class="number">0x18</span> raw_data_len</span><br><span class="line"><span class="number">0x20</span> name</span><br></pre></td></tr></table></figure>
+
+<p>我们再用CE看看</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId21.png" alt="document_image_rId21"></p>
+<p>可以看到，直接是一个标准的PE文件，说明这里存的是二进制内容。</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId22.png" alt="document_image_rId22"></p>
+<p>到这里，我们就已经分析完了loaded_images的一个内存结构。接下来就是写一个遍历工具，然后打开游戏，运行工具，等待DLL生成。这里我用易语言写了一个。</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId23.png" alt="document_image_rId23"></p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId24.png" alt="document_image_rId24"></p>
+<p><strong>运行。。。</strong></p>
+<p>原文件</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId25.png" alt="document_image_rId25"></p>
+<p>dump文件</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId26.png" alt="document_image_rId26"></p>
+<p><strong>Dnspy打开</strong></p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId27.png" alt="document_image_rId27"></p>
+<p>到这里，就已经完美提取了。这里的话，个人觉得，也可以提取一些第三方挂钩mono的DLL，但是本人没去试过。有兴趣的可以去试试。输入法和键盘同时出了问题，打字很难受，如果文章中存在错别字，，，见谅。。。。</p>
+<p><img src="/../images/GameHacker/U3D%E9%80%86%E5%90%91-Mono%E5%8F%A6%E7%B1%BB%E8%A7%A3%E5%AF%86/document_image_rId28.png" alt="document_image_rId28"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/FPS%E5%85%A8%E5%B1%8F%E7%A7%92%E6%9D%80%E4%BB%A5%E5%8F%8A%E5%85%A8%E5%B1%8F%E9%A3%9E%E5%88%80%E6%BC%8F%E6%B4%9E%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/" rel="prev" title="FPS全屏秒杀以及全屏飞刀漏洞的逆向分析">
+                  <i class="fa fa-chevron-left"></i> FPS全屏秒杀以及全屏飞刀漏洞的逆向分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/" rel="next" title="关于LOL动态皮肤修改的逆向与实现">
+                  关于LOL动态皮肤修改的逆向与实现 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>
