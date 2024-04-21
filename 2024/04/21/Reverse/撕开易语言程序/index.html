@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="PlaneJun ・2021-11-28 20:45   要点 易语言的入口函数特征 各种函数的调用特征以及识别 针对易语言程序的分析插件  1、如何识别易语言程序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="撕开易语言程序">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="PlaneJun ・2021-11-28 20:45   要点 易语言的入口函数特征 各种函数的调用特征以及识别 针对易语言程序的分析插件  1、如何识别易语言程序">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId5.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId6.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId7.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId8.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId9.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId10.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId11.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId12.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId13.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId14.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId15.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId16.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId17.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId18.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId19.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId20.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId21.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId22.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId23.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId24.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId25.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId26.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId27.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId28.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId29.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId30.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId31.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId32.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId33.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId34.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId35.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId36.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId37.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId38.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId39.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId40.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId41.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId42.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId43.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId44.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId45.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId46.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId48.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId49.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId50.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId51.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId52.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId53.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId54.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId55.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId56.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId57.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId58.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId59.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId60.png">
+<meta property="article:published_time" content="2024-04-21T12:32:42.867Z">
+<meta property="article:modified_time" content="2024-04-21T12:19:47.239Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId5.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/","path":"2024/04/21/Reverse/撕开易语言程序/","title":"撕开易语言程序"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>撕开易语言程序 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A6%81%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">要点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81%E5%A6%82%E4%BD%95%E8%AF%86%E5%88%AB%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">1、如何识别易语言程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E4%BF%A1%E6%81%AF%E5%8F%B3%E9%94%AE-%E5%B1%9E%E6%80%A7-%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF"><span class="nav-number">2.0.1.</span> <span class="nav-text">一、查看文件信息右键-属性-详细信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%9F%A5%E7%9C%8B%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6Resource-Hacker%E6%88%96%E5%85%B6%E4%BB%96%E5%8F%AF%E6%9F%A5%E7%9C%8B%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="nav-number">2.0.2.</span> <span class="nav-text">二、查看资源文件Resource Hacker或其他可查看资源文件的工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%BA%93%E6%96%87%E4%BB%B6"><span class="nav-number">2.0.3.</span> <span class="nav-text">三、库文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%89%B9%E5%BE%81"><span class="nav-number">2.0.4.</span> <span class="nav-text">四、字符串特征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%98%93%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%85%A5%E5%8F%A3"><span class="nav-number">2.0.5.</span> <span class="nav-text">五、易语言标准入口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%91%A0%E9%9D%99%E6%80%81%E7%BC%96%E8%AF%91"><span class="nav-number">2.0.6.</span> <span class="nav-text">①静态编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%91%A1%E9%9D%9E%E9%9D%99%E6%80%81%E7%BC%96%E8%AF%91"><span class="nav-number">2.0.7.</span> <span class="nav-text">②非静态编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%91%A2%E9%BB%91%E6%9C%88%E7%BC%96%E8%AF%91"><span class="nav-number">2.0.8.</span> <span class="nav-text">③黑月编译</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E6%98%93%E8%AF%AD%E8%A8%80%E7%9A%84%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B%E5%8F%8A%E7%89%B9%E5%BE%81"><span class="nav-number">3.</span> <span class="nav-text">2、易语言的函数类型及特征</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%B6%88%E6%81%AF%E5%87%BD%E6%95%B0"><span class="nav-number">3.0.1.</span> <span class="nav-text">一、消息函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0"><span class="nav-number">3.0.2.</span> <span class="nav-text">二、用户自定义函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%BA%93%E5%87%BD%E6%95%B0"><span class="nav-number">3.0.3.</span> <span class="nav-text">三、库函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%BB%84%E4%BB%B6%E5%B1%9E%E6%80%A7%E5%87%BD%E6%95%B0"><span class="nav-number">3.0.4.</span> <span class="nav-text">四、组件属性函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81%E6%98%93%E8%AF%AD%E8%A8%80%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">3、易语言的基本数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AD%97%E8%8A%82%E9%9B%86"><span class="nav-number">4.0.1.</span> <span class="nav-text">一、字节集</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4%E3%80%81%E7%BC%96%E8%AF%91%E5%99%A8%EF%BC%9A%E9%BB%91%E6%9C%88"><span class="nav-number">5.</span> <span class="nav-text">4、编译器：黑月</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5%E3%80%81%E6%98%93%E8%AF%AD%E8%A8%80%E5%88%86%E6%9E%90%E6%8F%92%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">5、易语言分析插件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81E-Debug%EF%BC%88https-github-com-fjqisba-E-debug-plus%EF%BC%89"><span class="nav-number">6.0.1.</span> <span class="nav-text">一、E-Debug（https:&#x2F;&#x2F;github.com&#x2F;fjqisba&#x2F;E-debug-plus）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6%E3%80%81%E8%8A%B1%E6%8C%87%E4%BB%A4"><span class="nav-number">7.</span> <span class="nav-text">6、花指令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7%E3%80%81%E9%92%88%E5%AF%B9%E4%B8%80%E4%BA%9B%E7%AA%97%E5%8F%A3%E8%B7%B3%E8%BD%AC%E7%9A%84%E7%A0%B4%E8%A7%A3"><span class="nav-number">8.</span> <span class="nav-text">7、针对一些窗口跳转的破解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8%E3%80%81%E9%99%84%E5%BD%95"><span class="nav-number">9.</span> <span class="nav-text">8、附录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%94%AF%E6%8C%81%E5%BA%93%E5%87%BD%E6%95%B0%E5%81%8F%E7%A7%BB"><span class="nav-number">9.0.1.</span> <span class="nav-text">一、支持库函数偏移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%A0%B8%E5%BF%83%E6%94%AF%E6%8C%81%E5%BA%93%E2%80%94%E2%80%94krnln"><span class="nav-number">9.0.2.</span> <span class="nav-text">系统核心支持库——krnln</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E5%8A%9F%E8%83%BD%E6%94%AF%E6%8C%81%E5%BA%93%E2%80%94%E2%80%94spec"><span class="nav-number">9.0.3.</span> <span class="nav-text">特殊功能支持库——spec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2%E6%94%AF%E6%8C%81%E5%BA%93%E2%80%94%E2%80%94cnvpe"><span class="nav-number">9.0.4.</span> <span class="nav-text">可执行文件数据转换支持库——cnvpe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C%E6%94%AF%E6%8C%81%E5%BA%93%E2%80%94%E2%80%94dp1"><span class="nav-number">9.0.5.</span> <span class="nav-text">数据操作支持库——dp1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E8%81%94%E7%BD%91%E6%94%AF%E6%8C%81%E5%BA%93%E2%80%94%E2%80%94internet"><span class="nav-number">9.0.6.</span> <span class="nav-text">互联网支持库——internet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%95%8C%E9%9D%A2%E5%8A%9F%E8%83%BD%E6%94%AF%E6%8C%81%E5%BA%93%E2%80%94%E2%80%94shell"><span class="nav-number">9.0.7.</span> <span class="nav-text">操作系统界面功能支持库——shell</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E6%8E%A5%E5%8F%A3%E6%94%AF%E6%8C%81%E5%BA%93%E2%80%94%E2%80%94eAPI"><span class="nav-number">9.0.8.</span> <span class="nav-text">应用接口支持库——eAPI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BB%84%E4%BB%B6ID"><span class="nav-number">9.0.9.</span> <span class="nav-text">二、组件ID</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/Reverse/%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="撕开易语言程序 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          撕开易语言程序
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：20:19:47" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Reverse/" itemprop="url" rel="index"><span itemprop="name">Reverse</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2021-11-28 20:45</li>
+</ul>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId5.png" alt="document_image_rId5"></p>
+<h1 id="要点"><a href="#要点" class="headerlink" title="要点"></a>要点</h1><ul>
+<li>易语言的入口函数特征</li>
+<li>各种函数的调用特征以及识别</li>
+<li>针对易语言程序的分析插件</li>
+</ul>
+<h1 id="1、如何识别易语言程序"><a href="#1、如何识别易语言程序" class="headerlink" title="1、如何识别易语言程序"></a>1、如何识别易语言程序</h1><h3 id="一、查看文件信息右键-属性-详细信息"><a href="#一、查看文件信息右键-属性-详细信息" class="headerlink" title="一、查看文件信息右键-属性-详细信息"></a>一、查看文件信息右键-属性-详细信息</h3><p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId6.png" alt="document_image_rId6"></p>
+<h3 id="二、查看资源文件Resource-Hacker或其他可查看资源文件的工具"><a href="#二、查看资源文件Resource-Hacker或其他可查看资源文件的工具" class="headerlink" title="二、查看资源文件Resource Hacker或其他可查看资源文件的工具"></a>二、查看资源文件Resource Hacker或其他可查看资源文件的工具</h3><p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId7.png" alt="document_image_rId7"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId8.png" alt="document_image_rId8"></p>
+<h3 id="三、库文件"><a href="#三、库文件" class="headerlink" title="三、库文件"></a>三、库文件</h3><p>易语言程序依赖于自实现的库(.<strong>fnr</strong>)执行，针对易语言的编译模式有静态编译、非静态编译和独立编译，如下图：</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId9.png" alt="document_image_rId9"></p>
+<ul>
+<li>编译：编译程序时，会将所有需要用到的库文件生成到同程序的目录下。</li>
+</ul>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId10.png" alt="document_image_rId10"></p>
+<ul>
+<li>非静态编译：编译程序时，将所有用到的库文件写入到程序中，与程序合并，编译出来的文件只有程序本身。</li>
+</ul>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId11.png" alt="document_image_rId11"></p>
+<ul>
+<li>独立编译：与静态编译相同之处是编译出来后只有程序本身，但运行程序时，会将所有用到的库文件写入到临时目录中，然后加载库文件。</li>
+</ul>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId12.png" alt="document_image_rId12"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId13.png" alt="document_image_rId13"></p>
+<h3 id="四、字符串特征"><a href="#四、字符串特征" class="headerlink" title="四、字符串特征"></a>四、字符串特征</h3><p>由于易语言是自写的框架，类似于MFC，因此如果未处理编译后的程序，程序中将存在一些固定的字符串。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId14.png" alt="document_image_rId14"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId15.png" alt="document_image_rId15"></p>
+<h3 id="五、易语言标准入口"><a href="#五、易语言标准入口" class="headerlink" title="五、易语言标准入口"></a>五、易语言标准入口</h3><p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId16.png" alt="document_image_rId16"></p>
+<h3 id="①静态编译"><a href="#①静态编译" class="headerlink" title="①静态编译"></a>①静态编译</h3><p>静态编译是直接将库文件与程序合并。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId17.png" alt="document_image_rId17"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId18.png" alt="document_image_rId18"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId19.png" alt="document_image_rId19"></p>
+<h3 id="②非静态编译"><a href="#②非静态编译" class="headerlink" title="②非静态编译"></a>②非静态编译</h3><p>该种编译模式会将库文件存放在程序中，在WinMain入口会获取读取自身的内容，然后释放出库文件。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId20.png" alt="document_image_rId20"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId21.png" alt="document_image_rId21"></p>
+<p>随后加载库文件，并调用一个固定函数<code>GetNewSock</code>。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId22.png" alt="document_image_rId22"></p>
+<p>最后调用函数</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId23.png" alt="document_image_rId23"></p>
+<p>进入该函数后，会看到call eax，eax为函数入口。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId24.png" alt="document_image_rId24"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId25.png" alt="document_image_rId25"></p>
+<h3 id="③黑月编译"><a href="#③黑月编译" class="headerlink" title="③黑月编译"></a>③黑月编译</h3><p>黑月编译器是网友针对易语言程序编写的一款编译器，他直接会优化掉前期的初始化代码，包括<code>clr(c library runtime)</code>初始化，直接进入到易语言的标准入口。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId26.png" alt="document_image_rId26"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId27.png" alt="document_image_rId27"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId28.png" alt="document_image_rId28"></p>
+<h1 id="2、易语言的函数类型及特征"><a href="#2、易语言的函数类型及特征" class="headerlink" title="2、易语言的函数类型及特征"></a>2、易语言的函数类型及特征</h1><p>易语言的函数大致分有三种，分别为窗体控件的消息函数、用户自定义函数、库函数和组件属性函数。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId29.png" alt="document_image_rId29"></p>
+<h3 id="一、消息函数"><a href="#一、消息函数" class="headerlink" title="一、消息函数"></a>一、消息函数</h3><p>消息函数都是通过固定代码段调用，代码段定位流程如下：</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId30.png" alt="document_image_rId30"></p>
+<p>找到如图特征</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId31.png" alt="document_image_rId31"></p>
+<p>进入函数后找到最后一call 局部变量，该位置调用的就是消息函数</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId32.png" alt="document_image_rId32"></p>
+<p>将函数对应到IDA中可直接定位到流程。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId33.png" alt="document_image_rId33"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId34.png" alt="document_image_rId34"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId35.png" alt="document_image_rId35"></p>
+<p>找到 case 2008:</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId36.png" alt="document_image_rId36"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId37.png" alt="document_image_rId37"></p>
+<h3 id="二、用户自定义函数"><a href="#二、用户自定义函数" class="headerlink" title="二、用户自定义函数"></a>二、用户自定义函数</h3><p>用户自定义的函数调用与通常的函数调用方式一致。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId38.png" alt="document_image_rId38"></p>
+<h3 id="三、库函数"><a href="#三、库函数" class="headerlink" title="三、库函数"></a>三、库函数</h3><p>库函数为易语言自写支持库里的函数，类似Windows的DLL文件。函数原型如下。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">E_FuncCallBack</span>(<span class="number">2</span>,参数一的值，参数一是否可忽略，参数一的类型，参数二的值，参数二是否可忽略，参数二的类型)</span><br></pre></td></tr></table></figure>
+
+<p>该函数是一个变参函数，参数一为<strong>欲调用欲调用函数的参数个数</strong>，然后其余的以<strong>三个参数为一组</strong>表示参数的信息。忽略参数的值为布尔值，0表示不可以忽略，1表示可忽略；其参数类型可参考的值如下（可能不完整）：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x80000004</td>
+<td>文本型</td>
+</tr>
+<tr>
+<td>0x80000101</td>
+<td>文本型</td>
+</tr>
+<tr>
+<td>0x80000000</td>
+<td>通用型</td>
+</tr>
+<tr>
+<td>0x80000002</td>
+<td>逻辑型</td>
+</tr>
+<tr>
+<td>0x80000005</td>
+<td>字节集</td>
+</tr>
+<tr>
+<td>0x80000006</td>
+<td>子程序指针</td>
+</tr>
+<tr>
+<td>0x80000301</td>
+<td>数值型</td>
+</tr>
+<tr>
+<td>0x80000601</td>
+<td>数值型</td>
+</tr>
+<tr>
+<td>0x10001</td>
+<td>窗体</td>
+</tr>
+</tbody></table>
+<p>由于易语言的编译模式不同，库函数调用代码也会产生差异。接下来分别解释静态编译与非静态编译下，函数代码的差异。</p>
+<ul>
+<li>静态编译</li>
+</ul>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId39.png" alt="document_image_rId39"></p>
+<ul>
+<li>非静态编译</li>
+</ul>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId40.png" alt="document_image_rId40"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId41.png" alt="document_image_rId41"></p>
+<p>非静态编译的程序，在调用库函数时不再通过静态地址的方式调用，而是通过传入库文件序号和欲调用对应函数的偏移到寄存器中，然后调用。</p>
+<p>库文件序号指的是库文件是程序中加载的第几个文件。序号从0开始，易语言程序在运行初期最先加载的库文件为该库文件，记加载序号为0；如果再加载一个库文件的话则加载新加载的库文件序号为1。<strong>对于调用krnln.fnr库文件的函数，易语言程序以隐式形式传递序号</strong>，因此在信息框函数调用的反汇编代码中并未看到传入0序号。常用库文件的函数偏移在附录中贴出。</p>
+<h3 id="四、组件属性函数"><a href="#四、组件属性函数" class="headerlink" title="四、组件属性函数"></a>四、组件属性函数</h3><p>函数分为两种，一种是对组件的属性修改，另一种是组件的自带函数。</p>
+<ul>
+<li>属性修改</li>
+</ul>
+<p><strong>参数一：</strong>父窗口</p>
+<p><strong>参数二：</strong>子窗口</p>
+<p><strong>参数三：</strong>属性下标</p>
+<p><strong>参数四：</strong>未知，一般都为-0x1</p>
+<p><strong>参数五：</strong>值</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId42.png" alt="document_image_rId42"></p>
+<ul>
+<li>自带函数调用</li>
+</ul>
+<p>与消息函数类型。参一：<strong>参数个数</strong>、参二：<strong>值，也就是父窗口ID</strong>、参三：<strong>ID</strong>、参四：<strong>参数类型</strong></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId43.png" alt="document_image_rId43"></p>
+<p>因为控件存在于krnln.fnr库中，因此在非静态编译中，库函数序号也是隐式传递。部分组件ID也在附录中列出。</p>
+<h1 id="3、易语言的基本数据类型"><a href="#3、易语言的基本数据类型" class="headerlink" title="3、易语言的基本数据类型"></a>3、易语言的基本数据类型</h1><h3 id="一、字节集"><a href="#一、字节集" class="headerlink" title="一、字节集"></a>一、字节集</h3><p>typdef struct 字节集<br>{<br>int unkown;<br>int length;<br>char* bytes;<br>};</p>
+<h1 id="4、编译器：黑月"><a href="#4、编译器：黑月" class="headerlink" title="4、编译器：黑月"></a>4、编译器：黑月</h1><p>程序入口为两个函数。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId44.png" alt="document_image_rId44"></p>
+<p>进入第二个后可以看到如下代码特征。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId45.png" alt="document_image_rId45"></p>
+<p>或者搜索到如下字符串。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId46.png" alt="document_image_rId46"></p>
+<h1 id="5、易语言分析插件"><a href="#5、易语言分析插件" class="headerlink" title="5、易语言分析插件"></a>5、易语言分析插件</h1><h3 id="一、E-Debug（https-github-com-fjqisba-E-debug-plus）"><a href="#一、E-Debug（https-github-com-fjqisba-E-debug-plus）" class="headerlink" title="一、E-Debug（https://github.com/fjqisba/E-debug-plus）"></a>一、E-Debug（<a target="_blank" rel="noopener" href="https://github.com/fjqisba/E-debug-plus">https://github.com/fjqisba/E-debug-plus</a>）</h3><p>只能用来分析静态编译的程序。</p>
+<ul>
+<li>OD</li>
+</ul>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId48.png" alt="document_image_rId48"></p>
+<ul>
+<li>IDA</li>
+</ul>
+<p>选择易语言反编译器</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId49.png" alt="document_image_rId49"></p>
+<p>IDA会自动识别由于的函数，并在工具栏新增易语言。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId50.png" alt="document_image_rId50"></p>
+<p>新增的项可以自动识别资源常量、窗体、消息函数（控件函数）。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId51.png" alt="document_image_rId51"></p>
+<ul>
+<li>特征生成</li>
+</ul>
+<p>EDebug可以手动生成后缀为sig的易语言特征，打开配套工具。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId52.png" alt="document_image_rId52"></p>
+<p>然后将易语言的支持库拖入即可，最后将生成的sig文件放置到对应分析工具的插件目录下。</p>
+<h1 id="6、花指令"><a href="#6、花指令" class="headerlink" title="6、花指令"></a>6、花指令</h1><p>易语言可以设置花指令来干扰程序的逆向分析。在工具栏的工具-系统配置的窗口中选择安全，可以设置花指令等级，默认为1。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId53.png" alt="document_image_rId53"></p>
+<p>级别不同，花指令形式也不同。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId54.png" alt="document_image_rId54"></p>
+<p>但是每一级别的花指令代码都是固定的，所以可以在IDA中使用脚本进行批处理处理，或者使用OD的插件去除花指令。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId55.png" alt="document_image_rId55"></p>
+<p>输入要去除花指令的起始地址和地址段大小后，点击执行即可去除。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId56.png" alt="document_image_rId56"></p>
+<h1 id="7、针对一些窗口跳转的破解"><a href="#7、针对一些窗口跳转的破解" class="headerlink" title="7、针对一些窗口跳转的破解"></a>7、针对一些窗口跳转的破解</h1><p>易语言载入窗口的命令为载入(,,)，窗体的类型为0x10001，因此可以通过搜索push 0x10001来找到该命令，或者有调用窗口函数的代码段来获取窗口ID。再将原始加载的窗口ID进行替换即可实现窗口跳转。</p>
+<p>搜索push 0x10001结果。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId57.png" alt="document_image_rId57"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId58.png" alt="document_image_rId58"></p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId59.png" alt="document_image_rId59"></p>
+<p>断点放开后执行，直接能跳转到第二个窗口。</p>
+<p><img src="/./%E6%92%95%E5%BC%80%E6%98%93%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F/document_image_rId60.png" alt="document_image_rId60"></p>
+<h1 id="8、附录"><a href="#8、附录" class="headerlink" title="8、附录"></a>8、附录</h1><h3 id="一、支持库函数偏移"><a href="#一、支持库函数偏移" class="headerlink" title="一、支持库函数偏移"></a>一、支持库函数偏移</h3><h3 id="系统核心支持库——krnln"><a href="#系统核心支持库——krnln" class="headerlink" title="系统核心支持库——krnln"></a>系统核心支持库——krnln</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x0</span>：寻找文件</span><br><span class="line"><span class="number">0x2</span>：相加</span><br><span class="line"><span class="number">0x9</span>：新建索引</span><br><span class="line"><span class="number">0x58</span>：取符号</span><br><span class="line"><span class="number">0x5C</span>：取绝对值</span><br><span class="line"><span class="number">0x60</span>：取整</span><br><span class="line"><span class="number">0x64</span>：绝对取整</span><br><span class="line"><span class="number">0x68</span>：四舍五入</span><br><span class="line"><span class="number">0x6C</span>：求次方</span><br><span class="line"><span class="number">0x70</span>：求平方根</span><br><span class="line"><span class="number">0x74</span>：求正弦</span><br><span class="line"><span class="number">0x78</span>：求余弦</span><br><span class="line"><span class="number">0x7C</span>：求正切</span><br><span class="line"><span class="number">0x80</span>：求反正切</span><br><span class="line"><span class="number">0x84</span>：求自然对数</span><br><span class="line"><span class="number">0x88</span>：求反对数</span><br><span class="line"><span class="number">0x8C</span>：是否运算正确</span><br><span class="line"><span class="number">0x90</span>：置随机数种子</span><br><span class="line"><span class="number">0x94</span>：取随机数</span><br><span class="line"><span class="number">0xC0</span>：位取反</span><br><span class="line"><span class="number">0xC4</span>：位与</span><br><span class="line"><span class="number">0xC8</span>：位或</span><br><span class="line"><span class="number">0xCC</span>：位异或</span><br><span class="line"><span class="number">0x100</span>：取命令行</span><br><span class="line"><span class="number">0x104</span>：取运行目录</span><br><span class="line"><span class="number">0x108</span>：取执行文件名</span><br><span class="line"><span class="number">0x10C</span>：读环境变量</span><br><span class="line"><span class="number">0x110</span>：写环境变量</span><br><span class="line"><span class="number">0x114</span>：取所有发音</span><br><span class="line"><span class="number">0x118</span>：取发音数目</span><br><span class="line"><span class="number">0x11C</span>：取拼音</span><br><span class="line"><span class="number">0x124</span>：取韵母</span><br><span class="line"><span class="number">0x128</span>：发音比较</span><br><span class="line"><span class="number">0x12C</span>：输入字比较</span><br><span class="line"><span class="number">0x130</span>：取文本长度</span><br><span class="line"><span class="number">0x134</span>：取文本左边</span><br><span class="line"><span class="number">0x138</span>：取文本右边</span><br><span class="line"><span class="number">0x13C</span>：取文本中间</span><br><span class="line"><span class="number">0x140</span>：字符</span><br><span class="line"><span class="number">0x144</span>：取代码</span><br><span class="line"><span class="number">0x148</span>：寻找文本</span><br><span class="line"><span class="number">0x14C</span>：倒找文本</span><br><span class="line"><span class="number">0x150</span>：到大写</span><br><span class="line"><span class="number">0x154</span>：到小写</span><br><span class="line"><span class="number">0x158</span>：到全角</span><br><span class="line"><span class="number">0x15C</span>：到半角</span><br><span class="line"><span class="number">0x160</span>：到时间</span><br><span class="line"><span class="number">0x164</span>：到数值</span><br><span class="line"><span class="number">0x168</span>：到文本</span><br><span class="line"><span class="number">0x16C</span>：删首空</span><br><span class="line"><span class="number">0x170</span>：删尾空</span><br><span class="line"><span class="number">0x174</span>：删首位空</span><br><span class="line"><span class="number">0x178</span>：删全部空</span><br><span class="line"><span class="number">0x17C</span>：文本替换</span><br><span class="line"><span class="number">0x180</span>：子文本替换</span><br><span class="line"><span class="number">0x184</span>：取空白文本</span><br><span class="line"><span class="number">0x188</span>：取重复文本</span><br><span class="line"><span class="number">0x18C</span>：文本比较</span><br><span class="line"><span class="number">0x190</span>：分割文本</span><br><span class="line"><span class="number">0x194</span>：取字节集长度</span><br><span class="line"><span class="number">0x198</span>：到字节集</span><br><span class="line"><span class="number">0x19C</span>：取字节集数据</span><br><span class="line"><span class="number">0x1A0</span>：取字节集左边</span><br><span class="line"><span class="number">0x1A4</span>：取字节集右边</span><br><span class="line"><span class="number">0x1A8</span>：取字节集中间</span><br><span class="line"><span class="number">0x1AC</span>：寻找字节集</span><br><span class="line"><span class="number">0x1B0</span>：倒找字节集</span><br><span class="line"><span class="number">0x1B4</span>：字节集替换</span><br><span class="line"><span class="number">0x1B8</span>：子字节集替换</span><br><span class="line"><span class="number">0x1BC</span>：取空白字节集</span><br><span class="line"><span class="number">0x1C0</span>：去重复字节集</span><br><span class="line"><span class="number">0x1C4</span>：分割字节集</span><br><span class="line"><span class="number">0x1C8</span>：数值到大写</span><br><span class="line"><span class="number">0x1CC</span>：数值到金额</span><br><span class="line"><span class="number">0x1D0</span>：数值到格式文本</span><br><span class="line"><span class="number">0x1D4</span>：取十六进制文本</span><br><span class="line"><span class="number">0x1D8</span>：取八进制文本</span><br><span class="line"><span class="number">0x1DC</span>：增减时间</span><br><span class="line"><span class="number">0x1E0</span>：取时间间隔</span><br><span class="line"><span class="number">0x1E4</span>：取某月天数</span><br><span class="line"><span class="number">0x1E8</span>：时间到文本</span><br><span class="line"><span class="number">0x1EC</span>：取时间部分</span><br><span class="line"><span class="number">0x1F0</span>：取年份</span><br><span class="line"><span class="number">0x1F4</span>：取月份</span><br><span class="line"><span class="number">0x1F8</span>：取日</span><br><span class="line"><span class="number">0x1FC</span>：取星期几</span><br><span class="line"><span class="number">0x200</span>：取小时</span><br><span class="line"><span class="number">0x204</span>：取分钟</span><br><span class="line"><span class="number">0x208</span>：取秒</span><br><span class="line"><span class="number">0x20C</span>：指定时间</span><br><span class="line"><span class="number">0x210</span>：取现行时间</span><br><span class="line"><span class="number">0x214</span>：置现行时间</span><br><span class="line"><span class="number">0x218</span>：取磁盘总空间</span><br><span class="line"><span class="number">0x21C</span>：取磁盘剩余空间</span><br><span class="line"><span class="number">0x220</span>：取磁盘卷标</span><br><span class="line"><span class="number">0x224</span>：置磁盘卷标</span><br><span class="line"><span class="number">0x228</span>：改变驱动器</span><br><span class="line"><span class="number">0x22C</span>：改变目录</span><br><span class="line"><span class="number">0x230</span>：取当前目录</span><br><span class="line"><span class="number">0x234</span>：创建目录</span><br><span class="line"><span class="number">0x238</span>：删除目录</span><br><span class="line"><span class="number">0x23C</span>：复制文件</span><br><span class="line"><span class="number">0x240</span>：移动文件</span><br><span class="line"><span class="number">0x244</span>：删除文件</span><br><span class="line"><span class="number">0x248</span>：文件更名</span><br><span class="line"><span class="number">0x24C</span>：文件是否存在</span><br><span class="line"><span class="number">0x254</span>：取文件时间</span><br><span class="line"><span class="number">0x258</span>：取文件尺寸</span><br><span class="line"><span class="number">0x25C</span>：取文件属性</span><br><span class="line"><span class="number">0x260</span>：置文件属性</span><br><span class="line"><span class="number">0x264</span>：取临时文件名</span><br><span class="line"><span class="number">0x268</span>：读入文件</span><br><span class="line"><span class="number">0x26C</span>：写到文件</span><br><span class="line"><span class="number">0x270</span>：打开文件</span><br><span class="line"><span class="number">0x274</span>：打开内存文件</span><br><span class="line"><span class="number">0x278</span>：关闭文件</span><br><span class="line"><span class="number">0x27C</span>：关闭所有文件</span><br><span class="line"><span class="number">0x280</span>：锁住文件</span><br><span class="line"><span class="number">0x284</span>：解锁文件</span><br><span class="line"><span class="number">0x288</span>：移动读写位置</span><br><span class="line"><span class="number">0x28C</span>：移到文件首</span><br><span class="line"><span class="number">0x290</span>：移到文件尾</span><br><span class="line"><span class="number">0x294</span>：读入字节集</span><br><span class="line"><span class="number">0x298</span>：写出字节集</span><br><span class="line"><span class="number">0x268</span>：读入文件</span><br><span class="line"><span class="number">0x2A0</span>：写出文本</span><br><span class="line"><span class="number">0x2A4</span>：读入一行</span><br><span class="line"><span class="number">0x2A8</span>：写文本行</span><br><span class="line"><span class="number">0x2AC</span>：读入数据</span><br><span class="line"><span class="number">0x2B0</span>：写出数据</span><br><span class="line"><span class="number">0x2B4</span>：是否在文件尾</span><br><span class="line"><span class="number">0x2B8</span>：取读写位置</span><br><span class="line"><span class="number">0x2BC</span>：取文件长度</span><br><span class="line"><span class="number">0x2C0</span>：运行</span><br><span class="line"><span class="number">0x2C4</span>：取剪辑板文本</span><br><span class="line"><span class="number">0x2C8</span>：置剪辑板文本</span><br><span class="line"><span class="number">0x2CC</span>：剪辑板中可有文本</span><br><span class="line"><span class="number">0x2D0</span>：清除剪辑板</span><br><span class="line"><span class="number">0x2D4</span>：取屏幕宽度</span><br><span class="line"><span class="number">0x2D8</span>：取屏幕高度</span><br><span class="line"><span class="number">0x2DC</span>：取鼠标水平位置</span><br><span class="line"><span class="number">0x2E0</span>：取鼠标垂直位置</span><br><span class="line"><span class="number">0x300</span>：信息框</span><br><span class="line"><span class="number">0x304</span>：鸣叫</span><br><span class="line"><span class="number">0x308</span>：取启动时间</span><br><span class="line"><span class="number">0x320</span>：载入</span><br><span class="line"><span class="number">0x330</span>：是否已创建</span><br><span class="line"><span class="number">0x334</span>：取数据类型尺寸</span><br><span class="line"><span class="number">0x35C</span>：取窗口句柄</span><br><span class="line"><span class="number">0x540</span>：是否支持多用户</span><br><span class="line"><span class="number">0x544</span>：取错误码</span><br><span class="line"><span class="number">0x548</span>：取错误信息</span><br><span class="line"><span class="number">0x54C</span>：创建</span><br><span class="line"><span class="number">0x550</span>：打开</span><br><span class="line"><span class="number">0x554</span>：替换打开</span><br><span class="line"><span class="number">0x558</span>：置当前库</span><br><span class="line"><span class="number">0x55C</span>：取当前库</span><br><span class="line"><span class="number">0x560</span>：关闭</span><br><span class="line"><span class="number">0x564</span>：全部关闭</span><br><span class="line"><span class="number">0x568</span>：取库文件名</span><br><span class="line"><span class="number">0x56C</span>：是否已打开</span><br><span class="line"><span class="number">0x570</span>：取记录数</span><br><span class="line"><span class="number">0x574</span>：取创建时间</span><br><span class="line"><span class="number">0x578</span>：取字段数</span><br><span class="line"><span class="number">0x57C</span>：取字段名</span><br><span class="line"><span class="number">0x580</span>：改字段名</span><br><span class="line"><span class="number">0x584</span>：取字段类型</span><br><span class="line"><span class="number">0x588</span>：取字段尺寸</span><br><span class="line"><span class="number">0x58C</span>：新建索引</span><br><span class="line"><span class="number">0x590</span>：置当前索引</span><br><span class="line"><span class="number">0x594</span>：取当前索引</span><br><span class="line"><span class="number">0x598</span>：更新索引</span><br><span class="line"><span class="number">0x59C</span>：取索引数</span><br><span class="line"><span class="number">0x5A0</span>：取索引名</span><br><span class="line"><span class="number">0x5A4</span>：取索引字段</span><br><span class="line"><span class="number">0x5A8</span>：置加锁重试时间</span><br><span class="line"><span class="number">0x5AC</span>：锁住数据库</span><br><span class="line"><span class="number">0x5B0</span>：解锁数据库</span><br><span class="line"><span class="number">0x5B4</span>：锁住增删</span><br><span class="line"><span class="number">0x5B8</span>：解增删锁</span><br><span class="line"><span class="number">0x5BC</span>：锁住记录</span><br><span class="line"><span class="number">0x5C4</span>：解锁记录</span><br><span class="line"><span class="number">0x5C8</span>：全部解锁</span><br><span class="line"><span class="number">0x5CC</span>：取平均值</span><br><span class="line"><span class="number">0x5D0</span>：求和</span><br><span class="line"><span class="number">0x5D4</span>：取最大值</span><br><span class="line"><span class="number">0x5D8</span>：取最小值</span><br><span class="line"><span class="number">0x5DC</span>：取最大时间</span><br><span class="line"><span class="number">0x5E0</span>：计算数目</span><br><span class="line"><span class="number">0x5E4</span>：复制结构</span><br><span class="line"><span class="number">0x5E8</span>：复制记录</span><br><span class="line"><span class="number">0x5EC</span>：计算排序</span><br><span class="line"><span class="number">0x5F0</span>：排序</span><br><span class="line"><span class="number">0x5F4</span>：分类计算</span><br><span class="line"><span class="number">0x5F8</span>：添加</span><br><span class="line"><span class="number">0x5FC</span>：加记录</span><br><span class="line"><span class="number">0x600</span>：加空记录</span><br><span class="line"><span class="number">0x604</span>：替换</span><br><span class="line"><span class="number">0x608</span>：修改</span><br><span class="line"><span class="number">0x60C</span>：删除</span><br><span class="line"><span class="number">0x610</span>：是否已删除</span><br><span class="line"><span class="number">0x614</span>：恢复删除</span><br><span class="line"><span class="number">0x618</span>：彻底删除</span><br><span class="line"><span class="number">0x61C</span>：清空</span><br><span class="line"><span class="number">0x620</span>：读</span><br><span class="line"><span class="number">0x624</span>：写</span><br><span class="line"><span class="number">0x628</span>：读字段</span><br><span class="line"><span class="number">0x62C</span>：写字段</span><br><span class="line"><span class="number">0x630</span>：附加字节集</span><br><span class="line"><span class="number">0x634</span>：附加备注</span><br><span class="line"><span class="number">0x638</span>：索引查找</span><br><span class="line"><span class="number">0x63C</span>：查找</span><br><span class="line"><span class="number">0x640</span>：到首记录</span><br><span class="line"><span class="number">0x644</span>：到尾记录</span><br><span class="line"><span class="number">0x648</span>：跳过</span><br><span class="line"><span class="number">0x64C</span>：取记录号</span><br><span class="line"><span class="number">0x650</span>：跳到</span><br><span class="line"><span class="number">0x654</span>：取标签</span><br><span class="line"><span class="number">0x658</span>：记录是否存在</span><br><span class="line"><span class="number">0x65c</span>：标签跳转</span><br><span class="line"><span class="number">0x660</span>：首记录前</span><br><span class="line"><span class="number">0x664</span>：尾记录后</span><br><span class="line"><span class="number">0x668</span>：写出缓存</span><br><span class="line"><span class="number">0x66c</span>：写出所有缓存</span><br><span class="line"><span class="number">0x670</span>：编辑</span><br><span class="line"><span class="number">0x674</span>：置等待鼠标</span><br><span class="line"><span class="number">0x678</span>：恢复鼠标</span><br><span class="line"><span class="number">0x67C</span>：延时</span><br><span class="line"><span class="number">0x688</span>：插入字节集</span><br><span class="line"><span class="number">0x68C</span>：插入文本</span><br><span class="line"><span class="number">0x690</span>：插入文本行</span><br><span class="line"><span class="number">0x694</span>：删除数据</span><br><span class="line"><span class="number">0x698</span>：取文本注册项</span><br><span class="line"><span class="number">0x69C</span>：取数值注册项</span><br><span class="line"><span class="number">0x6A0</span>：取字节集注册项</span><br><span class="line"><span class="number">0x6A4</span>：写注册项</span><br><span class="line"><span class="number">0x6A8</span>：删除注册项</span><br><span class="line"><span class="number">0x6AC</span>：注册项是否存在</span><br><span class="line"><span class="number">0x6C4</span>：取硬盘特征字</span><br><span class="line"><span class="number">0x6F4</span>：转换为主机名</span><br><span class="line"><span class="number">0x6F8</span>：转换为IP地址</span><br><span class="line"><span class="number">0x714</span>：取默认底色</span><br><span class="line"><span class="number">0x71C</span>：快照</span><br><span class="line"><span class="number">0x8BC</span>：取日期</span><br><span class="line"><span class="number">0x8C0</span>：取时间</span><br><span class="line"><span class="number">0x8C8</span>：读配置项</span><br><span class="line"><span class="number">0x8CC</span>：写配置项</span><br><span class="line"><span class="number">0x8D0</span>：取配置节名</span><br><span class="line"><span class="number">0x8D8</span>：打开加密文件</span><br><span class="line"><span class="number">0x8D4</span>：取操作系统类别</span><br><span class="line"><span class="number">0x8DC</span>：是否已加密</span><br><span class="line"><span class="number">0x8E0</span>：置数据库密码</span><br><span class="line"><span class="number">0x8E4</span>：密码输入框</span><br><span class="line"><span class="number">0x8E8</span>：复制密码</span><br><span class="line"><span class="number">0x914</span>：写到内存</span><br><span class="line"><span class="number">0x904</span>：标准输出</span><br><span class="line"><span class="number">0x908</span>：标准输入</span><br><span class="line"><span class="number">0x90C</span>：指针到文本</span><br><span class="line"><span class="number">0x9D4</span>：到字节</span><br><span class="line"><span class="number">0x9D8</span>：到短整数</span><br><span class="line"><span class="number">0x9DC</span>：到整数</span><br><span class="line"><span class="number">0x9E0</span>：到长整数</span><br><span class="line"><span class="number">0x9E4</span>：到小数</span><br><span class="line"><span class="number">0x9F8</span>：左移</span><br><span class="line"><span class="number">0x9FC</span>：右移</span><br><span class="line"><span class="number">0xA7C</span>：取程序名称</span><br><span class="line"><span class="number">0xA8C</span>：取最后错误</span><br><span class="line"><span class="number">0xAA0</span>：文本到UTF8</span><br><span class="line"><span class="number">0xAA4</span>：UTF8到文本</span><br><span class="line"><span class="number">0xAB0</span>：反转整数字节序</span><br></pre></td></tr></table></figure>
+
+<h3 id="特殊功能支持库——spec"><a href="#特殊功能支持库——spec" class="headerlink" title="特殊功能支持库——spec"></a>特殊功能支持库——spec</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x1C</span>：延迟</span><br><span class="line"><span class="number">0x24</span>：申请内存</span><br></pre></td></tr></table></figure>
+
+<h3 id="可执行文件数据转换支持库——cnvpe"><a href="#可执行文件数据转换支持库——cnvpe" class="headerlink" title="可执行文件数据转换支持库——cnvpe"></a>可执行文件数据转换支持库——cnvpe</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x0</span>：转换可执行文件数据</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据操作支持库——dp1"><a href="#数据操作支持库——dp1" class="headerlink" title="数据操作支持库——dp1"></a>数据操作支持库——dp1</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x0</span>：压缩数据</span><br><span class="line"><span class="number">0x4</span>：解压数据</span><br><span class="line"><span class="number">0x8</span>：取数据摘要</span><br><span class="line"><span class="number">0xC</span>：加密数据</span><br><span class="line"><span class="number">0x10</span>：解密数据</span><br><span class="line"><span class="number">0x14</span>：数字签名</span><br><span class="line"><span class="number">0x18</span>：签名验证</span><br></pre></td></tr></table></figure>
+
+<h3 id="互联网支持库——internet"><a href="#互联网支持库——internet" class="headerlink" title="互联网支持库——internet"></a>互联网支持库——internet</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x0</span>：连接发信服务器</span><br><span class="line"><span class="number">0x4</span>：断开发信服务器</span><br><span class="line"><span class="number">0x8</span>：添加附件文件</span><br><span class="line"><span class="number">0xC</span>：添加附件数据</span><br><span class="line"><span class="number">0x10</span>：清除所有附件</span><br><span class="line"><span class="number">0x14</span>：发送邮件</span><br><span class="line"><span class="number">0x18</span>：置代理服务器</span><br><span class="line"><span class="number">0x1C</span>：HTTP读文件</span><br><span class="line"><span class="number">0x20</span>：连接FTP服务器</span><br><span class="line"><span class="number">0x24</span>：断开FTP服务器</span><br><span class="line"><span class="number">0x28</span>：FTP文件下载</span><br><span class="line"><span class="number">0x2C</span>：FTP文件上传</span><br><span class="line"><span class="number">0x30</span>：FTP删除文件</span><br><span class="line"><span class="number">0x34</span>：FTP文件改名</span><br><span class="line"><span class="number">0x38</span>：FTP创建目录</span><br><span class="line"><span class="number">0x3C</span>：FTP删除目录</span><br><span class="line"><span class="number">0x40</span>：FTP置现行目录</span><br><span class="line"><span class="number">0x44</span>：FTP取现行目录</span><br><span class="line"><span class="number">0x48</span>：FTP目录列表</span><br></pre></td></tr></table></figure>
+
+<h3 id="操作系统界面功能支持库——shell"><a href="#操作系统界面功能支持库——shell" class="headerlink" title="操作系统界面功能支持库——shell"></a>操作系统界面功能支持库——shell</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x0</span>：创建快捷方式</span><br><span class="line"><span class="number">0x4</span>：查询快捷方式</span><br><span class="line"><span class="number">0x8</span>：浏览文件夹</span><br><span class="line"><span class="number">0xC</span>：删除到回收站</span><br><span class="line"><span class="number">0x10</span>：进度复制文件</span><br><span class="line"><span class="number">0x14</span>：进度移动文件</span><br><span class="line"><span class="number">0x18</span>：执行</span><br><span class="line"><span class="number">0x1C</span>：取特定目录</span><br><span class="line"><span class="number">0x20</span>：关闭系统</span><br></pre></td></tr></table></figure>
+
+<h3 id="应用接口支持库——eAPI"><a href="#应用接口支持库——eAPI" class="headerlink" title="应用接口支持库——eAPI"></a>应用接口支持库——eAPI</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x0</span>：取键盘指示灯状态</span><br><span class="line"><span class="number">0x4</span>：模拟按键</span><br><span class="line"><span class="number">0x8</span>：模拟鼠标点击</span><br><span class="line"><span class="number">0xC</span>：取硬盘信息</span><br><span class="line"><span class="number">0x10</span>：取驱动器数量</span><br><span class="line"><span class="number">0x14</span>：取驱动器列表</span><br><span class="line"><span class="number">0x18</span>：弹出光驱</span><br><span class="line"><span class="number">0x1C</span>：关闭光驱</span><br><span class="line"><span class="number">0x20</span>：取光驱盘符</span><br><span class="line"><span class="number">0x24</span>：光驱中是否有盘</span><br><span class="line"><span class="number">0x28</span>：取系统进程列表</span><br><span class="line"><span class="number">0x2C</span>：终止进程</span><br><span class="line"><span class="number">0x30</span>：取正在使用DLL列表</span><br><span class="line"><span class="number">0x38</span>：取系统信息</span><br><span class="line"><span class="number">0x3C</span>：取BIOS信息</span><br><span class="line"><span class="number">0x40</span>：取文件版本信息</span><br><span class="line"><span class="number">0x44</span>：取CPU信息</span><br><span class="line"><span class="number">0x48</span>：取CPU占用率</span><br><span class="line"><span class="number">0x4C</span>：取内存容量信息</span><br><span class="line"><span class="number">0x50</span>：取声卡名称</span><br><span class="line"><span class="number">0x54</span>：打开监视器</span><br><span class="line"><span class="number">0x58</span>：关闭监视器</span><br><span class="line"><span class="number">0x5C</span>：添加右键菜单</span><br><span class="line"><span class="number">0x60</span>：删除右键菜单</span><br><span class="line"><span class="number">0x64</span>：设置自动运行</span><br><span class="line"><span class="number">0x68</span>：删除临时文件</span><br><span class="line"><span class="number">0x6C</span>：清除历史记录</span><br><span class="line"><span class="number">0x94</span>：创建程序组</span><br><span class="line"><span class="number">0x98</span>：删除程序组</span><br><span class="line"><span class="number">0x9C</span>：创建程序项</span><br><span class="line"><span class="number">0xA0</span>：删除程序项</span><br><span class="line"><span class="number">0xA4</span>：取快捷方式目标</span><br><span class="line"><span class="number">0xA8</span>：取网卡信息列表</span><br><span class="line"><span class="number">0xAC</span>：取本机网卡名</span><br><span class="line"><span class="number">0xB0</span>：取本机网卡物理地址</span><br><span class="line"><span class="number">0xB4</span>：取远程网卡物理地址</span><br><span class="line"><span class="number">0xBC</span>：取IP地址</span><br><span class="line"><span class="number">0xC0</span>：撰写邮件</span><br><span class="line"><span class="number">0xC4</span>：取网络类型列表</span><br><span class="line"><span class="number">0xC8</span>：取网络工作组列表</span><br><span class="line"><span class="number">0xCC</span>：取网络计算机列表</span><br><span class="line"><span class="number">0xD0</span>：是否与互联网连接</span><br><span class="line"><span class="number">0xDC</span>：打开特殊系统窗口</span><br><span class="line"><span class="number">0xE0</span>：打开指定网址</span><br><span class="line"><span class="number">0xE4</span>：隐藏桌面图标</span><br><span class="line"><span class="number">0xE8</span>：显示桌面图标</span><br><span class="line"><span class="number">0xEC</span>：隐藏任务栏</span><br><span class="line"><span class="number">0xF0</span>：显示任务栏</span><br><span class="line"><span class="number">0xF4</span>：隐藏系统时钟</span><br><span class="line"><span class="number">0xF8</span>：显示系统时钟</span><br><span class="line"><span class="number">0xFC</span>：隐藏开始按钮</span><br><span class="line"><span class="number">0x100</span>：显示开始按钮</span><br><span class="line"><span class="number">0x104</span>：设置桌面壁纸</span><br><span class="line"><span class="number">0x108</span>：设置窗口透明度</span><br><span class="line"><span class="number">0x10C</span>：取显示模式列表</span><br><span class="line"><span class="number">0x110</span>：取当前显示模式</span><br><span class="line"><span class="number">0x114</span>：设置屏幕分辨率</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、组件ID"><a href="#二、组件ID" class="headerlink" title="二、组件ID"></a>二、组件ID</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x16010030</span>：编辑框</span><br><span class="line"><span class="number">0x16010031</span>：图片框</span><br><span class="line"><span class="number">0x16010032</span>：外形框</span><br><span class="line"><span class="number">0x16010033</span>：画板</span><br><span class="line"><span class="number">0x16010034</span>：分组框</span><br><span class="line"><span class="number">0x16010035</span>：标签</span><br><span class="line"><span class="number">0x16010036</span>：按钮</span><br><span class="line"><span class="number">0x1601016B</span>：时钟</span><br><span class="line"><span class="number">0x16010006</span>：时钟</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/Reverse/%E4%BF%AE%E5%A4%8DIAT%E7%9A%84%E5%A5%87%E6%B7%AB%E6%8A%80%E5%B7%A7/" rel="prev" title="修复IAT的奇淫技巧">
+                  <i class="fa fa-chevron-left"></i> 修复IAT的奇淫技巧
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/UnrealEngine/%E4%B8%80%E3%80%81%E4%BA%86%E8%A7%A3UE4%E5%BC%95%E6%93%8E%E5%8F%8A%E6%95%B0%E6%8D%AE%E6%9F%A5%E6%89%BE/" rel="next" title="一、了解UE4引擎及数据查找">
+                  一、了解UE4引擎及数据查找 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

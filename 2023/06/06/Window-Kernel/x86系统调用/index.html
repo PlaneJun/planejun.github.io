@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1、R3进入R0WindowsXp前R3进入R0都是依靠中断门(0x2E)进行提权，这种提权方式较为复杂，需要压入SS、CS、EIP、ESP等等一系列复杂操作。因此Xp后引入快速调用(FastCall)。   x86使用的是sysenter&#x2F;sysreturn,x64是syscall&#x2F;sysexit。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x86系统调用">
+<meta property="og:url" content="https://blog.planejun.cn/2023/06/06/Window-Kernel/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="1、R3进入R0WindowsXp前R3进入R0都是依靠中断门(0x2E)进行提权，这种提权方式较为复杂，需要压入SS、CS、EIP、ESP等等一系列复杂操作。因此Xp后引入快速调用(FastCall)。   x86使用的是sysenter&#x2F;sysreturn,x64是syscall&#x2F;sysexit。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174405820.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174544302.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174830637.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174744294.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606180430780.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606181016370.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606181042043.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606181545455.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606185833671.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606190001409.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606190256492.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606194041632.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606213328593.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606213340869.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606214811005.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606214823709.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606215841958.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606220710700.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606221830957.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606222957415.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223405698.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223421453.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223444266.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223500077.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223512539.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223529963.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223541132.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607113834088.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607113849972.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607113908536.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607114434208.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607114506759.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607114728846.png">
+<meta property="og:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607114858636.png">
+<meta property="article:published_time" content="2023-06-06T13:25:00.000Z">
+<meta property="article:modified_time" content="2024-04-21T12:21:45.035Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174405820.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2023/06/06/Window-Kernel/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2023/06/06/Window-Kernel/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/","path":"2023/06/06/Window-Kernel/x86系统调用/","title":"x86系统调用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>x86系统调用 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81R3%E8%BF%9B%E5%85%A5R0"><span class="nav-number">1.</span> <span class="nav-text">1、R3进入R0</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E5%88%86%E6%9E%90KiFastCallEntry"><span class="nav-number">1.1.</span> <span class="nav-text">1.2 分析KiFastCallEntry</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%8F%8F%E8%BF%B0%E8%A1%A8"><span class="nav-number">2.</span> <span class="nav-text">2、系统服务描述表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E5%88%86%E6%9E%90SSSDT%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 分析SSSDT初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E6%9C%8D%E5%8A%A1%E5%8F%B7"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 服务号</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81R0%E5%9B%9ER3"><span class="nav-number">3.</span> <span class="nav-text">3、R0回R3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4%E3%80%81HOOK-SSDT"><span class="nav-number">4.</span> <span class="nav-text">4、HOOK SSDT</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5%E3%80%81PreviousMode%E7%90%86%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">5、PreviousMode理解</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2023/06/06/Window-Kernel/x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="x86系统调用 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          x86系统调用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-06-06 21:25:00" itemprop="dateCreated datePublished" datetime="2023-06-06T21:25:00+08:00">2023-06-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-04-21 20:21:45" itemprop="dateModified" datetime="2024-04-21T20:21:45+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Windows-Kernel/" itemprop="url" rel="index"><span itemprop="name">Windows-Kernel</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="1、R3进入R0"><a href="#1、R3进入R0" class="headerlink" title="1、R3进入R0"></a>1、R3进入R0</h1><p><code>WindowsXp</code>前R3进入R0都是依靠中断门<code>(0x2E)</code>进行提权，这种提权方式较为复杂，需要压入SS、CS、EIP、ESP等等一系列复杂操作。因此Xp后引入快速调用<code>(FastCall)</code>。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174405820.png" alt="image-20230606174405820"></p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174544302.png" alt="image-20230606174544302"></p>
+<p>x86使用的是sysenter&#x2F;sysreturn,x64是syscall&#x2F;sysexit。</p>
+<p>以API<code>ReadProcessMemory</code>为例，使用CE跳转到该函数，然后手动跟踪。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174830637.png" alt="image-20230606174830637"></p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606174744294.png" alt="image-20230606174744294"></p>
+<p>可以看到调用过程如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kernel32.ReadProcessMemory-&gt;kernelbase.ReadProcessMemory-&gt;ntdll.ZwReadVirtualMemory</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>“Window7有一项变化，即对Kernel32.dll做了重构，引入KernelBase.dll，把原本实现在Kernel32.dll中的逻辑移到Kernelbase.dll中，Kernel32只保留了接口，这样修改后，负责用户空间开发的团队只需要使用稳定版本的Kernel32.dll，不需要频繁更新，负责内核空间的团队如果对底层做修改，一般只需要修改Kernelbase.dll，不需要更新Kernel32.dll，两个团队之间的相互牵制大大减少。”   –《软件调试-卷二：Windows平台调试(上)》</p>
+</blockquote>
+<p>其中ZwReadVirtualMemory中只通过一条<code>call [edx]</code>即可完成函数调用，实际上edx指向的地址为<code>_KUSER_SHARED_DATA</code>中的成员<code>SystemCall</code>，该成员保存着快速调用函数的入口。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//0x5f0 bytes (sizeof)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">KUSER_SHARED_DATA</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ULONG TickCountLowDeprecated;                                           <span class="comment">//0x0</span></span><br><span class="line">    ULONG TickCountMultiplier;                                              <span class="comment">//0x4</span></span><br><span class="line">    <span class="keyword">volatile</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KSYSTEM_TIME</span> <span class="title">InterruptTime</span>;</span>                            <span class="comment">//0x8</span></span><br><span class="line">    <span class="keyword">volatile</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KSYSTEM_TIME</span> <span class="title">SystemTime</span>;</span>                               <span class="comment">//0x14</span></span><br><span class="line">    <span class="keyword">volatile</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KSYSTEM_TIME</span> <span class="title">TimeZoneBias</span>;</span>                             <span class="comment">//0x20</span></span><br><span class="line">    USHORT ImageNumberLow;                                                  <span class="comment">//0x2c</span></span><br><span class="line">    USHORT ImageNumberHigh;                                                 <span class="comment">//0x2e</span></span><br><span class="line">    WCHAR NtSystemRoot[<span class="number">260</span>];                                                <span class="comment">//0x30</span></span><br><span class="line">    ULONG MaxStackTraceDepth;                                               <span class="comment">//0x238</span></span><br><span class="line">    ULONG CryptoExponent;                                                   <span class="comment">//0x23c</span></span><br><span class="line">    ULONG TimeZoneId;                                                       <span class="comment">//0x240</span></span><br><span class="line">    ULONG LargePageMinimum;                                                 <span class="comment">//0x244</span></span><br><span class="line">    ULONG Reserved2[<span class="number">7</span>];                                                     <span class="comment">//0x248</span></span><br><span class="line">    <span class="class"><span class="keyword">enum</span> _<span class="title">NT_PRODUCT_TYPE</span> <span class="title">NtProductType</span>;</span>                                    <span class="comment">//0x264</span></span><br><span class="line">    UCHAR ProductTypeIsValid;                                               <span class="comment">//0x268</span></span><br><span class="line">    ULONG NtMajorVersion;                                                   <span class="comment">//0x26c</span></span><br><span class="line">    ULONG NtMinorVersion;                                                   <span class="comment">//0x270</span></span><br><span class="line">    UCHAR ProcessorFeatures[<span class="number">64</span>];                                            <span class="comment">//0x274</span></span><br><span class="line">    ULONG Reserved1;                                                        <span class="comment">//0x2b4</span></span><br><span class="line">    ULONG Reserved3;                                                        <span class="comment">//0x2b8</span></span><br><span class="line">    <span class="keyword">volatile</span> ULONG TimeSlip;                                                <span class="comment">//0x2bc</span></span><br><span class="line">    <span class="class"><span class="keyword">enum</span> _<span class="title">ALTERNATIVE_ARCHITECTURE_TYPE</span> <span class="title">AlternativeArchitecture</span>;</span>            <span class="comment">//0x2c0</span></span><br><span class="line">    ULONG AltArchitecturePad[<span class="number">1</span>];                                            <span class="comment">//0x2c4</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> _<span class="title">LARGE_INTEGER</span> <span class="title">SystemExpirationDate</span>;</span>                              <span class="comment">//0x2c8</span></span><br><span class="line">    ULONG SuiteMask;                                                        <span class="comment">//0x2d0</span></span><br><span class="line">    UCHAR KdDebuggerEnabled;                                                <span class="comment">//0x2d4</span></span><br><span class="line">    UCHAR NXSupportPolicy;                                                  <span class="comment">//0x2d5</span></span><br><span class="line">    <span class="keyword">volatile</span> ULONG ActiveConsoleId;                                         <span class="comment">//0x2d8</span></span><br><span class="line">    <span class="keyword">volatile</span> ULONG DismountCount;                                           <span class="comment">//0x2dc</span></span><br><span class="line">    ULONG ComPlusPackage;                                                   <span class="comment">//0x2e0</span></span><br><span class="line">    ULONG LastSystemRITEventTickCount;                                      <span class="comment">//0x2e4</span></span><br><span class="line">    ULONG NumberOfPhysicalPages;                                            <span class="comment">//0x2e8</span></span><br><span class="line">    UCHAR SafeBootMode;                                                     <span class="comment">//0x2ec</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        UCHAR TscQpcData;                                                   <span class="comment">//0x2ed</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">        &#123;</span></span><br><span class="line">            UCHAR TscQpcEnabled:<span class="number">1</span>;                                          <span class="comment">//0x2ed</span></span><br><span class="line">            UCHAR TscQpcSpareFlag:<span class="number">1</span>;                                        <span class="comment">//0x2ed</span></span><br><span class="line">            UCHAR TscQpcShift:<span class="number">6</span>;                                            <span class="comment">//0x2ed</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;;</span><br><span class="line">    UCHAR TscQpcPad[<span class="number">2</span>];                                                     <span class="comment">//0x2ee</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        ULONG SharedDataFlags;                                              <span class="comment">//0x2f0</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">        &#123;</span></span><br><span class="line">            ULONG DbgErrorPortPresent:<span class="number">1</span>;                                    <span class="comment">//0x2f0</span></span><br><span class="line">            ULONG DbgElevationEnabled:<span class="number">1</span>;                                    <span class="comment">//0x2f0</span></span><br><span class="line">            ULONG DbgVirtEnabled:<span class="number">1</span>;                                         <span class="comment">//0x2f0</span></span><br><span class="line">            ULONG DbgInstallerDetectEnabled:<span class="number">1</span>;                              <span class="comment">//0x2f0</span></span><br><span class="line">            ULONG DbgSystemDllRelocated:<span class="number">1</span>;                                  <span class="comment">//0x2f0</span></span><br><span class="line">            ULONG DbgDynProcessorEnabled:<span class="number">1</span>;                                 <span class="comment">//0x2f0</span></span><br><span class="line">            ULONG DbgSEHValidationEnabled:<span class="number">1</span>;                                <span class="comment">//0x2f0</span></span><br><span class="line">            ULONG SpareBits:<span class="number">25</span>;                                             <span class="comment">//0x2f0</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;;</span><br><span class="line">    ULONG DataFlagsPad[<span class="number">1</span>];                                                  <span class="comment">//0x2f4</span></span><br><span class="line">    ULONGLONG TestRetInstruction;                                           <span class="comment">//0x2f8</span></span><br><span class="line">    ULONG SystemCall;                                                       <span class="comment">//0x300</span></span><br><span class="line">    ULONG SystemCallReturn;                                                 <span class="comment">//0x304</span></span><br><span class="line">    ULONGLONG SystemCallPad[<span class="number">3</span>];                                             <span class="comment">//0x308</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        <span class="keyword">volatile</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KSYSTEM_TIME</span> <span class="title">TickCount</span>;</span>                            <span class="comment">//0x320</span></span><br><span class="line">        <span class="keyword">volatile</span> ULONGLONG TickCountQuad;                                   <span class="comment">//0x320</span></span><br><span class="line">        ULONG ReservedTickCountOverlay[<span class="number">3</span>];                                  <span class="comment">//0x320</span></span><br><span class="line">    &#125;;</span><br><span class="line">    ULONG TickCountPad[<span class="number">1</span>];                                                  <span class="comment">//0x32c</span></span><br><span class="line">    ULONG Cookie;                                                           <span class="comment">//0x330</span></span><br><span class="line">    ULONG CookiePad[<span class="number">1</span>];                                                     <span class="comment">//0x334</span></span><br><span class="line">    LONGLONG ConsoleSessionForegroundProcessId;                             <span class="comment">//0x338</span></span><br><span class="line">    ULONG Wow64SharedInformation[<span class="number">16</span>];                                       <span class="comment">//0x340</span></span><br><span class="line">    USHORT UserModeGlobalLogger[<span class="number">16</span>];                                        <span class="comment">//0x380</span></span><br><span class="line">    ULONG ImageFileExecutionOptions;                                        <span class="comment">//0x3a0</span></span><br><span class="line">    ULONG LangGenerationCount;                                              <span class="comment">//0x3a4</span></span><br><span class="line">    ULONGLONG Reserved5;                                                    <span class="comment">//0x3a8</span></span><br><span class="line">    <span class="keyword">volatile</span> ULONGLONG InterruptTimeBias;                                   <span class="comment">//0x3b0</span></span><br><span class="line">    <span class="keyword">volatile</span> ULONGLONG TscQpcBias;                                          <span class="comment">//0x3b8</span></span><br><span class="line">    <span class="keyword">volatile</span> ULONG ActiveProcessorCount;                                    <span class="comment">//0x3c0</span></span><br><span class="line">    <span class="keyword">volatile</span> USHORT ActiveGroupCount;                                       <span class="comment">//0x3c4</span></span><br><span class="line">    USHORT Reserved4;                                                       <span class="comment">//0x3c6</span></span><br><span class="line">    <span class="keyword">volatile</span> ULONG AitSamplingValue;                                        <span class="comment">//0x3c8</span></span><br><span class="line">    <span class="keyword">volatile</span> ULONG AppCompatFlag;                                           <span class="comment">//0x3cc</span></span><br><span class="line">    ULONGLONG SystemDllNativeRelocation;                                    <span class="comment">//0x3d0</span></span><br><span class="line">    ULONG SystemDllWowRelocation;                                           <span class="comment">//0x3d8</span></span><br><span class="line">    ULONG XStatePad[<span class="number">1</span>];                                                     <span class="comment">//0x3dc</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">XSTATE_CONFIGURATION</span> <span class="title">XState</span>;</span>                                    <span class="comment">//0x3e0</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<p><code>_KUSER_SHARED_DATA</code>是R0和R3共享的一段内存，其中R3只有读权限，R0有读写权限。将edx的值减掉0x300可得到地址头。在R0下地址为fffe0000。随便附加一个R3进程，然后查看7ffe0000。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606180430780.png" alt="image-20230606180430780"></p>
+<p>使用Windbg查看一下该处函数。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606181016370.png" alt="image-20230606181016370"></p>
+<p>这里没有显示符号，到ce看一下。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606181042043.png" alt="image-20230606181042043"></p>
+<p>实际上叫做KiFastSystemCall。其中sysenter指令执行时会跳转到MSR[176]指向的函数地址。快速调用之所以比中断门提权快是因为，快速调用进入内核的时，CS、SS、EIP、ESP均来自MSR寄存器，CPU直接读取后即可进入提权操作，并且快速调用中会自己保护上下文环境。中断门需要自己压参数，和保护上下文，性能上不如直接读取CPU寄存器快。</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>174H</td>
+<td>CS</td>
+</tr>
+<tr>
+<td>175H</td>
+<td>ESP</td>
+</tr>
+<tr>
+<td>176H</td>
+<td>EIP</td>
+</tr>
+</tbody></table>
+<p>SS&#x3D;CS的值+8，因为SS的描述符是紧随着CS的描述符。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606181545455.png" alt="image-20230606181545455"></p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606185833671.png" alt="image-20230606185833671"></p>
+<p>使用windbg查看176位置的函数。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606190001409.png" alt="image-20230606190001409"></p>
+<p>由于没有加载出符号，但实际上这个函数是<code>KiFastCallEntry</code></p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606190256492.png" alt="image-20230606190256492"></p>
+<h2 id="1-2-分析KiFastCallEntry"><a href="#1-2-分析KiFastCallEntry" class="headerlink" title="1.2 分析KiFastCallEntry"></a>1.2 分析KiFastCallEntry</h2><p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606194041632.png" alt="image-20230606194041632"></p>
+<p>IDA中会看到还有一个KiFastCallEntry2，这是因为不是所有API都是过这个KiFastCallEntry，那个2是为了兼容其他框架。</p>
+<hr>
+<p>这里需要了解两个结构体，<code>KPCR</code>和<code>KTrap_Frame</code></p>
+<ul>
+<li>fs:[30]：在3环时，fs处指向的是PEB结构，0环下指向_KPCR结构。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//0x3748 bytes (sizeof)</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">_KPCR</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">union</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">_NT_TIB</span> NtTib;                                               <span class="comment">//0x0</span></span><br><span class="line">        <span class="keyword">struct</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">struct</span> <span class="title class_">_EXCEPTION_REGISTRATION_RECORD</span>* Used_ExceptionList;      <span class="comment">//0x0</span></span><br><span class="line">            VOID* Used_StackBase;                                           <span class="comment">//0x4</span></span><br><span class="line">            VOID* Spare2;                                                   <span class="comment">//0x8</span></span><br><span class="line">            VOID* TssCopy;                                                  <span class="comment">//0xc</span></span><br><span class="line">            ULONG ContextSwitches;                                          <span class="comment">//0x10</span></span><br><span class="line">            ULONG SetMemberCopy;                                            <span class="comment">//0x14</span></span><br><span class="line">            VOID* Used_Self;                                                <span class="comment">//0x18</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">_KPCR</span>* SelfPcr;                                                  <span class="comment">//0x1c</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">_KPRCB</span>* Prcb;                                                    <span class="comment">//0x20</span></span><br><span class="line">    UCHAR Irql;                                                             <span class="comment">//0x24</span></span><br><span class="line">    ULONG IRR;                                                              <span class="comment">//0x28</span></span><br><span class="line">    ULONG IrrActive;                                                        <span class="comment">//0x2c</span></span><br><span class="line">    ULONG IDR;                                                              <span class="comment">//0x30</span></span><br><span class="line">    VOID* KdVersionBlock;                                                   <span class="comment">//0x34</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">_KIDTENTRY</span>* IDT;                                                 <span class="comment">//0x38</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">_KGDTENTRY</span>* GDT;                                                 <span class="comment">//0x3c</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">_KTSS</span>* TSS;                                                      <span class="comment">//0x40</span></span><br><span class="line">    USHORT MajorVersion;                                                    <span class="comment">//0x44</span></span><br><span class="line">    USHORT MinorVersion;                                                    <span class="comment">//0x46</span></span><br><span class="line">    ULONG SetMember;                                                        <span class="comment">//0x48</span></span><br><span class="line">    ULONG StallScaleFactor;                                                 <span class="comment">//0x4c</span></span><br><span class="line">    UCHAR SpareUnused;                                                      <span class="comment">//0x50</span></span><br><span class="line">    UCHAR Number;                                                           <span class="comment">//0x51</span></span><br><span class="line">    UCHAR Spare0;                                                           <span class="comment">//0x52</span></span><br><span class="line">    UCHAR SecondLevelCacheAssociativity;                                    <span class="comment">//0x53</span></span><br><span class="line">    ULONG VdmAlert;                                                         <span class="comment">//0x54</span></span><br><span class="line">    ULONG KernelReserved[<span class="number">14</span>];                                               <span class="comment">//0x58</span></span><br><span class="line">    ULONG SecondLevelCacheSize;                                             <span class="comment">//0x90</span></span><br><span class="line">    ULONG HalReserved[<span class="number">16</span>];                                                  <span class="comment">//0x94</span></span><br><span class="line">    ULONG InterruptMode;                                                    <span class="comment">//0xd4</span></span><br><span class="line">    UCHAR Spare1;                                                           <span class="comment">//0xd8</span></span><br><span class="line">    ULONG KernelReserved2[<span class="number">17</span>];                                              <span class="comment">//0xdc</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">_KPRCB</span> PrcbData;                                                 <span class="comment">//0x120</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>KTrap_Frame：栈帧，由于R3切换到R0，环境产生改变，因此需要保存。这个结构就是用来保存R3切换到R0的环境。</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//0x8c bytes (sizeof)</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">_KTRAP_FRAME</span></span><br><span class="line">&#123;</span><br><span class="line">    ULONG DbgEbp;                                                           <span class="comment">//0x0</span></span><br><span class="line">    ULONG DbgEip;                                                           <span class="comment">//0x4</span></span><br><span class="line">    ULONG DbgArgMark;                                                       <span class="comment">//0x8</span></span><br><span class="line">    ULONG DbgArgPointer;                                                    <span class="comment">//0xc</span></span><br><span class="line">    USHORT TempSegCs;                                                       <span class="comment">//0x10</span></span><br><span class="line">    UCHAR Logging;                                                          <span class="comment">//0x12</span></span><br><span class="line">    UCHAR Reserved;                                                         <span class="comment">//0x13</span></span><br><span class="line">    ULONG TempEsp;                                                          <span class="comment">//0x14</span></span><br><span class="line">    ULONG Dr0;                                                              <span class="comment">//0x18</span></span><br><span class="line">    ULONG Dr1;                                                              <span class="comment">//0x1c</span></span><br><span class="line">    ULONG Dr2;                                                              <span class="comment">//0x20</span></span><br><span class="line">    ULONG Dr3;                                                              <span class="comment">//0x24</span></span><br><span class="line">    ULONG Dr6;                                                              <span class="comment">//0x28</span></span><br><span class="line">    ULONG Dr7;                                                              <span class="comment">//0x2c</span></span><br><span class="line">    ULONG SegGs;                                                            <span class="comment">//0x30</span></span><br><span class="line">    ULONG SegEs;                                                            <span class="comment">//0x34</span></span><br><span class="line">    ULONG SegDs;                                                            <span class="comment">//0x38</span></span><br><span class="line">    ULONG Edx;                                                              <span class="comment">//0x3c</span></span><br><span class="line">    ULONG Ecx;                                                              <span class="comment">//0x40</span></span><br><span class="line">    ULONG Eax;                                                              <span class="comment">//0x44</span></span><br><span class="line">    ULONG PreviousPreviousMode;                                             <span class="comment">//0x48-----R0用</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">_EXCEPTION_REGISTRATION_RECORD</span>* ExceptionList;                   <span class="comment">//0x4c</span></span><br><span class="line">    ULONG SegFs;                                                            <span class="comment">//0x50</span></span><br><span class="line">    ULONG Edi;                                                              <span class="comment">//0x54</span></span><br><span class="line">    ULONG Esi;                                                              <span class="comment">//0x58</span></span><br><span class="line">    ULONG Ebx;                                                              <span class="comment">//0x5c</span></span><br><span class="line">    ULONG Ebp;                                                              <span class="comment">//0x60</span></span><br><span class="line">    ULONG ErrCode;                                                          <span class="comment">//0x64</span></span><br><span class="line">    ULONG Eip;                                                              <span class="comment">//0x68</span></span><br><span class="line">    ULONG SegCs;                                                            <span class="comment">//0x6c </span></span><br><span class="line">    ULONG EFlags;                                                           <span class="comment">//0x70-----R3用</span></span><br><span class="line">    ULONG HardwareEsp;                                                      <span class="comment">//0x74 </span></span><br><span class="line">    ULONG HardwareSegSs;                                                    <span class="comment">//0x78</span></span><br><span class="line">    ULONG V86Es;                                                            <span class="comment">//0x7c	虚拟8086模式下，保护模式下不用</span></span><br><span class="line">    ULONG V86Ds;                                                            <span class="comment">//0x80</span></span><br><span class="line">    ULONG V86Fs;                                                            <span class="comment">//0x84</span></span><br><span class="line">    ULONG V86Gs;                                                            <span class="comment">//0x88</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606213328593.png" alt="image-20230606213328593"></p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606213340869.png" alt="image-20230606213340869"></p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606214811005.png" alt="image-20230606214811005"></p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606214823709.png" alt="image-20230606214823709"></p>
+<h1 id="2、系统服务描述表"><a href="#2、系统服务描述表" class="headerlink" title="2、系统服务描述表"></a>2、系统服务描述表</h1><p>由上边分析可知，最后调用的函数来自于一个ServiceTable，这个叫做服务表，一共有两张，一张叫做<code>SystemServiceDecriptionTable</code>，另一张叫做<code>SystemServiceDecriptionTableShadow</code>其中后边这张只有带有UI的程序才会存在。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_KSERVICE_TABLKSERVICE_TABLE_DESCRIPTORE_DESCRIPTOR</span></span><br><span class="line">&#123;</span><br><span class="line">    PULONG_PTR FuncPoint;	<span class="comment">//指向函数表</span></span><br><span class="line">    PULONG Count;			<span class="comment">//调用的次数</span></span><br><span class="line">    PULONG Limit;			<span class="comment">//函数个数</span></span><br><span class="line">    PUCHAR ArgsPoint;		<span class="comment">//参数列表</span></span><br><span class="line">&#125;KSERVICE_TABLE_DESCRIPTOR, *PKSERVICE_TABLE_DESCRIPTOR;</span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NUMBER_SERVICE_TABLES 2</span></span><br><span class="line"> </span><br><span class="line">KSERVICE_TABLE_DESCRIPTOR KeServiceDescriptorTable[NUMBER_SERVICE_TABLES]</span><br><span class="line">KSERVICE_TABLE_DESCRIPTOR KeServiceDescriptorTableShadow[NUMBER_SERVICE_TABLES]</span><br></pre></td></tr></table></figure>
+
+<p>Windows中提供了一个导出的全局变量<code>SystemServicesDescriptorTable</code>，也叫SSDT。这个全局变量存储了系统服务表的地址，但仅存储了第一张表的地址。</p>
+<p>在windbg中输入命令 <code>dd KeServiceDescriptorTable</code>查看该全局变量。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606215841958.png" alt="image-20230606215841958"></p>
+<p>一张表共0x10个字节，也解释微软在上边通过服务号计算表的算法为什么利用0x10算。内核中还有一个全局变量称为SSDT Shadow，该变量未导出，但可以查看所有的系统服务表。在windbg中输入命令 <code>dd KeServiceDescriptorTableShadow</code>，也叫SSSDT。查看该全局变量。可以看到所有的系统服务表。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606220710700.png" alt="image-20230606220710700"></p>
+<h2 id="2-1-分析SSSDT初始化"><a href="#2-1-分析SSSDT初始化" class="headerlink" title="2.1 分析SSSDT初始化"></a>2.1 分析SSSDT初始化</h2><p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606221830957.png" alt="image-20230606221830957"></p>
+<h2 id="2-2-服务号"><a href="#2-2-服务号" class="headerlink" title="2.2 服务号"></a>2.2 服务号</h2><p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606222957415.png" alt="image-20230606222957415"></p>
+<p>小技巧：服务号&gt;0x1000是SSSDT，小于0x1000是SSDT。</p>
+<h1 id="3、R0回R3"><a href="#3、R0回R3" class="headerlink" title="3、R0回R3"></a>3、R0回R3</h1><p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223405698.png" alt="image-20230606223405698"></p>
+<p>检查ETW日志是否需要记录。并为Kthread-&gt;TrapFrame成员赋值。可用于恢复旧TrapFrame或蓝屏时进行堆栈回溯。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223421453.png" alt="image-20230606223421453"></p>
+<p>随后判断是否虚拟8086模式和之前的特权级。并相应的执行性能统计</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223444266.png" alt="image-20230606223444266"></p>
+<p>如果有APC需要处理则处理APC。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223500077.png" alt="image-20230606223500077"></p>
+<p>恢复异常链表及调试寄存器（如果为调试模式的话）。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223512539.png" alt="image-20230606223512539"></p>
+<p>进行一万个感觉没卵用的判断</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223529963.png" alt="image-20230606223529963"></p>
+<p>最后恢复各种寄存器，并以iret方式返回3环。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230606223541132.png" alt="image-20230606223541132"></p>
+<h1 id="4、HOOK-SSDT"><a href="#4、HOOK-SSDT" class="headerlink" title="4、HOOK SSDT"></a>4、HOOK SSDT</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;ntifs.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_KSERVICE_TABLKSERVICE_TABLE_DESCRIPTORE_DESCRIPTOR</span></span><br><span class="line">&#123;</span><br><span class="line">	PULONG_PTR FuncPoint;	<span class="comment">//指向函数表</span></span><br><span class="line">	PULONG Count;			<span class="comment">//调用的次数</span></span><br><span class="line">	PULONG Limit;			<span class="comment">//函数个数</span></span><br><span class="line">	PUCHAR ArgsPoint;		<span class="comment">//参数列表</span></span><br><span class="line">&#125;KSERVICE_TABLE_DESCRIPTOR, *PKSERVICE_TABLE_DESCRIPTOR;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">EXTERN_C PKSERVICE_TABLE_DESCRIPTOR KeServiceDescriptorTable;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">NTSTATUS</span><span class="params">(NTAPI *fnNtOpenProcess)</span><span class="params">(_Out_ PHANDLE ProcessHandle, _In_ ACCESS_MASK DesiredAccess, _In_ POBJECT_ATTRIBUTES ObjectAttributes, _In_opt_ PCLIENT_ID ClientId)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">fnNtOpenProcess lpOpenProcess = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">PVOID <span class="title">HookSSDT</span><span class="params">(ULONG serviceIndex, PVOID hkFunc)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ULONG func_offset = serviceIndex &amp; <span class="number">0xFFF</span>;</span><br><span class="line">	PULONG_PTR func_pointer = &amp;((KeServiceDescriptorTable-&gt;FuncPoint)[func_offset]);</span><br><span class="line">	PHYSICAL_ADDRESS tmp = <span class="built_in">MmGetPhysicalAddress</span>(func_pointer);</span><br><span class="line">	PULONG_PTR mapAddr = <span class="built_in">MmMapIoSpace</span>(tmp, PAGE_SIZE, MmCached);</span><br><span class="line">	<span class="keyword">if</span> (mapAddr &gt; <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		PVOID origin = (KeServiceDescriptorTable-&gt;FuncPoint)[func_offset]; <span class="comment">//获取原始函数</span></span><br><span class="line">		*mapAddr = hkFunc;<span class="comment">//hook函数</span></span><br><span class="line">		<span class="keyword">return</span> origin;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">VOID <span class="title">unloadDrv</span><span class="params">(PDRIVER_OBJECT pDrv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">HookSSDT</span>(<span class="number">0xBE</span>, lpOpenProcess);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS NTAPI <span class="title">MyNtOpenProcess</span><span class="params">(_Out_ PHANDLE ProcessHandle, _In_ ACCESS_MASK DesiredAccess, _In_ POBJECT_ATTRIBUTES ObjectAttributes, _In_opt_ PCLIENT_ID ClientId)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	PEPROCESS eproc = <span class="literal">NULL</span>;</span><br><span class="line">	NTSTATUS status = <span class="built_in">PsLookupProcessByProcessId</span>(ClientId-&gt;UniqueProcess, &amp;eproc);</span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">NT_SUCCESS</span>(status))</span><br><span class="line">	&#123;</span><br><span class="line">		PUNICODE_STRING imageName = <span class="literal">NULL</span>;</span><br><span class="line">		status = <span class="built_in">SeLocateProcessImageName</span>(eproc, &amp;imageName);</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">NT_SUCCESS</span>(status))</span><br><span class="line">		&#123;</span><br><span class="line">			UNICODE_STRING target = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">			<span class="built_in">RtlInitUnicodeString</span>(&amp;target, <span class="string">L&quot;\\Device\\HarddiskVolume2\\内核工具包\\Loader\\InstDrv.exe&quot;</span>);</span><br><span class="line">			<span class="keyword">if</span> (!<span class="built_in">RtlCompareUnicodeString</span>(imageName, &amp;target, TRUE))</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">DbgPrintEx</span>(<span class="number">77</span>, <span class="number">0</span>, <span class="string">&quot;hook \r\n&quot;</span>);</span><br><span class="line">				<span class="keyword">return</span> STATUS_ACCESS_VIOLATION;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">lpOpenProcess</span>(ProcessHandle, DesiredAccess, ObjectAttributes, ClientId);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS <span class="title">DriverEntry</span><span class="params">(PDRIVER_OBJECT pDrv, PUNICODE_STRING pReg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	pDrv-&gt;DriverUnload = unloadDrv;</span><br><span class="line"></span><br><span class="line">	lpOpenProcess = <span class="built_in">HookSSDT</span>(<span class="number">0xBE</span>, MyNtOpenProcess);</span><br><span class="line">	<span class="keyword">if</span> (lpOpenProcess&gt;<span class="number">0</span>)</span><br><span class="line">		<span class="built_in">DbgPrintEx</span>(<span class="number">77</span>, <span class="number">0</span>, <span class="string">&quot;ok\r\n&quot;</span>);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="built_in">DbgPrintEx</span>(<span class="number">77</span>, <span class="number">0</span>, <span class="string">&quot;no\r\n&quot;</span>);</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过HOOK OpenProcess函数判断如果打开的进程为InstDrv则直接返回失败，效果：CE对进程InstDrv无图标。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607113834088.png" alt="image-20230607113834088"></p>
+<p>打开进程失败。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607113849972.png" alt="image-20230607113849972"></p>
+<p>驱动卸载后，一切正常。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607113908536.png" alt="image-20230607113908536"></p>
+<h1 id="5、PreviousMode理解"><a href="#5、PreviousMode理解" class="headerlink" title="5、PreviousMode理解"></a>5、PreviousMode理解</h1><p>假如R3向驱动发送了一个信息号，让驱动执行函数<code>NtProtectVirtualMemory</code>,此时R0的PreviousMode为1，即为三环。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607114434208.png" alt="image-20230607114434208"></p>
+<p>打开WRK查看函数<code>NtProtectVirtualMemory</code>流程</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607114506759.png" alt="image-20230607114506759"></p>
+<p>可以看到如果PreviousMode不是KernelMode，则会判断当前传进来的参数是否可读，否则会跑出一个异常。<code>这里的坑就是,假设通过驱动修改某个进程地址的属性，那么此时BaseAddress属于R3的内存范围,因此这里的判断就会出错,进入异常。</code></p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607114728846.png" alt="image-20230607114728846"></p>
+<p>因此需要在调用的时候修改PreviousMode。</p>
+<p><img src="/./x86%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/image-20230607114858636.png" alt="image-20230607114858636"></p>
+<p>调用完毕后再修改回来。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/05/25/Window-Kernel/x64%E9%A1%B5%E8%A1%A8%E6%98%A0%E5%B0%84/" rel="prev" title="x64页表映射">
+                  <i class="fa fa-chevron-left"></i> x64页表映射
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/13/GameHacker/%E5%85%B3%E4%BA%8ELOL%E5%8A%A8%E6%80%81%E7%9A%AE%E8%82%A4%E4%BF%AE%E6%94%B9%E7%9A%84%E9%80%86%E5%90%91%E4%B8%8E%E5%AE%9E%E7%8E%B0/" rel="next" title="关于LOL动态皮肤修改的逆向与实现">
+                  关于LOL动态皮肤修改的逆向与实现 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="开场白和表情包我就不加了了，文采和资源没这么丰富，直接步入正题。本次聊聊的功能为目前fps较为热门功能：子弹追踪。  PlaneJun ・2020-4-27 19:44  开场白和表情包我就不加了了，文采和资源没这么丰富，直接步入正题。本次聊聊的功能为目前fps较为热门功能：子弹追踪。 简单聊聊：该功能呢早期主要是火在pubg系列的游戏，因为在类似pubg系列游戏中，自瞄显得稍微鸡助，然后某些大佬">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈FPS子弹追踪实现以及防护">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/GameHacker/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="开场白和表情包我就不加了了，文采和资源没这么丰富，直接步入正题。本次聊聊的功能为目前fps较为热门功能：子弹追踪。  PlaneJun ・2020-4-27 19:44  开场白和表情包我就不加了了，文采和资源没这么丰富，直接步入正题。本次聊聊的功能为目前fps较为热门功能：子弹追踪。 简单聊聊：该功能呢早期主要是火在pubg系列的游戏，因为在类似pubg系列游戏中，自瞄显得稍微鸡助，然后某些大佬">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162621287.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162630133.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162635080.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162638119.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162642055.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162645779.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162648454.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162650987.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162653368.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162656248.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162659031.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162701960.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162704978.png">
+<meta property="article:published_time" content="2024-04-21T12:32:42.651Z">
+<meta property="article:modified_time" content="2024-04-21T12:19:02.809Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162621287.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/GameHacker/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/GameHacker/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/","path":"2024/04/21/GameHacker/浅谈FPS子弹追踪实现以及防护/","title":"浅谈FPS子弹追踪实现以及防护"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>浅谈FPS子弹追踪实现以及防护 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E8%81%8A%E8%81%8A%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">简单聊聊：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">分析：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">实现：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%EF%BC%9A"><span class="nav-number">4.</span> <span class="nav-text">代码：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%B2%E6%8A%A4%EF%BC%9A"><span class="nav-number">5.</span> <span class="nav-text">防护：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A"><span class="nav-number">6.</span> <span class="nav-text">补充：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9E%E5%A4%8D"><span class="nav-number">7.</span> <span class="nav-text">回复</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/GameHacker/%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="浅谈FPS子弹追踪实现以及防护 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浅谈FPS子弹追踪实现以及防护
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：20:19:02" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GameHacker/" itemprop="url" rel="index"><span itemprop="name">GameHacker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>开场白和表情包我就不加了了，文采和资源没这么丰富，直接步入正题。本次聊聊的功能为目前fps较为热门功能：<strong>子弹追踪。</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2020-4-27 19:44</li>
+</ul>
+<p>开场白和表情包我就不加了了，文采和资源没这么丰富，直接步入正题。本次聊聊的功能为目前fps较为热门功能：<strong>子弹追踪。</strong></p>
+<h1 id="简单聊聊："><a href="#简单聊聊：" class="headerlink" title="简单聊聊："></a><strong>简单聊聊：</strong></h1><p>该功能呢早期主要是火在pubg系列的游戏，因为在类似pubg系列游戏中，自瞄显得稍微鸡助，然后某些大佬就弄出了这么一个功能，子弹追踪。其实它的一个效果与自瞄不同，自瞄的表现效果为准星死死锁住敌人。可子弹追踪的表现效果为子弹死死锁住敌人，也就是说准星在不需要锁住人的情况下开枪也能对敌人造成伤害，下面放一个图直观的感受一下。</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162621287.png" alt="image-20221019162621287"></p>
+<p>该gif为手机录制，所以画质很渣，但是不影响看效果。可以明显看到他虽然没有瞄准敌人，但是敌人却被打出了健康的绿色血液，这就是子弹追踪的效果。</p>
+<p>效果我们看到了，那么该功能的一个实现原理是什么呢？<strong>顾名思义，子弹追踪就是子弹追着人打嘛，只要对子弹下手就能实现了，看似如此可真是如此吗？那我们换一个思维模式，我们当前要实现一个功能是不是准星在无需瞄准人的前提下开枪也能对敌人造成伤害？那么只要我们实现了这个功能，那我们的这个功能是不是也能称之为子弹追踪？</strong>这两句话很关键，大家细品。只要弄清这两个问题后就不会再被‘’子弹‘’两个字给骗到了。另外，如果大家常年混在看雪里褥羊毛的话就会发现，其实早期就有人发布过一种子弹追踪的实现方式，那就是飞郁培训的大佬讲师任鸟飞。这里就直接上帖子链接，有兴趣的大家可以看看：<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-251701.htm">https://bbs.pediy.com/thread-251701.htm</a>。</p>
+<p>除了修改击打区域达到子弹追踪，还有什么方法能达到吗？俗话说“条条道路通罗马”，那么该功能实现的方法肯定不止一种，就看你脑洞能不能想到。下面呢我讲举一种实现方法来讲解。</p>
+<h1 id="分析："><a href="#分析：" class="headerlink" title="分析："></a><strong>分析：</strong></h1><p>我不知道大家有没有仔细思考过一个根源问题，那就是为什么FPS存在准星这个东西？答案很简单：用来瞄准目标。所以我们能准星指哪打哪。可是问题来了，请问游戏是怎么知道我们准星瞄准的是哪里？打的是哪里？<strong>请注意，这里我说是两个问题。</strong>我相信大部分人都没有真正去思考过这个问题，因为他们基本上都把这两个问题归结为一个问题。其实在我们不断深层的挖掘这个问题的时候，答案已经显得容见。那就是游戏会不会把我们从瞄准到射击敌人的这个过程分为两个部分，一个是准星的变动(<strong>准星的变动所带来的的影响为视角的变动，下面我都以视角来描述</strong>)，另一个是实际射击。为了确认这两个想法是否正确，我们用游戏实践一下。第一步得找到视角的坐标，也就是鼠标XY。</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162630133.png" alt="image-20221019162630133"></p>
+<p>不难发现随着鼠标XY变化，视角也在变化，故第一个想法成立。我们来看看第二个，既然用于实际射击，那么在我们开枪的时候鼠标XY必定作为参数传进来，此时我们只需要找到开枪call下断，然后开一枪后看一下堆栈是否存在鼠标XY即可。</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162635080.png" alt="image-20221019162635080"></p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162638119.png" alt="image-20221019162638119"></p>
+<p>断点断下后往下一翻，果然有鼠标XY，那么就说明从瞄准到射击的确分为两个部分。当我们确认这两个想法之后，好玩的事来了。我们回忆一下，我们是不是要实现一个<strong>准星在无需瞄准人的前提下开枪也能对敌人造成伤害</strong>的功能，那么我们是不是可以做一下手脚？<strong>当我们开枪的时候我们不用游戏本身所提供的视角坐标，而是用我们提供的坐标，这样就能在不影响原视角的情况下让子弹往我们提供的坐标射击</strong>，于是文章开头的那个效果图就出来了。至此，子弹追踪就已经实现。不过这种子弹追踪的实现方式在江湖中有它自己的名字—–<strong>视角追踪或静默自瞄</strong>。这里说一下，之所以也称之为静默自瞄，只因为该追踪本质上还是属于自瞄，只不过是我们原视角在不产生变动的情况下进行了自瞄。</p>
+<h1 id="实现："><a href="#实现：" class="headerlink" title="实现："></a><strong>实现：</strong></h1><p>分析也分析完了，那么怎么去实现呢？两种方式：</p>
+<p>第一种、需要大量的逆向功底，就是分析开枪call在什么时候被赋值了实际射击坐标，然后hook即可实现。</p>
+<p>第二种、有句古话“擒贼先擒王”，既然开枪的时候需要去读取视角坐标，那么我们就直接在访问视角坐标的代码段进行处理岂不美哉。</p>
+<p><strong>Tip: 第二种方法虽然不如第一种方法要求的技术含量高，但是根据本人这段时间的测试，发现很多游戏都能实现，并且危害性大。故讲解该种方法的实现，也希望游戏产商早日和谐该功能。</strong></p>
+<p>我们来访问一下视角坐标</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162642055.png" alt="image-20221019162642055"></p>
+<p>发现有三条，而且无论我们改变视角还是开枪，都不会出现新的访问，那么我们只能从这三条处理。我们抛开第三条不看，因为第三条是属于给视角坐标赋值语句，我们要看的只是访问语句。这样就只剩下两条了，我们先点击第一条看看。</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162645779.png" alt="image-20221019162645779"></p>
+<p>我们再来看第二条语句的</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162648454.png" alt="image-20221019162648454"></p>
+<p>这两段代码几乎相同，都是把视角坐标取出来后赋值给另一个地址。经过我们上面分析，瞄准和射击分为两个部分，他们都是需要去访问读取视角坐标的，巧的是这里对视角坐标访问恰好就是有两个，那么我们可以怀疑一下这两个语句分别就是对应瞄准和射击。我们直接nop看效果，先nop第一个</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162650987.png" alt="image-20221019162650987"></p>
+<p>因为eax和eax+4分别存储视角Y和X，所以得nop两条语句。接下来我们进入游戏看看</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162653368.png" alt="image-20221019162653368"></p>
+<p>我们发现nop之后虽然我们没法改变视角，但是我们会发现，鼠标XY竟然在改变，然后我们开枪，发现子弹依旧是打在墙上，这就尴尬了。。。。。我们添加一个机器人，我们走到他的面前，我们把准星对准他的头部，然后重新nop该处代码。</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162656248.png" alt="image-20221019162656248"></p>
+<p>神奇的一幕来，无论我们朝他头部开多少枪，就是打不了。为什么？我们还原代码</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162659031.png" alt="image-20221019162659031"></p>
+<p>发现我们准星此时指的是这个位置，此时我们把视角瞄准敌人后再次nop</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162701960.png" alt="image-20221019162701960"></p>
+<p>就变成了这样，我们用手枪打一下。</p>
+<p><img src="/./%E6%B5%85%E8%B0%88FPS%E5%AD%90%E5%BC%B9%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E9%98%B2%E6%8A%A4/image-20221019162704978.png" alt="image-20221019162704978"></p>
+<p>发现敌人被我们爆头了。我们就能百分百确认了，该代码段为控制视角，真实控制射击的是第二条访问语句或者直接是鼠标XY。现在呢，已经可以写代码了，不过这里我只提供关键代码，其余代码大家可以自己完善。</p>
+<h1 id="代码："><a href="#代码：" class="headerlink" title="代码："></a><strong>代码：</strong></h1><p>在研究的时候我们发现一旦nop之后，视角直接发生改变，而且直接把人物指向0的位置，是因为我们nop后视角坐标得不到赋值，就一直为0。那我们我们想让我们视角保持不变怎么办？那就得需要一个变量来记录。当我们开枪的时候，先把当前的视角坐标记录，然后把这个记录的值写入视角坐标，这样就达到一个锁视角的效果，然后再通过自瞄算法把自瞄角度算出来再写入鼠标XY中，最后实现追踪效果，追踪完毕后再恢复代码。那么如何确定视角坐标地址呢？</p>
+<p>首先我们已经找到控制视角的代码段了，不难发现，控制视角的关键语句为的两条</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">client.dll+CB0D0 - 8B 44 24 04           - mov eax,[esp+04]</span><br><span class="line">client.dll+CB0D4 - 8B 10               - mov edx,[eax]</span><br><span class="line">client.dll+CB0D6 - 89 91 040F0000            - mov [ecx+00000F04],edx           ---------&gt;视角Y</span><br><span class="line">client.dll+CB0DC - 8B 50 04             - mov edx,[eax+04]</span><br><span class="line">client.dll+CB0DF - 89 91 080F0000            - mov [ecx+00000F08],edx           ---------&gt;视角X</span><br><span class="line">client.dll+CB0E5 - 8B 40 08             - mov eax,[eax+08]</span><br><span class="line">client.dll+CB0E8 - 89 81 0C0F0000            - mov [ecx+00000F0C],eax</span><br><span class="line">client.dll+CB0EE - C2 0400              - ret 0004ret 0004</span><br></pre></td></tr></table></figure>
+
+<p>那么我们可以直接采用hook技术，把记录的值写入这两地址里即可。以下为部分代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">//静默自瞄</span></span><br><span class="line">        <span class="keyword">if</span> (g_bBulletTrack)</span><br><span class="line">        &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">GetAsyncKeyState</span>(VK_LBUTTON) != <span class="number">0</span> &amp;&amp; dwTargetObj != <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">if</span> (Data::<span class="built_in">getHp</span>(dwTargetObj) &gt; <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        bAimLock = <span class="literal">true</span>;</span><br><span class="line">                        AimAngle = Data::<span class="built_in">getAimAngle</span>(Data::<span class="built_in">getBonePos</span>(LocalPlayer.obj, Bone_Head), Data::<span class="built_in">getBonePos</span>(dwTargetObj, Bone_Head));</span><br><span class="line">                        AimPunch = Data::<span class="built_in">getAimPunch</span>(LocalPlayer.obj);</span><br><span class="line">                        AimAngle.x -= AimPunch.x;</span><br><span class="line">                        AimAngle.y -= AimPunch.y;</span><br><span class="line">                        BulletTrack::<span class="built_in">Track</span>(<span class="literal">true</span>, AimAngle);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                    BulletTrack::<span class="built_in">Track</span>(<span class="literal">false</span>, AimAngle);</span><br><span class="line">                    bAimLock = <span class="literal">false</span>;</span><br><span class="line">                    fValue1 = <span class="number">0</span>;</span><br><span class="line">                &#125;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*追踪实现*/</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">Track</span><span class="params">(<span class="type">bool</span> state,Vector2 angle)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (state == <span class="literal">true</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            g_dwTrackSwitch = <span class="number">1</span>; <span class="comment">//开</span></span><br><span class="line">            g_AimAngle = angle;</span><br><span class="line">            <span class="built_in">lockScreenView</span>(); <span class="comment">//锁定视角</span></span><br><span class="line">            <span class="built_in">WriteMem</span>&lt;FLOAT&gt;(<span class="built_in">ReadMem</span>&lt;DWORD&gt;(g_dwEngineModule + m_Mouse) + m_offsetMouseY , g_saveMouse.y);  <span class="comment">//写自瞄角度</span></span><br><span class="line">            <span class="built_in">WriteMem</span>&lt;FLOAT&gt;(<span class="built_in">ReadMem</span>&lt;DWORD&gt;(g_dwEngineModule + m_Mouse) + m_offsetMouseY+<span class="number">4</span>, g_saveMouse.x);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (g_dwTrackSwitch == <span class="number">1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                g_dwTrackSwitch = <span class="number">0</span>; <span class="comment">//关</span></span><br><span class="line">                <span class="built_in">resumeScreenView</span>(); <span class="comment">//恢复视角</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="防护："><a href="#防护：" class="headerlink" title="防护："></a><strong>防护：</strong></h1><p>正如我在文中多次提到，该种追踪的实现方法在很多款游戏我已经实现了，页游到端游的部分游戏都会存在，并且没有一丝丝的检测。游戏厂商应该对此重视一下，稍微对其关键部位进行检测，并对鼠标XY的数据进行校验，以防不法分子对其进行篡改。</p>
+<h1 id="补充："><a href="#补充：" class="headerlink" title="补充："></a><strong>补充：</strong></h1><p>本文提到的 <strong>准星、视角、鼠标</strong> 均为一个东西。</p>
+<h1 id="回复"><a href="#回复" class="headerlink" title="回复"></a><strong>回复</strong></h1><p>既然大家都这么热情，我就简单说说把。对于提到的这个追踪只能给自己看，敌人视角还是能看到锁住的这个问题我确实没去注意到，这里算是我的一个失误。但是抛开这些小问题，你们都觉得这个不是子弹追踪。那行，就再聊聊。</p>
+<p>子弹追踪目前市场上热门的分三种，魔术子弹、弹道追踪、视角追踪。大致是这三种，其他的肯定还是有，这里我就不阐述。不过这三种的区别我简单讲一下。</p>
+<p>魔术子弹：直接在子弹产生的那个时候把子弹坐标改成敌人坐标，直接把敌人击杀。pubg的穿山爆车，隔着各种障碍物秒人就是这个，很多人以为是子弹穿墙，其实不是。</p>
+<p>弹道追踪：这个虽然是和魔术子弹都是从子弹下手，但是他不同于魔术子弹，这个他不能无视障碍物，效果就是和视角追踪一样，只不过他这个是对子弹做了处理。</p>
+<p>视角追踪：就是我文章提到的。我就不说了，你们如果混黑产就去看看某平，某战场的源代码，看看是不是这个东西。</p>
+<p>其实我文章开头已经提到两个内容了，一个是我只讲一种的实现原理，另一个就是不希望大家被子弹追踪这个名字给约束。功能是叫这个名字，但是实现是另外一回事，你能实现这个功能的效果，那总的来说也能称之为子弹追踪，只不过可能不太准确。就好比你实现透视方法很多种，雷达，方框，Z轴等等，更牛逼还是直接画在h5，可最终的目的还是看到敌人玩家。功能的名字是固定的，但是思维碰撞是不定的，你研究一样东西你不能总在抠字眼，老人都常说，不管黑猫白猫，能抓到老鼠都是好猫。如果非要否定，那也没办法。我写出来是为了技术分享，别无他意。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/GameHacker/%E6%9F%90Pubg%20Lite%E8%BE%85%E5%8A%A9%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B%E5%8F%8A%E5%BF%83%E5%BE%97/" rel="prev" title="某Pubg Lite辅助逆向分析过程及心得">
+                  <i class="fa fa-chevron-left"></i> 某Pubg Lite辅助逆向分析过程及心得
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/Reverse/2022%E6%B8%B8%E6%88%8F%E5%AE%89%E5%85%A8%E6%8A%80%E6%9C%AF%E7%AB%9E%E8%B5%9B-%E5%86%B3%E8%B5%9B/" rel="next" title="2022游戏安全技术竞赛-决赛">
+                  2022游戏安全技术竞赛-决赛 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

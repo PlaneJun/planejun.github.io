@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="PlaneJun ・2020-10-15 12:32  前言该文章将邀请世界第一的编程语言-易语言来为我们演示。 吹逼随着好玩的游戏越来越多，盖佬人才越来越突出，好玩的游戏+一款牛逼的WG成为了一个老挂逼的日常生活。鲁迅说过‘有乐同享，有难同当‘，于是乎，老挂逼们开始投身于直播行业，以‘高超’的技术，来向大众传递游戏胜利的快乐。为了防止大众偷学到自己的技术，一种技术诞生了-反截图。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反截图技术的原理及简单实现">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="PlaneJun ・2020-10-15 12:32  前言该文章将邀请世界第一的编程语言-易语言来为我们演示。 吹逼随着好玩的游戏越来越多，盖佬人才越来越突出，好玩的游戏+一款牛逼的WG成为了一个老挂逼的日常生活。鲁迅说过‘有乐同享，有难同当‘，于是乎，老挂逼们开始投身于直播行业，以‘高超’的技术，来向大众传递游戏胜利的快乐。为了防止大众偷学到自己的技术，一种技术诞生了-反截图。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId5.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId6.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId7.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId8.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId9.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId10.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId11.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId12.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId13.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId14.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId15.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId16.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId18.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId19.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId20.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId21.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId22.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId23.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId24.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId25.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId26.png">
+<meta property="article:published_time" content="2024-04-21T12:32:42.648Z">
+<meta property="article:modified_time" content="2024-04-21T12:18:55.481Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId5.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/","path":"2024/04/21/GameHacker/反截图技术的原理及简单实现/","title":"反截图技术的原理及简单实现"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>反截图技术的原理及简单实现 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%B9%E9%80%BC"><span class="nav-number">2.</span> <span class="nav-text">吹逼</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%95%A5%E5%8F%AB%E5%8F%8D%E6%88%AA%E5%9B%BE"><span class="nav-number">3.</span> <span class="nav-text">啥叫反截图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%8F%8D%E6%88%AA%E5%9B%BE"><span class="nav-number">4.</span> <span class="nav-text">为什么要反截图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E5%8F%8D%E6%88%AA%E5%9B%BE"><span class="nav-number">5.</span> <span class="nav-text">实现一个简单反截图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%A2%E7%A9%B6%E5%8F%8D%E6%88%AA%E5%9B%BE%E5%8E%9F%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">探究反截图原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%8F%8D%E6%88%AA%E5%9B%BE"><span class="nav-number">7.</span> <span class="nav-text">优化反截图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E6%9D%9F%E8%AF%AD"><span class="nav-number">8.</span> <span class="nav-text">结束语</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/GameHacker/%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="反截图技术的原理及简单实现 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          反截图技术的原理及简单实现
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:42 / 修改时间：20:18:55" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:42+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GameHacker/" itemprop="url" rel="index"><span itemprop="name">GameHacker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2020-10-15 12:32</li>
+</ul>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>该文章将邀请世界第一的编程语言-易语言来为我们演示。</p>
+<h1 id="吹逼"><a href="#吹逼" class="headerlink" title="吹逼"></a>吹逼</h1><p>随着好玩的游戏越来越多，盖佬人才越来越突出，好玩的游戏+一款牛逼的WG成为了一个老挂逼的日常生活。鲁迅说过‘有乐同享，有难同当‘，于是乎，老挂逼们开始投身于直播行业，以‘高超’的技术，来向大众传递游戏胜利的快乐。为了防止大众偷学到自己的技术，一种技术诞生了-反截图。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId5.png" alt="document_image_rId5"></p>
+<h1 id="啥叫反截图"><a href="#啥叫反截图" class="headerlink" title="啥叫反截图"></a>啥叫反截图</h1><p>顾名思义，就是让你截取不到你想截取的图片呗。这时聪明人又来了，那我直接把截图函数全部干掉不就完事了吗？</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId6.png" alt="document_image_rId6"></p>
+<p>emmm,虽然是这么个理，但是你确定你干得来吗。</p>
+<h1 id="为什么要反截图"><a href="#为什么要反截图" class="headerlink" title="为什么要反截图"></a>为什么要反截图</h1><p>直播、装逼、防止一些有截图检测的游戏</p>
+<h1 id="实现一个简单反截图"><a href="#实现一个简单反截图" class="headerlink" title="实现一个简单反截图"></a>实现一个简单反截图</h1><p>这个简单啊，打钱就完事。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId7.png" alt="document_image_rId7"></p>
+<p>咳咳，开个玩笑。上才艺</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId8.png" alt="document_image_rId8"></p>
+<p>看不懂没关系，会用就行。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId9.png" alt="document_image_rId9"></p>
+<p>这样就OK，然后咱们运行后看一下截图效果</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId10.png" alt="document_image_rId10"></p>
+<p>我们发现，窗口变黑了。这是一个简单的反截图效果，虽然能反截图了，但是是个人都觉得这种反截图不靠谱。假设你正在用科技直播，观众全部就看着黑框了。而且，咱们自己都觉得这种反截图效果不行，那游戏公司还会傻吗？不给你一个套餐，难道留着回家过年吗。</p>
+<p>那么问题来了，当前这个黑框是覆盖在我们窗口上面呢，还是他把窗口直接变成黑色。接下来开始探究。</p>
+<h1 id="探究反截图原理"><a href="#探究反截图原理" class="headerlink" title="探究反截图原理"></a>探究反截图原理</h1><p>那么我们能不能实现一个全透明的反截图效果呢，比如B覆盖在A上面，我们截图，只能截取到A，B就完全处于一个透明的状态。答案是肯定的。接下来我们来进一步研究一下，既然我们想让他透明，好办啊，我们给窗口设置一个透明。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId11.png" alt="document_image_rId11"></p>
+<p>运行起来之后，发现窗口透明了</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId12.png" alt="document_image_rId12"></p>
+<p>那我们来重新截图试试看。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId13.png" alt="document_image_rId13"></p>
+<p>诶，我们发现刚刚那个反截图的效果，也变透明了。我们添加一个控件再运行截图看看效果。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId14.png" alt="document_image_rId14"></p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId15.png" alt="document_image_rId15"></p>
+<p>我们发现，看不到按钮。经过这样的测试我们发现，SetWindowDisplayAffinity 这个函数之后所产生的黑框，并不是覆盖上去的，而是直接把窗口刷新成为黑色的，而且这种黑色的效果可以通过修改窗口透明度来控制黑色的可见度。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId16.png" alt="document_image_rId16"></p>
+<p>由此可知，一个新的反截图思路：给窗体一个透明度，这样就实现了全透明的反截图。当然还有另一种方法：论坛已经给出，<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-258830.htm">https://bbs.pediy.com/thread-258830.htm</a></p>
+<p>Ok.下面开始根据第一种方法实现反截图(嘴角开始上扬)。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId18.png" alt="document_image_rId18"></p>
+<h1 id="优化反截图"><a href="#优化反截图" class="headerlink" title="优化反截图"></a>优化反截图</h1><p>其实在上面我们已经实现了全透明的反截图，只不过用的是易语言官方库的命令(易语言真是世界上最好用的语言呢)，现在用API实现。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId19.png" alt="document_image_rId19"></p>
+<p>用这个函数设置就行，第一个参数句柄，第四个参数：1则用crKey，忽略bAlpha；2则用bAlpha，忽略crKey。这个函数干嘛的呢，就是设置窗口透明度的。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId20.png" alt="document_image_rId20"></p>
+<p>下面为了方便演示，我在窗口写了字，看看效果。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId21.png" alt="document_image_rId21"></p>
+<p>截图看一下效果</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId22.png" alt="document_image_rId22"></p>
+<p>这样的话，就实现了一个简单的反截图。如果想要实现效果更好的，可以到我上面指出的帖子里看看实现方法。</p>
+<p>下面是我将此技术运用在D3D透明绘制上</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId23.png" alt="document_image_rId23"></p>
+<p>截图后</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId24.png" alt="document_image_rId24"></p>
+<h1 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h1><p>本篇文章只是探究一个低级的反截图，该反截图的原理也是我再某论坛看到的，虽说开源，但是却是调用DLL。凭着正义心驱使的我岂能让这种作为猖狂，直接扔进OD瞎操作，最后得知原理。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId25.png" alt="document_image_rId25"></p>
+<p>另外该种方法还能过录制。行了，这几天事务繁忙，突然有空就分析了一下反截图，然后就顺便来看雪划了水，溜了溜了。</p>
+<p><img src="/./%E5%8F%8D%E6%88%AA%E5%9B%BE%E6%8A%80%E6%9C%AF%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/document_image_rId26.png" alt="document_image_rId26"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/GameHacker/%E5%88%A9%E7%94%A8U3D%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7%E5%BF%AB%E9%80%92%E5%AE%9A%E4%BD%8D%E6%95%B0%E7%BB%84/" rel="prev" title="利用U3D引擎特性快递定位数组">
+                  <i class="fa fa-chevron-left"></i> 利用U3D引擎特性快递定位数组
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/GameHacker/%E5%A4%A9%E5%A0%82M%E5%82%B3%E8%AA%AA-%E5%90%83%E8%8D%AFcall%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/" rel="next" title="天堂M傳說-吃药call的逆向分析">
+                  天堂M傳說-吃药call的逆向分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>

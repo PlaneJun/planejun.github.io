@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="codeva-XHCX41TH3N">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.planejun.cn","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"flat"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一个数据加密恶意样本分析 PlaneJun ・2021-12-22 14:23  该样本为帖子[讨论]抠下来的，过火绒-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com看到的，当时闲的没事下载来看了看。样本运行后会对电脑文件加密，并且删除了卷影文件，防止通过磁盘工具恢复。 运行效果以及行为弹出网页">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个数据加密恶意样本分析">
+<meta property="og:url" content="https://blog.planejun.cn/2024/04/21/Virus/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="PlaneJun&#39;Blog">
+<meta property="og:description" content="一个数据加密恶意样本分析 PlaneJun ・2021-12-22 14:23  该样本为帖子[讨论]抠下来的，过火绒-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com看到的，当时闲的没事下载来看了看。样本运行后会对电脑文件加密，并且删除了卷影文件，防止通过磁盘工具恢复。 运行效果以及行为弹出网页">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId6.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId7.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId8.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId9.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId10.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId11.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId12.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId13.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId14.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId15.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId16.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId17.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId18.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId19.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId20.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId21.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId22.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId23.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId24.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId25.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId26.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId27.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId28.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId29.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId30.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId31.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId32.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId33.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId34.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId35.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId36.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId37.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId38.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId39.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId40.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId41.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId42.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId43.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId44.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId45.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId46.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId47.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId48.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId49.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId50.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId51.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId52.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId53.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId54.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId55.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId56.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId57.png">
+<meta property="og:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId58.png">
+<meta property="article:published_time" content="2024-04-21T12:32:43.169Z">
+<meta property="article:modified_time" content="2024-04-21T12:21:05.894Z">
+<meta property="article:author" content="PlaneJun">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.planejun.cn/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId6.png">
+
+
+<link rel="canonical" href="https://blog.planejun.cn/2024/04/21/Virus/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.planejun.cn/2024/04/21/Virus/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/","path":"2024/04/21/Virus/一个数据加密恶意样本分析/","title":"一个数据加密恶意样本分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>一个数据加密恶意样本分析 | PlaneJun'Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">PlaneJun'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">我是从未来来的！现在学已经来不及了，放开玩吧！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section">首页</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section">归档</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section">分类</a></li><li class="menu-item menu-item-github"><a href="https://www.github.com/PlaneJun" rel="section" target="_blank">GitHub</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section">关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">一个数据加密恶意样本分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%95%88%E6%9E%9C%E4%BB%A5%E5%8F%8A%E8%A1%8C%E4%B8%BA"><span class="nav-number">2.</span> <span class="nav-text">运行效果以及行为</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">样本分析：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ShellCode%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">ShellCode分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ShellCode1%E5%88%86%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">ShellCode1分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ShellCode2"><span class="nav-number">6.</span> <span class="nav-text">ShellCode2</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PlaneJun</p>
+  <div class="site-description" itemprop="description">This is PlaneJun‘s Blog</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.planejun.cn/2024/04/21/Virus/%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PlaneJun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PlaneJun'Blog">
+      <meta itemprop="description" content="This is PlaneJun‘s Blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="一个数据加密恶意样本分析 | PlaneJun'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一个数据加密恶意样本分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-04-21 20:32:43 / 修改时间：20:21:05" itemprop="dateCreated datePublished" datetime="2024-04-21T20:32:43+08:00">2024-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Virus/" itemprop="url" rel="index"><span itemprop="name">Virus</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="一个数据加密恶意样本分析"><a href="#一个数据加密恶意样本分析" class="headerlink" title="一个数据加密恶意样本分析"></a>一个数据加密恶意样本分析</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/user-home-826671.htm">PlaneJun</a> ・2021-12-22 14:23</li>
+</ul>
+<p>该样本为帖子<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-270586.htm">[讨论]抠下来的，过火绒-软件逆向-看雪论坛-安全社区|安全招聘|bbs.pediy.com</a>看到的，当时闲的没事下载来看了看。样本运行后会对电脑文件加密，并且删除了卷影文件，防止通过磁盘工具恢复。</p>
+<h1 id="运行效果以及行为"><a href="#运行效果以及行为" class="headerlink" title="运行效果以及行为"></a>运行效果以及行为</h1><p>弹出网页</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId6.png" alt="document_image_rId6"></p>
+<p>隐藏了所有的文件夹，并创建了新的文件夹，实则为快捷方式，右键属性可看到重定向。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId7.png" alt="document_image_rId7"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId8.png" alt="document_image_rId8"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId9.png" alt="document_image_rId9"></p>
+<p>加密了文件，无法打开</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId10.png" alt="document_image_rId10"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId11.png" alt="document_image_rId11"></p>
+<p>对文件进行了截断操作，加密。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId12.png" alt="document_image_rId12"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId13.png" alt="document_image_rId13"></p>
+<p>手动检查启动项后发现，在启动中添加了一个html，该html为样本弹出的html。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId14.png" alt="document_image_rId14"></p>
+<h1 id="样本分析："><a href="#样本分析：" class="headerlink" title="样本分析："></a>样本分析：</h1><table>
+<thead>
+<tr>
+<th>MD5</th>
+<th>8f2050c9937f5f21b118c18dce3054fb</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SHA1</td>
+<td>0df872ae7916dd70e69b3a319ef57612e0ace739</td>
+</tr>
+<tr>
+<td>SHA256</td>
+<td>32e504c5664ee16d00149c1d8fe8184b872b07f9fad93ed3bce2bf11c1cc7c3a</td>
+</tr>
+</tbody></table>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId15.png" alt="document_image_rId15"></p>
+<p>突破口：通过VirusTotal和微云沙盒分析的得知可能的操作有分配内存，写内存。在给WriteProcessMemory下断调试观察参数时发现当前区域为动态分配的内存，</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId16.png" alt="document_image_rId16"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId17.png" alt="document_image_rId17"></p>
+<p>故其首先调用了VirtualAlloc,ida进行交叉引用可到</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __thiscall <span class="title function_">sub_2001DC0</span><span class="params">(<span class="type">int</span> this, <span class="keyword">struct</span> tagCREATESTRUCTA *a2)</span></span><br></pre></td></tr></table></figure>
+
+<p>该函数内部进行了shellcode初始化及解密后进行调用</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId18.png" alt="document_image_rId18"></p>
+<p>在dbg里对VirtualAlloc下断后跟踪后可得到解密的内容</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId19.png" alt="document_image_rId19"></p>
+<p>这里直接对shellcode进行dump。</p>
+<p>因为是从EF0000开始dump，所以拖进ida分析的时候需要修复一下头部，从28开始。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId20.png" alt="document_image_rId20"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId21.png" alt="document_image_rId21"></p>
+<h1 id="ShellCode分析"><a href="#ShellCode分析" class="headerlink" title="ShellCode分析"></a>ShellCode分析</h1><p>函数进来后会进行初始化字符串。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId22.png" alt="document_image_rId22"></p>
+<p>然后调用InitProcAddr获取LoadLibrary和GetProcAddress地址。InitProcAddr的实现也是从Ldr中去遍历</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId23.png" alt="document_image_rId23"></p>
+<p>紧接着分别获取以下这些函数地址</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GetModuleFileNameW</span><br><span class="line">CreateFileW</span><br><span class="line">VirtualAlloc</span><br><span class="line">GetFileSize</span><br><span class="line">ReadFile</span><br><span class="line">CloseHandle</span><br><span class="line">SHGetSpecialFolderPathW</span><br><span class="line">CopyFileW</span><br><span class="line">SetFileAttributesW</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId24.png" alt="document_image_rId24"></p>
+<p>随后获取了AppData和StartUp的路径，其中AppData进行了以下拼接</p>
+<blockquote>
+<p>%AppData%\CSIDL_<br>%AppData%\CSIDL_X</p>
+</blockquote>
+<p>然后检查当前运行的实例是否存在于其中一个目录中，如果不存在则自我复制后，将文件设置为隐藏状态（<strong>单独分析shellcode时路径不存在，猜测为主程序创建目录</strong>）</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId25.png" alt="document_image_rId25"></p>
+<p>中间存在一些对文件读写操作，经过分析后发现是为了给新的shellcode申请空间。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId26.png" alt="document_image_rId26"></p>
+<p>老规矩，直接弄出他的shellcode。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId27.png" alt="document_image_rId27"></p>
+<h1 id="ShellCode1分析"><a href="#ShellCode1分析" class="headerlink" title="ShellCode1分析"></a>ShellCode1分析</h1><p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId28.png" alt="document_image_rId28"></p>
+<p>以0，1和0，0不同参数执行了两次call</p>
+<p>函数进来会进行字符串初始化，用于后面调用api</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">strcpy</span>(str_kernel32, <span class="string">&quot;kernel32.dll&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_ntdll, <span class="string">&quot;ntdll.dll&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_shell32, <span class="string">&quot;shell32.dll&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_advapi32, <span class="string">&quot;advapi32.dll&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_psapi, <span class="string">&quot;psapi.dll&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetProcAddress, <span class="string">&quot;GetProcAddress&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetModuleHandleA, <span class="string">&quot;GetModuleHandleA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetModuleFileNameA, <span class="string">&quot;GetModuleFileNameA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetModuleFileNameW, <span class="string">&quot;GetModuleFileNameW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_CreateProcessA, <span class="string">&quot;CreateProcessA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_CreateProcessW, <span class="string">&quot;CreateProcessW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_CreateToolhelp32Snapshot, <span class="string">&quot;CreateToolhelp32Snapshot&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_Process32First, <span class="string">&quot;Process32First&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_Process32Next, <span class="string">&quot;Process32Next&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_Module32First, <span class="string">&quot;Module32First&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_Module32Next, <span class="string">&quot;Module32Next&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_CloseHandle, <span class="string">&quot;CloseHandle&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetCurrentProcess, <span class="string">&quot;GetCurrentProcess&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GlobalAlloc, <span class="string">&quot;GlobalAlloc&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_OpenProcessToken, <span class="string">&quot;OpenProcessToken&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetTokenInformation, <span class="string">&quot;GetTokenInformation&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_AllocateAndInitializeSid, <span class="string">&quot;AllocateAndInitializeSid&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_EqualSid, <span class="string">&quot;EqualSid&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_LookupAccountSidA, <span class="string">&quot;LookupAccountSidA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_OpenMutexA, <span class="string">&quot;OpenMutexA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_CreateMutexA, <span class="string">&quot;CreateMutexA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_CreateFileA, <span class="string">&quot;CreateFileA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_CreateFileW, <span class="string">&quot;CreateFileW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetFileSize, <span class="string">&quot;GetFileSize&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_ReadFile, <span class="string">&quot;ReadFile&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetSystemDirectoryA, <span class="string">&quot;GetSystemDirectoryA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetSystemDirectoryW, <span class="string">&quot;GetSystemDirectoryW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_SetFileAttributesW, <span class="string">&quot;SetFileAttributesW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_MoveFileExW, <span class="string">&quot;MoveFileExW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_SHGetSpecialFolderPathA, <span class="string">&quot;SHGetSpecialFolderPathA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_SHGetSpecialFolderPathW, <span class="string">&quot;SHGetSpecialFolderPathW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_RegOpenKeyExA, <span class="string">&quot;RegOpenKeyExA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_RegOpenKeyExW, <span class="string">&quot;RegOpenKeyExW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_RegSetValueExA, <span class="string">&quot;RegSetValueExA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_RegSetValueExW, <span class="string">&quot;RegSetValueExW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_RegQueryValueExA, <span class="string">&quot;RegQueryValueExA&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_RegQueryValueExW, <span class="string">&quot;RegQueryValueExW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_RegCloseKey, <span class="string">&quot;RegCloseKey&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_CreateDirectoryW, <span class="string">&quot;CreateDirectoryW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_ExitProcess, <span class="string">&quot;ExitProcess&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_Sleep, <span class="string">&quot;Sleep&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetFileTime, <span class="string">&quot;GetFileTime&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_SetFileTime, <span class="string">&quot;SetFileTime&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_CopyFileW, <span class="string">&quot;CopyFileW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_DeleteFileW, <span class="string">&quot;DeleteFileW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_VirtualAlloc, <span class="string">&quot;VirtualAlloc&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetTickCount, <span class="string">&quot;GetTickCount&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_IsWow64Process, <span class="string">&quot;IsWow64Process&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_OpenProcess, <span class="string">&quot;OpenProcess&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_DuplicateHandle, <span class="string">&quot;DuplicateHandle&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_NtUnmapViewOfSection, <span class="string">&quot;NtUnmapViewOfSection&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_VirtualAllocEx, <span class="string">&quot;VirtualAllocEx&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_WriteProcessMemory, <span class="string">&quot;WriteProcessMemory&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetThreadContext, <span class="string">&quot;GetThreadContext&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_SetThreadContext, <span class="string">&quot;SetThreadContext&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_ResumeThread, <span class="string">&quot;ResumeThread&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_SuspendThread, <span class="string">&quot;SuspendThread&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_TerminateProcess, <span class="string">&quot;TerminateProcess&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_NtReadVirtualMemory, <span class="string">&quot;NtReadVirtualMemory&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetCommandLineW, <span class="string">&quot;GetCommandLineW&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_GetProcessMemoryInfo, <span class="string">&quot;GetProcessMemoryInfo&quot;</span>);</span><br><span class="line"><span class="built_in">strcpy</span>(str_WriteFile, <span class="string">&quot;WriteFile&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>初始化完毕后，根据参数值进行分支操作，由于第一个参数为1，这里从1开始。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId29.png" alt="document_image_rId29"></p>
+<p>首先进行了一些看不懂的文件操作。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId30.png" alt="document_image_rId30"></p>
+<p>然后开始解密新的shellcode</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId31.png" alt="document_image_rId31"></p>
+<p>然后开始进行一下虚拟机检测之类的东西</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId32.png" alt="document_image_rId32"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId33.png" alt="document_image_rId33"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId34.png" alt="document_image_rId34"></p>
+<p>然后是运行一个脚本，但是这个脚本在整个分析过程中没有碰到。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId35.png" alt="document_image_rId35"></p>
+<p>该shellcode的内容比较多，最后会执行到比较核心的内容。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId36.png" alt="document_image_rId36"></p>
+<p>首先是判断电脑是否存在浏览器。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId37.png" alt="document_image_rId37"></p>
+<p>如果IE存在，则启动IE浏览器，以IE浏览器为目标程序，解密一个资源文件并内存加载到IE中。反之自启动一份作为目标进程。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId38.png" alt="document_image_rId38"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId39.png" alt="document_image_rId39"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId40.png" alt="document_image_rId40"></p>
+<p>动态调试直接捕获到最终加载的**恶意样本(7396C43A6E8CCA2F811939EF1BE71B73)**。</p>
+<h1 id="ShellCode2"><a href="#ShellCode2" class="headerlink" title="ShellCode2"></a>ShellCode2</h1><table>
+<thead>
+<tr>
+<th>MD5</th>
+<th>7396c43a6e8cca2f811939ef1be71b73</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SHA1</td>
+<td>a7dace43bcc5e7108a9827dd3a7e03c30acdeeba</td>
+</tr>
+<tr>
+<td>SHA256</td>
+<td>5548fec3bae254f7882d9b681080261ba588bc05cb63a81a28107ff49f71c513</td>
+</tr>
+<tr>
+<td>File size</td>
+<td>52.00 KB (53248 bytes)}</td>
+</tr>
+</tbody></table>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId41.png" alt="document_image_rId41"></p>
+<p>该样本首先创建一个互斥名作为单例启动。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId42.png" alt="document_image_rId42"></p>
+<p>随后删除了卷影文件，防止通过该文件进行文件恢复。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId43.png" alt="document_image_rId43"></p>
+<p>然后开始加密文件。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId44.png" alt="document_image_rId44"></p>
+<p>加密过程主要是遍历电脑磁盘和移动硬盘文件。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId45.png" alt="document_image_rId45"></p>
+<p>然后查看文件是否为需要加密的文件。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId46.png" alt="document_image_rId46"></p>
+<p>以下为该样本所要加密的文件后缀。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId47.png" alt="document_image_rId47"></p>
+<p>加密后的文件在文件的头部会存在一个CRC32的值，该值由原文件前128个字节计算来的。样本会判断前面这个CRC32的值来判断是否需要加密。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId48.png" alt="document_image_rId48"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId49.png" alt="document_image_rId49"></p>
+<p>之后开始进行隐藏文件和创建快捷方式</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId50.png" alt="document_image_rId50"></p>
+<p>隐藏文件。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId51.png" alt="document_image_rId51"></p>
+<p>创建快捷方式，并重定向为临时目录的样本文件。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId52.png" alt="document_image_rId52"></p>
+<p>然后进行疑似横向感染操作。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId53.png" alt="document_image_rId53"></p>
+<p>然后开始解密HTML数据，就是运行样本后弹出的那个网页。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId54.png" alt="document_image_rId54"></p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId55.png" alt="document_image_rId55"></p>
+<p>该样本在运行之初会判断是否为管理员运行，如果不是管理员，会以管理员模式运行，并关闭当前进程。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId56.png" alt="document_image_rId56"></p>
+<p>该样本中还存在疑似公钥的东西，估计是可以用来解密，但是本人对加密这一块比较弱，就没去详细分析。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId57.png" alt="document_image_rId57"></p>
+<p>至于提供样本的那个老哥问怎么解决，我这边建议闲鱼5元包邮送出远方。</p>
+<p><img src="/./%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%AF%86%E6%81%B6%E6%84%8F%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/document_image_rId58.png" alt="document_image_rId58"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/21/Virus/ZarazaBot%E7%AA%83%E5%8F%96%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%86%E7%A0%81%E6%A0%B7%E6%9C%AC%E5%88%86%E6%9E%90/" rel="prev" title="ZarazaBot窃取浏览器密码样本分析">
+                  <i class="fa fa-chevron-left"></i> ZarazaBot窃取浏览器密码样本分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/21/Virus/%E5%BD%A9%E8%99%B9%E7%8C%AB%E7%97%85%E6%AF%92%E5%88%86%E6%9E%90/" rel="next" title="彩虹猫病毒分析">
+                  彩虹猫病毒分析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PlaneJun</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+
+</body>
+</html>
